@@ -30,6 +30,8 @@
 #include <vector>
 #include <cstdlib>
 
+#include "SDL_supplement.h"
+
 #include "frm_main.h"
 #include "std_picture.h"
 #include "gfx.h"
@@ -163,8 +165,6 @@ extern bool StartMenu;
 extern int BlockFlash;
 //Public ScrollRelease As Boolean
 extern bool ScrollRelease;
-//Public TakeScreen As Boolean
-extern bool TakeScreen;
 //Public LB As String  ' Line Break
 extern std::string LB;
 //Public EoT As String  ' End of Transmission for WINSOCK
@@ -1810,7 +1810,7 @@ extern bool GrabAll;
 //Public Cheater As Boolean 'if the player is a cheater
 extern bool Cheater;
 //EXTRA
-extern Uint32 RenderMode;
+extern uint32_t RenderMode;
 //'--------------------------------
 //Public WorldCredits(1 To 5) As String
 extern RangeArr<std::string, 1, maxWorldCredits> WorldCredits;
@@ -2137,8 +2137,6 @@ const int ScreenW = 800;
 const int ScreenH = 480;
 
 extern void Set_Screen(int sw, int sh);
-
-extern uint DK_GetTicks(void);
 
 #endif // GLOBALS_H
 

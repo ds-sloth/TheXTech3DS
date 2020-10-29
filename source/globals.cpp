@@ -27,7 +27,6 @@
 #include <fmt_format_ne.h>
 #include <cmath>
 #include <cfenv>
-#include <ctime>
 
 FrmMain frmMain;
 GFX_t GFX;
@@ -45,10 +44,8 @@ int AllCharBlock = 0;
 bool StartMenu = false;
 int BlockFlash = 0;
 bool ScrollRelease = false;
-bool TakeScreen = false;
 std::string LB;
 std::string EoT;
-RangeArr<ConKeyboard_t, 1, 2> conKeyboard;
 RangeArr<ConJoystick_t, 1, 2> conJoystick;
 RangeArrI<int, 1, 2, 0> useJoystick;
 
@@ -324,7 +321,7 @@ bool MaxFPS = false;
 bool GodMode = false;
 bool GrabAll = false;
 bool Cheater = false;
-Uint32 RenderMode = 1;
+uint32_t RenderMode = 1;
 RangeArr<std::string, 1, maxWorldCredits> WorldCredits;
 int Score = 0;
 RangeArrI<int, 1, 13, 0> Points;
@@ -481,11 +478,6 @@ void DoEvents()
     frmMain.doEvents();
 }
 
-uint DK_GetTicks(void)
-{
-    return clock() / 1000;
-}
-
 // TODO...
 int showCursor(int show)
 {
@@ -523,7 +515,6 @@ void initAll()
     SavedEvents.fill(std::string());
     BlockSwitch.fill(false);
     PowerUpUnlock.fill(false);
-    conKeyboard.fill(ConKeyboard_t());
     conJoystick.fill(ConJoystick_t());
     useJoystick.fill(0);
     vScreen.fill(vScreen_t());
@@ -595,18 +586,18 @@ int vb6Round(double x)
     return static_cast<int>(vb6Round(x, 0));
 }
 
-static SDL_INLINE double toNearest(double x)
+static double toNearest(double x)
 {
-    int round_old = std::fegetround();
-    if(round_old == FE_TONEAREST)
+    // int round_old = std::fegetround();
+    // if(round_old == FE_TONEAREST)
         return std::nearbyint(x);
-    else
-    {
-        std::fesetround(FE_TONEAREST);
-        x = std::nearbyint(x);
-        std::fesetround(round_old);
-        return x;
-    }
+    // else
+    // {
+    //     std::fesetround(FE_TONEAREST);
+    //     x = std::nearbyint(x);
+    //     std::fesetround(round_old);
+    //     return x;
+    // }
 }
 
 double vb6Round(double x, int decimals)
@@ -616,7 +607,7 @@ double vb6Round(double x, int decimals)
     if(decimals < 0 || decimals > 22)
         decimals = 0;
 
-    if(SDL_fabs(x) < 1.0e16)
+    if(fabs(x) < 1.0e16)
     {
         decmul = power10[decimals];
         res = toNearest(x * decmul) / decmul;

@@ -391,64 +391,7 @@ void NPCWarpGFX(int A, Location_t &tempLocation, float &X2, float &Y2)
 
 // change from fullscreen to windowed mode
 void ChangeScreen()
-{
-//    frmMain.LockSize = True
-//    If resChanged = True Then
-    if(resChanged)
-    {
-//        SetOrigRes
-        SetOrigRes();
-//        DoEvents
-        DoEvents();
-//        DeleteDC myBackBuffer
-//        DeleteObject myBufferBMP
-//        DoEvents
-//        myBackBuffer = CreateCompatibleDC(frmMain.hdc)
-//        myBufferBMP = CreateCompatibleBitmap(frmMain.hdc, 800, 600)
-//        SelectObject myBackBuffer, myBufferBMP
-//        frmMain.BorderStyle = 2
-//        frmMain.Caption = "Super Mario Bros. X - Version 1.3 - www.SuperMarioBrothers.org"
-//        frmMain.Left = 0
-//        frmMain.Top = 0
-//    Else
-    } else {
-//        If frmMain.WindowState = 2 Then
-//            frmMain.WindowState = 0
-//        End If
-//        frmMain.Width = 12240
-//        frmMain.Height = 9570
-//        Do While frmMain.ScaleWidth > 800
-//            frmMain.Width = frmMain.Width - 5
-//        Loop
-//        Do While frmMain.ScaleHeight > 600
-//            frmMain.Height = frmMain.Height - 5
-//        Loop
-//        Do While frmMain.ScaleWidth < 800
-//            frmMain.Width = frmMain.Width + 5
-//        Loop
-//        Do While frmMain.ScaleHeight < 600
-//            frmMain.Height = frmMain.Height + 5
-//        Loop
-//        SetRes
-        SetRes();
-//        DoEvents
-        DoEvents();
-//        DeleteDC myBackBuffer
-//        DeleteObject myBufferBMP
-//        DoEvents
-//        myBackBuffer = CreateCompatibleDC(frmMain.hdc)
-//        myBufferBMP = CreateCompatibleBitmap(frmMain.hdc, 800, 600)
-//        SelectObject myBackBuffer, myBufferBMP
-//        frmMain.BorderStyle = 0
-//        frmMain.Caption = ""
-//        frmMain.Left = 0
-//        frmMain.Top = 0
-//    End If
-    }
-//    SaveConfig
-    SaveConfig();
-//    frmMain.LockSize = False
-}
+{}
 
 void GetvScreenCredits()
 {
@@ -526,15 +469,6 @@ int pfrY(int plrFrame)
     while(A > 9)
         A = A - 10;
     return A * 100;
-}
-
-void ScreenShot()
-{
-#ifndef __EMSCRIPTEN__
-    frmMain.makeShot();
-    PlaySound(12);
-#endif
-    TakeScreen = false;
 }
 
 void DrawFrozenNPC(int Z, int A)

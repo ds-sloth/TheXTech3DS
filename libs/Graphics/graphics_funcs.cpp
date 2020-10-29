@@ -28,11 +28,6 @@
 
 #include "image_size.h"
 
-//#include <common_features/engine_resources.h>
-
-#ifdef _WIN32
-#include <SDL2/SDL_syswm.h>
-#endif
 #include <FreeImageLite.h>
 
 void GraphicsHelps::initFreeImage()

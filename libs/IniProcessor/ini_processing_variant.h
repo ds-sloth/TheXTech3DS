@@ -168,39 +168,20 @@ public:
         for(; i < ss; i++)
             (*pbuff++) = static_cast<char>(std::tolower(*pbufi++));
 
-        if(ss < 4)
-        {
-            if(ss == 0)
-                return false;
+        if(ss == 0)
+            return false;
 
-            if(ss == 1)
-                return (buff[0] == '1');
+        if(ss == 1)
+            return (buff[0] == '1');
 
-            try
-            {
-                long num = std::strtol(buff, 0, 0);
-                return num != 0l;
-            }
-            catch(...)
-            {
-                bool res = (std::memcmp(buff, "yes", 3) == 0) ||
-                           (std::memcmp(buff, "on", 2) == 0);
-                return res;
-            }
-        }
-
-        if(std::memcmp(buff, "true", 4) == 0)
+        if ((std::memcmp(buff, "yes", 3) == 0) ||
+            (std::memcmp(buff, "on", 2) == 0) ||
+            (std::memcmp(buff, "true", 4) == 0))
             return true;
 
-        try
-        {
-            long num = std::strtol(buff, 0, 0);
-            return num != 0l;
-        }
-        catch(...)
-        {
-            return false;
-        }
+        if(('1' <= buff[0]) && (buff[0] <= '9'))
+            return true;
+        return false;
     }
 
     int toInt()

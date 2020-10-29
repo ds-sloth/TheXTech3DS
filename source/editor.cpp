@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <InterProcess/intproc.h>
 #include <Logger/logger.h>
 #include <Utils/elapsed_timer.h>
 #include <pge_delay.h>
@@ -102,7 +101,7 @@ void UpdateEditor()
 
     if(!MagicHand)
     {
-        if((getKeyState(vbKeyPageUp) == KEY_PRESSED) != 0)
+        if(getKeyState(KEYCODE_CSTICK_UP))
         {
             if(ScrollRelease == true)
             {
@@ -115,7 +114,7 @@ void UpdateEditor()
 //                    frmLevelSettings::optSection(curSection).Value = true;
             }
         }
-        else if((getKeyState(vbKeyPageDown) == KEY_PRESSED) != 0)
+        else if(getKeyState(KEYCODE_CSTICK_DOWN))
         {
             if(ScrollRelease == true)
             {
@@ -170,7 +169,7 @@ void UpdateEditor()
     if(LevelEditor || MagicHand)
     {
         GetEditorControls();
-        if((getKeyState(vbKeyShift) == KEY_PRESSED) != 0)
+        if(getKeyState(KEYCODE_ZR))
             ScrollDelay = 0;
 
         if(MagicHand)
@@ -215,9 +214,6 @@ void UpdateEditor()
         SetCursor();
 
         // this is where objects are placed/grabbed/deleted
-
-        if(IntProc::isEnabled())
-            UpdateInterprocess();
 
         if(EditorControls.Mouse1)
         {
@@ -1646,251 +1642,6 @@ void UpdateEditor()
     }
 }
 
-void UpdateInterprocess()
-{
-    IntProc::cmdLock();
-
-    //Recive external commands!
-    if(IntProc::hasCommand())
-    {
-        switch(IntProc::commandType())
-        {
-        case IntProc::MsgBox:
-        {
-            MessageText = IntProc::getCMD();
-            PauseGame(1);
-            break;
-        }
-
-        case IntProc::Cheat:
-        {
-            CheatString = IntProc::getCMD();
-            CheatCode(CheatString[0]);
-            break;
-        }
-
-        case IntProc::SetLayer:
-        {
-            EditorCursor.Layer = IntProc::getCMD();
-
-            EditorCursor.Block.Layer = EditorCursor.Layer;
-            EditorCursor.Background.Layer = EditorCursor.Layer;
-            EditorCursor.NPC.Layer = EditorCursor.Layer;
-            break;
-        }
-
-        case IntProc::PlaceItem:
-        {
-            std::string raw = IntProc::getCMD();
-            pLogDebug(raw.c_str());
-            LevelData got;
-            PGE_FileFormats_misc::RawTextInput raw_file(&raw);
-            FileFormats::ReadExtendedLvlFile(raw_file, got);
-
-            if(!got.meta.ReadFileValid)
-            {
-                LogDebug(got.meta.ERROR_info);
-                break;
-            }
-
-            if(raw.compare(0, 11, "BLOCK_PLACE") == 0)
-            {
-                if(got.blocks.empty())
-                    break;
-
-                optCursor.current = 1;
-                OptCursorSync();
-
-                const LevelBlock &b = got.blocks[0];
-
-                if(EditorCursor.Mode != OptCursor_t::LVL_BLOCKS ||
-                   EditorCursor.Block.Type != int(b.id))
-                    PlaySound(23);
-
-                EditorCursor.Layer = b.layer;
-
-                EditorCursor.Mode = OptCursor_t::LVL_BLOCKS;
-                EditorCursor.Block = Block_t();
-                EditorCursor.Block.Type = int(b.id);
-                EditorCursor.Location.X = b.x;
-                EditorCursor.Location.Y = b.y;
-                EditorCursor.Location.Width = b.w;
-                EditorCursor.Location.Height = b.h;
-                if(EditorCursor.Block.Type <= maxBlockType && BlockIsSizable[EditorCursor.Block.Type])
-                {
-                    EditorCursor.Block.Location.Width = 128;
-                    EditorCursor.Block.Location.Height = 128;
-                    EditorCursor.Location.Width = 128;
-                    EditorCursor.Location.Height = 128;
-                }
-                EditorCursor.Block.Invis = b.invisible;
-                EditorCursor.Block.Slippy = b.slippery;
-                EditorCursor.Block.Special = b.npc_id > 0 ? int(b.npc_id + 1000) : int(-b.npc_id);
-                EditorCursor.Block.Layer = b.layer;
-                EditorCursor.Block.TriggerHit = b.event_hit;
-                EditorCursor.Block.TriggerLast = b.event_emptylayer;
-                EditorCursor.Block.TriggerDeath = b.event_destroy;
-
-                if(EditorCursor.Block.Type > maxBlockType) // Avoid out of range crash
-                    EditorCursor.Block.Type = 1;
-
-                SetCursor();
-            }
-            else if(raw.compare(0, 9, "BGO_PLACE") == 0)
-            {
-                if(got.bgo.empty())
-                    break;
-
-                optCursor.current = 3;
-                OptCursorSync();
-
-                const LevelBGO &b = got.bgo[0];
-
-                if(EditorCursor.Mode != OptCursor_t::LVL_BGOS ||
-                   EditorCursor.Background.Type != int(b.id))
-                    PlaySound(23);
-
-                EditorCursor.Layer = b.layer;
-
-                EditorCursor.Mode = OptCursor_t::LVL_BGOS;
-                EditorCursor.Background = Background_t();
-                EditorCursor.Background.Type = int(b.id);
-                EditorCursor.Location.X = b.x;
-                EditorCursor.Location.Y = b.y;
-                EditorCursor.Background.Layer = b.layer;
-                EditorCursor.Background.SortPriority = int(b.smbx64_sp);
-                EditorCursor.Background.uid = (numBackground + 1);
-
-                if(b.z_mode == LevelBGO::ZDefault)
-                    EditorCursor.Background.SortPriority = int(b.smbx64_sp);
-                else
-                {
-                    switch(b.z_mode)
-                    {
-                    case LevelBGO::Background2:
-                        EditorCursor.Background.SortPriority = 10;
-                        break;
-                    case LevelBGO::Background1:
-                        EditorCursor.Background.SortPriority = 30;
-                        break;
-                    case LevelBGO::Foreground1:
-                        EditorCursor.Background.SortPriority = 125;
-                        break;
-                    case LevelBGO::Foreground2:
-                        EditorCursor.Background.SortPriority = 200;
-                        break;
-                    default:
-                        break;
-                    }
-                }
-
-                if(EditorCursor.Background.Type > maxBackgroundType) // Avoid out of range crash
-                    EditorCursor.Background.Type = 1;
-
-                SetCursor();
-            }
-            else if(raw.compare(0, 9, "NPC_PLACE") == 0)
-            {
-                if(got.npc.empty())
-                    break;
-
-                optCursor.current = 4;
-                OptCursorSync();
-
-                const LevelNPC &n = got.npc[0];
-
-                if(EditorCursor.Mode != OptCursor_t::LVL_NPCS ||
-                   EditorCursor.NPC.Type != int(n.id))
-                    PlaySound(23);
-
-                EditorCursor.Layer = n.layer;
-
-                EditorCursor.Mode = OptCursor_t::LVL_NPCS;
-                EditorCursor.NPC = NPC_t();
-                EditorCursor.NPC.Type = int(n.id);
-                EditorCursor.NPC.Hidden = false;
-                EditorCursor.Location.X = n.x;
-                EditorCursor.Location.Y = n.y;
-                EditorCursor.NPC.Direction = n.direct;
-
-                if(EditorCursor.NPC.Type > maxNPCType) // Avoid out of range crash
-                    EditorCursor.NPC.Type = 1;
-
-                if(EditorCursor.NPC.Type == 91 || EditorCursor.NPC.Type == 96 || EditorCursor.NPC.Type == 283 || EditorCursor.NPC.Type == 284)
-                {
-                    EditorCursor.NPC.Special = n.contents;
-                    EditorCursor.NPC.DefaultSpecial = int(EditorCursor.NPC.Special);
-                }
-                if(EditorCursor.NPC.Type == 288 || EditorCursor.NPC.Type == 289 || (EditorCursor.NPC.Type == 91 && int(EditorCursor.NPC.Special) == 288))
-                {
-                    EditorCursor.NPC.Special2 = n.special_data;
-                    EditorCursor.NPC.DefaultSpecial2 = int(EditorCursor.NPC.Special2);
-                }
-
-                if(NPCIsAParaTroopa[EditorCursor.NPC.Type])
-                {
-                    EditorCursor.NPC.Special = n.special_data;
-                    EditorCursor.NPC.DefaultSpecial = int(EditorCursor.NPC.Special);
-                }
-
-                if(NPCIsCheep[EditorCursor.NPC.Type])
-                {
-                    EditorCursor.NPC.Special = n.special_data;
-                    EditorCursor.NPC.DefaultSpecial = int(EditorCursor.NPC.Special);
-                }
-
-                if(EditorCursor.NPC.Type == 260)
-                {
-                    EditorCursor.NPC.Special = n.special_data;
-                    EditorCursor.NPC.DefaultSpecial = int(EditorCursor.NPC.Special);
-                }
-
-                EditorCursor.NPC.Generator = n.generator;
-                if(EditorCursor.NPC.Generator)
-                {
-                    EditorCursor.NPC.GeneratorDirection = n.generator_direct;
-                    EditorCursor.NPC.GeneratorEffect = n.generator_type;
-                    EditorCursor.NPC.GeneratorTimeMax = n.generator_period;
-                }
-
-                EditorCursor.NPC.Text = n.msg;
-
-                EditorCursor.NPC.Inert = n.friendly;
-                if(EditorCursor.NPC.Type == 151)
-                    EditorCursor.NPC.Inert = true;
-                EditorCursor.NPC.Stuck = n.nomove;
-                EditorCursor.NPC.DefaultStuck = EditorCursor.NPC.Stuck;
-
-                EditorCursor.NPC.Legacy = n.is_boss;
-
-                EditorCursor.NPC.Layer = n.layer;
-                EditorCursor.NPC.TriggerActivate = n.event_activate;
-                EditorCursor.NPC.TriggerDeath = n.event_die;
-                EditorCursor.NPC.TriggerTalk = n.event_talk;
-                EditorCursor.NPC.TriggerLast = n.event_emptylayer;
-                EditorCursor.NPC.AttLayer = n.attach_layer;
-
-                EditorCursor.NPC.DefaultType = EditorCursor.NPC.Type;
-                EditorCursor.NPC.Location.Width = NPCWidth[EditorCursor.NPC.Type];
-                EditorCursor.NPC.Location.Height = NPCHeight[EditorCursor.NPC.Type];
-                EditorCursor.NPC.DefaultLocation = EditorCursor.NPC.Location;
-                EditorCursor.NPC.DefaultDirection = EditorCursor.NPC.Direction;
-                EditorCursor.NPC.TimeLeft = 1;
-                EditorCursor.NPC.Active = true;
-                EditorCursor.NPC.JustActivated = 1;
-                SetCursor();
-            }
-            else
-                PlaySound(43);
-
-            break;
-        }
-        }
-    }
-
-    IntProc::cmdUnLock();
-}
-
 int EditorNPCFrame(int A, float C, int N)
 {
     int ret = 0;
@@ -2054,19 +1805,19 @@ void GetEditorControls()
 {
     if(HasCursor)
     {
-        if((getKeyState(vbKeyUp) == KEY_PRESSED))
+        if(getKeyState(KEYCODE_DUP))
             EditorControls.Up = true;
         else
             EditorControls.Up = false;
-        if((getKeyState(vbKeyDown) == KEY_PRESSED))
+        if(getKeyState(KEYCODE_DDOWN))
             EditorControls.Down = true;
         else
             EditorControls.Down = false;
-        if((getKeyState(vbKeyLeft) == KEY_PRESSED))
+        if(getKeyState(KEYCODE_DLEFT))
             EditorControls.Left = true;
         else
             EditorControls.Left = false;
-        if((getKeyState(vbKeyRight) == KEY_PRESSED))
+        if(getKeyState(KEYCODE_DRIGHT))
             EditorControls.Right = true;
         else
             EditorControls.Right = false;
@@ -2714,64 +2465,6 @@ void zTestLevel(bool magicHand, bool interProcess)
         MagicHand = false;
     }
 
-    if(interProcess)
-    {
-        LevelData data;
-        FileFormats::CreateLevelData(data);
-        data.meta.ReadFileValid = false;
-        pLogDebug("ICP: Requesting editor for a file....");
-        IntProc::sendMessage("CMD:CONNECT_TO_ENGINE");
-        ElapsedTimer time;
-        time.start();
-        //wait for accepting of level data
-        bool timeOut = false;
-        int attempts = 0;
-
-        pLogDebug("ICP: Waiting reply....");
-        IntProc::setState("Waiting for input data...");
-        while(!IntProc::hasLevelData())
-        {
-            UpdateLoad();
-
-            //Abort loading process and exit from game if window was closed
-            if(!GameIsActive)
-                return;
-
-            if(!IntProc::levelReceivingInProcess() && time.elapsed() > 1500)
-            {
-                pLogDebug("ICP: Waiting #%d....", attempts);
-                IntProc::sendMessage("CMD:CONNECT_TO_ENGINE"); // Re-ask again
-                time.restart();
-                attempts += 1;
-            }
-
-            if(attempts > 4)
-            {
-                pLogWarning("ICP: Wait timeout");
-                timeOut = true;
-                IntProc::setState("ERROR: Wait time out.");
-                UpdateLoad();
-                PGE_Delay(1000);
-                GameIsActive = false;
-                return;
-            }
-            PGE_Delay(2);
-        }
-
-        data = IntProc::editor->m_acceptedLevel;
-        if(!timeOut && !data.meta.ReadFileValid)
-        {
-            pLogWarning("Bad file format!");
-            GameIsActive = false;
-            return;
-        }
-
-        OpenLevelData(data);
-
-        pLogDebug("ICP: Done, starting a game....");
-        IntProc::setState("Done. Starting game...");
-    }
-    else
     {
         if(!OpenLevel(FullFileName))
         {

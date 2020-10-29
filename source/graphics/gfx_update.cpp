@@ -50,7 +50,7 @@ void UpdateGraphics(bool skipRepaint)
     // frame skip code
     cycleCount += 1;
 
-    if(FrameSkip && !TakeScreen)
+    if(FrameSkip)
     {
         if(SDL_GetTicks() + floor(1000 * (1 - (cycleCount / 63.0))) > GoalTime) // Don't draw this frame
         {
@@ -2556,7 +2556,7 @@ void UpdateGraphics(bool skipRepaint)
 //                    BitBlt myBackBuffer, .X - vScreen(Z).Left, .Y - vScreen(Z).Top, 32, 32, GFX.ECursor(2).hdc, 0, 0, vbSrcPaint
                     frmMain.renderTexture(curX, curY, GFX.ECursor[2]);
 //                    If LCase(frmLayers.lstLayer.List(frmLayers.lstLayer.ListIndex)) <> "default" Then
-                    if(!e.Layer.empty() && SDL_strcasecmp(e.Layer.c_str(), "Default") != 0)
+                    if(!e.Layer.empty() && strcasecmp(e.Layer.c_str(), "Default") != 0)
 //                        SuperPrint UCase(frmLayers.lstLayer.List(frmLayers.lstLayer.ListIndex)), 3, .X + 28, .Y + 34
                         SuperPrint(e.Layer, 3, X + 28, Y + 34);
 //                    End If
@@ -2577,7 +2577,7 @@ void UpdateGraphics(bool skipRepaint)
 //                    BitBlt myBackBuffer, .X - vScreen(Z).Left, .Y - vScreen(Z).Top, 32, 32, GFX.ECursor(2).hdc, 0, 0, vbSrcPaint
                     frmMain.renderTexture(curX, curY, GFX.ECursor[2]);
 //                    If LCase(frmLayers.lstLayer.List(frmLayers.lstLayer.ListIndex)) <> "default" Then
-                    if(!e.Layer.empty() && SDL_strcasecmp(e.Layer.c_str(), "Default") != 0)
+                    if(!e.Layer.empty() && strcasecmp(e.Layer.c_str(), "Default") != 0)
 //                        SuperPrint UCase(frmLayers.lstLayer.List(frmLayers.lstLayer.ListIndex)), 3, .X + 28, .Y + 34
                         SuperPrint(EditorCursor.Layer, 3, curX + 28 , curY + 34);
 //                    End If
@@ -2624,10 +2624,6 @@ void UpdateGraphics(bool skipRepaint)
 
     if(!skipRepaint)
         frmMain.repaint();
-
-//    If TakeScreen = True Then ScreenShot
-    if(TakeScreen)
-        ScreenShot();
 
     // Update Coin Frames
     CoinFrame2[1] = CoinFrame2[1] + 1;

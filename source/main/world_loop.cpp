@@ -177,12 +177,7 @@ void WorldLoop()
         tempLocation.Y = tempLocation.Y + 4;
         WorldPlayer[1].LevelName = "";
 
-        bool altPressed = getKeyState(SDL_SCANCODE_LALT) == KEY_PRESSED ||
-                          getKeyState(SDL_SCANCODE_RALT) == KEY_PRESSED;
-
-        bool escPressed = getKeyState(SDL_SCANCODE_ESCAPE) == KEY_PRESSED;
-
-        bool pausePress = (Player[1].Controls.Start || escPressed) && !altPressed;
+        bool pausePress = Player[1].Controls.Start;
 
         for(A = 1; A <= numWorldLevels; A++)
         {
@@ -380,7 +375,7 @@ void WorldLoop()
                         PGE_Delay(1000);
 
                         overTime = 0;
-                        GoalTime = DK_GetTicks() + 1000;
+                        GoalTime = SDL_GetTicks() + 1000;
                         fpsCount = 0;
                         fpsTime = 0;
                         cycleCount = 0;
@@ -644,7 +639,7 @@ void PathWait()
 {
     int C = 0;
     overTime = 0;
-    GoalTime = DK_GetTicks() + 1000;
+    GoalTime = SDL_GetTicks() + 1000;
     fpsCount = 0;
     cycleCount = 0;
     gameTime = 0;
@@ -653,7 +648,7 @@ void PathWait()
     do
     {
         DoEvents();
-        tempTime = DK_GetTicks();
+        tempTime = SDL_GetTicks();
         if(tempTime >= gameTime + frameRate || tempTime < gameTime || MaxFPS)
         {
             UpdateGraphics2();
@@ -673,7 +668,7 @@ void PathWait()
             gameTime = tempTime - overTime;
             overTime = (overTime - (tempTime - gameTime));
             DoEvents();
-            if(DK_GetTicks() > fpsTime)
+            if(SDL_GetTicks() > fpsTime)
             {
                 if(cycleCount >= 65)
                 {
@@ -681,7 +676,7 @@ void PathWait()
                     gameTime = tempTime;
                 }
                 cycleCount = 0;
-                fpsTime = DK_GetTicks() + 1000;
+                fpsTime = SDL_GetTicks() + 1000;
                 GoalTime = fpsTime;
 //                if(Debugger)
 //                    frmLevelDebugger.lblFPS = fpsCount;
@@ -694,7 +689,7 @@ void PathWait()
     } while(!(C >= 24));
 
     overTime = 0;
-    GoalTime = DK_GetTicks() + 1000;
+    GoalTime = SDL_GetTicks() + 1000;
     fpsCount = 0;
     cycleCount = 0;
     gameTime = 0;

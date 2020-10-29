@@ -618,7 +618,4 @@ void UpdateGraphics2()
 
         frmMain.repaint();
     }
-
-    if(TakeScreen)
-        ScreenShot();
 }

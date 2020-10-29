@@ -141,12 +141,7 @@ void GameLoop()
         if(MagicHand)
             UpdateEditor();
 
-        bool altPressed = getKeyState(SDL_SCANCODE_LALT) == KEY_PRESSED ||
-                          getKeyState(SDL_SCANCODE_RALT) == KEY_PRESSED;
-
-        bool escPressed = getKeyState(SDL_SCANCODE_ESCAPE) == KEY_PRESSED;
-
-        bool pausePress = (Player[1].Controls.Start || escPressed) && !altPressed;
+        bool pausePress = Player[1].Controls.Start;
 
         if(pausePress)
         {
@@ -156,12 +151,12 @@ void GameLoop()
                 {
                     if((CaptainN || FreezeNPCs) && PSwitchStop == 0)
                     {
-                        if(escPressed)
-                        {
-                            FreezeNPCs = false;
-                            PauseGame(1);
-                        }
-                        else
+                        // if(escPressed)
+                        // {
+                        //     FreezeNPCs = false;
+                        //     PauseGame(1);
+                        // }
+                        // else
                         {
                             Player[1].UnStart = false;
                             if(FreezeNPCs)
@@ -251,7 +246,7 @@ void PauseGame(int plr)
     }
 
     overTime = 0;
-    GoalTime = DK_GetTicks() + 1000;
+    GoalTime = SDL_GetTicks() + 1000;
     fpsCount = 0;
     fpsTime = 0;
     cycleCount = 0;
@@ -259,7 +254,7 @@ void PauseGame(int plr)
 
     do
     {
-        tempTime = DK_GetTicks();
+        tempTime = SDL_GetTicks();
         if(tempTime >= gameTime + frameRate || tempTime < gameTime || MaxFPS)
         {
             if(fpsCount >= 32000) // Fixes Overflow bug
@@ -275,7 +270,7 @@ void PauseGame(int plr)
                 overTime = 1000;
             gameTime = tempTime - overTime;
             overTime = (overTime - (tempTime - gameTime));
-            if(DK_GetTicks() > fpsTime)
+            if(SDL_GetTicks() > fpsTime)
             {
                 if(cycleCount >= 65)
                 {
@@ -283,7 +278,7 @@ void PauseGame(int plr)
                     gameTime = tempTime;
                 }
                 cycleCount = 0;
-                fpsTime = DK_GetTicks() + 1000;
+                fpsTime = SDL_GetTicks() + 1000;
                 GoalTime = fpsTime;
 //                if(Debugger == true)
 //                    frmLevelDebugger.lblFPS = fpsCount;
@@ -305,16 +300,6 @@ void PauseGame(int plr)
             BlockFrames();
             UpdateEffects();
 
-            bool altPressed = getKeyState(SDL_SCANCODE_LALT) == KEY_PRESSED ||
-                              getKeyState(SDL_SCANCODE_RALT) == KEY_PRESSED;
-            bool escPressed = getKeyState(SDL_SCANCODE_ESCAPE) == KEY_PRESSED;
-            bool spacePressed = getKeyState(SDL_SCANCODE_SPACE) == KEY_PRESSED;
-            bool returnPressed = getKeyState(SDL_SCANCODE_RETURN) == KEY_PRESSED;
-            bool upPressed = getKeyState(SDL_SCANCODE_UP) == KEY_PRESSED;
-            bool downPressed = getKeyState(SDL_SCANCODE_DOWN) == KEY_PRESSED;
-
-            bool menuDoPress = (returnPressed && !altPressed) || spacePressed;
-            bool menuBackPress = (escPressed && !altPressed);
 
             if(SingleCoop > 0 || numPlayers > 2)
             {
@@ -324,11 +309,11 @@ void PauseGame(int plr)
 
             auto &c = Player[plr].Controls;
 
-            menuDoPress |= (c.Start || c.Jump) && !altPressed;
-            menuBackPress |= c.Run && !altPressed;
+            bool menuDoPress = c.Start || c.Jump;
+            bool menuBackPress = c.Run;
 
-            upPressed |= (c.Up && !altPressed);
-            downPressed |= (c.Down && !altPressed);
+            bool upPressed = c.Up;
+            bool downPressed = c.Down;
 
             if(MessageText.empty())
             {
@@ -579,7 +564,7 @@ void PauseGame(int plr)
     MessageText.clear();
 
     overTime = 0;
-    GoalTime = DK_GetTicks() + 1000;
+    GoalTime = SDL_GetTicks() + 1000;
     fpsCount = 0;
     cycleCount = 0;
     gameTime = 0;

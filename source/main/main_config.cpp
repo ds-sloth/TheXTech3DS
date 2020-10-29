@@ -33,7 +33,6 @@
 #include <AppPath/app_path.h>
 #include <Logger/logger.h>
 
-
 void OpenConfig_preSetup()
 {
     std::string configPath = AppPathManager::settingsFileSTD();

@@ -33,24 +33,23 @@
 #include <deque>
 #endif
 
-#include <gif_writer.h>
-
 #include "std_picture.h"
 #include "cmd_line_setup.h"
 
+#include <citro2d.h>
 
 class FrmMain
 {
-    SDL_Event m_event;
     std::string m_windowTitle;
-    SDL_Window *m_window = nullptr;
-    SDL_Renderer *m_gRenderer = nullptr;
-    SDL_Texture  *m_tBuffer = nullptr;
-    std::set<SDL_Texture *> m_textureBank;
+    void *m_window = nullptr; // SDL_Window
+    void *m_gRenderer = nullptr; // SDL_Renderer
+    void  *m_tBuffer = nullptr; // SDL_Texture
+    std::set<C2D_SpriteSheet> m_textureBank; // SDL_Texture
     bool m_sdlLoaded = false;
     const uint8_t *m_keyboardState = nullptr;
-    Uint32 m_lastMousePress = 0;
-    SDL_RendererInfo m_ri;
+    uint32_t m_lastMousePress = 0;
+    int m_ri; // SDL_RendererInfo
+    int defaultDepth = 0;
 public:
     int ScaleWidth = 800;
     int ScaleHeight = 600;
@@ -59,7 +58,7 @@ public:
 
     FrmMain();
 
-    SDL_Window *getWindow();
+    void *getWindow(); // SDL_Window
 
     uint8_t getKeyState(int key);
 
@@ -74,13 +73,6 @@ public:
     bool isWindowActive();
     bool hasWindowMouseFocus();
 
-    void eventDoubleClick();
-    void eventKeyDown(SDL_KeyboardEvent &evt);
-    void eventKeyPress(SDL_Scancode KeyASCII);
-    void eventKeyUp(SDL_KeyboardEvent &evt);
-    void eventMouseDown(SDL_MouseButtonEvent &m_event);
-    void eventMouseMove(SDL_MouseMotionEvent &m_event);
-    void eventMouseUp(SDL_MouseButtonEvent &m_event);
     void eventResize();
     int setFullScreen(bool fs);
     bool isSdlError();
@@ -91,102 +83,46 @@ public:
     void setViewport(int x, int y, int w, int h);
     void offsetViewport(int x, int y); // for screen-shaking
 
-    StdPicture LoadPicture(std::string path, std::string maskPath = std::string(), std::string maskFallbackPath = std::string());
-    StdPicture lazyLoadPicture(std::string path, std::string maskPath = std::string(), std::string maskFallbackPath = std::string());
+    StdPicture LoadPicture(std::string path);
+    StdPicture lazyLoadPicture(std::string path);
     void deleteTexture(StdPicture &tx, bool lazyUnload = false);
     void clearAllTextures();
 
     void clearBuffer();
-    void renderRect(int x, int y, int w, int h, float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, bool filled = true);
-    void renderRectBR(int _left, int _top, int _right, int _bottom, float red, float green, float blue, float alpha);
+    void renderRect(int x, int y, int w, int h, float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, bool filled = true, int depth=-10000);
+    void renderRectBR(int _left, int _top, int _right, int _bottom, float red, float green, float blue, float alpha, int depth=-10000);
 
-    void renderCircle(int cx, int cy, int radius, float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, bool filled = true);
+    void renderCircle(int cx, int cy, int radius, float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, bool filled = true, int depth=-10000);
 
     // Similar to BitBlt, but without masks, just draw a texture or it's fragment!
     void renderTextureI(int xDst, int yDst, int wDst, int hDst,
                         StdPicture &tx,
                         int xSrc, int ySrc,
                         double rotateAngle = 0.0, SDL_Point *center = nullptr, unsigned int flip = SDL_FLIP_NONE,
-                        float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f);
+                        float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, int depth = -10000);
     void renderTexture(double xDst, double yDst, double wDst, double hDst,
                        StdPicture &tx,
                        int xSrc, int ySrc,
-                       float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f);
+                       float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, int depth = -10000);
 
     void renderTextureFL(double xDst, double yDst, double wDst, double hDst,
                          StdPicture &tx,
                          int xSrc, int ySrc,
                          double rotateAngle = 0.0, SDL_Point *center = nullptr, unsigned int flip = SDL_FLIP_NONE,
-                         float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f);
+                         float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, int depth = -10000);
 
     void renderTexture(int xDst, int yDst, StdPicture &tx,
-                       float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f);
+                       float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, int depth = -10000);
 
-    void getScreenPixels(int x, int y, int w, int h, unsigned char *pixels);
-    void getScreenPixelsRGBA(int x, int y, int w, int h, unsigned char *pixels);
-    int  getPixelDataSize(const StdPicture &tx);
-    void getPixelData(const StdPicture &tx, unsigned char *pixelData);
-
-#ifndef __EMSCRIPTEN__
-    void makeShot();
-#endif
+    void setDefaultDepth(int depth);
 
 private:
-#ifndef __EMSCRIPTEN__
-
-    struct PGE_GL_shoot
-    {
-        FrmMain *me = nullptr;
-        uint8_t *pixels = nullptr;
-        int pitch = 0;
-        int w = 0, h = 0;
-    };
-
-    struct GifRecorder
-    {
-        GIF_H::GifWriter  writer      = {nullptr, nullptr, true, false};
-        SDL_Thread *worker      = nullptr;
-        uint32_t    delay       = 4;
-        uint32_t    delayTimer  = 0;
-        bool        enabled     = false;
-        unsigned char padding[7] = {0, 0, 0, 0, 0, 0, 0};
-        bool        fadeForward = true;
-        float       fadeValue = 0.5f;
-
-        std::deque<PGE_GL_shoot> queue;
-        SDL_mutex  *mutex = nullptr;
-        bool        doFinalize = false;
-
-        void init();
-        void quit();
-
-        void drawRecCircle();
-        bool hasSome();
-        void enqueue(const PGE_GL_shoot &entry);
-        PGE_GL_shoot dequeue();
-    };
-
-    GifRecorder m_gif;
-
-    bool recordInProcess();
-    void toggleGifRecorder();
-    void processRecorder();
-    static int processRecorder_action(void *_pixels);
-#endif
 
     void processEvent();
-    void loadTexture(StdPicture &target, uint32_t width, uint32_t height, uint8_t *RGBApixels);
+    void loadTexture(StdPicture &target, C2D_SpriteSheet &sheet);
 
     void lazyLoad(StdPicture &target);
     void lazyUnLoad(StdPicture &target);
-
-    std::string m_screenshotPath;
-    std::string m_gifRecordPath;
-
-#ifndef __EMSCRIPTEN__
-    static int makeShot_action(void *_pixels);
-    SDL_Thread *m_screenshot_thread = nullptr;
-#endif
 
     //Scale of virtual and window resolutuins
     float scale_x = 1.f;

@@ -23,8 +23,7 @@
 #include <Utils/strings.h>
 #include <algorithm>
 #include <cstdlib>
-
-#include <SDL2/SDL_stdinc.h>
+#include <cstring>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -60,7 +59,7 @@ bool util::strempty(const char *str)
 {
     if(str)
     {
-        if(SDL_strlen(str))
+        if(strlen(str))
             return true;
     }
 
@@ -104,17 +103,10 @@ inline void CSV2IntArr_CODE(const std::string &source, TList &dest, const typena
 
         for(std::string &fr : tmlL)
         {
-            try
-            {
-                if(std::is_same<T, int>::value)
-                    dest.push_back(std::atoi(fr.c_str()));
-                else
-                    dest.push_back(int(std::strtod(fr.c_str(), nullptr)));
-            }
-            catch(...)
-            {
-                continue;
-            }
+            if(std::is_same<T, int>::value)
+                dest.push_back(std::atoi(fr.c_str()));
+            else
+                dest.push_back(int(std::strtod(fr.c_str(), nullptr)));
             dest.pop_back();
         }
 

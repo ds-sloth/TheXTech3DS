@@ -33,15 +33,10 @@
 // Gets players controls
 void UpdateControls();
 
-int InitJoysticks();
+bool JoyIsKeyDown(const KM_Key &key);
 
-bool JoyIsKeyDown(int JoystickNumber, const KM_Key &key);
-
-void CloseJoysticks();
-// Public Function StartJoystick(Optional ByVal JoystickNumber As Integer = 0) As Boolean
-bool StartJoystick(int JoystickNumber);
 // Public Sub PollJoystick()
-bool PollJoystick(int joystick, KM_Key &key);
+bool PollJoystick(KM_Key &key);
 
 
 #endif // JOYSTICK_H

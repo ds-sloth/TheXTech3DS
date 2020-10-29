@@ -1390,7 +1390,7 @@ void BlockFrames()
 
     bool pChar[maxPlayers] = {false};
     bool tempBool = false;
-    SDL_memset(pChar, 0, sizeof(pChar));
+    memset(pChar, 0, sizeof(pChar));
 
     if(FreezeNPCs == true)
         return;

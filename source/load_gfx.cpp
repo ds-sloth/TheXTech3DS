@@ -29,11 +29,7 @@
 #include <Utils/files.h>
 #include <Utils/dir_list_ci.h>
 #include <DirManager/dirman.h>
-#include <InterProcess/intproc.h>
 #include <fmt_format_ne.h>
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
 
 #include <set>
 
@@ -83,13 +79,10 @@ static void loadCGFX(const std::set<std::string> &files,
                      bool world = false,
                      bool skipMask = false)
 {
-    std::string imgPath = dEpisode + s_dirEpisode.resolveFileCase(fName + ".png");
-    std::string gifPath = dEpisode + s_dirEpisode.resolveFileCase(fName + ".gif");
-    std::string maskPath = dEpisode + s_dirEpisode.resolveFileCase(fName + "m.gif");
+    std::string imgPath = dEpisode + s_dirEpisode.resolveFileCase(fName + ".t3x");
 
-    std::string imgPathC = dEpisode + dData + "/" + s_dirEpisode.resolveFileCase(fName + ".png");
-    std::string gifPathC = dEpisode + dData + "/" + s_dirCustom.resolveFileCase(fName + ".gif");
-    std::string maskPathC = dEpisode + dData + "/" + s_dirCustom.resolveFileCase(fName + "m.gif");
+    std::string imgPathC = dEpisode + dData + "/" + s_dirEpisode.resolveFileCase(fName + ".t3x");
+    std::string imgToUse;
     bool alreadyLoaded = false;
 
     std::string loadedPath;
@@ -107,22 +100,11 @@ static void loadCGFX(const std::set<std::string> &files,
         backup.height = *height;
     backup.texture = texture;
 
-    std::string imgToUse;
-    std::string maskToUse;
-    bool isGif = false;
-
     if(files.find(imgPathC) != files.end()) {
         imgToUse = imgPathC;
-    } else if(files.find(gifPathC) != files.end()) {
-        isGif = true;
-        imgToUse = gifPathC;
     } else if(files.find(imgPath) != files.end()) {
         imgToUse = imgPath;
-    } else if(files.find(gifPath) != files.end()) {
-        isGif = true;
-        imgToUse = gifPath;
     }
-
     if(imgToUse.empty())
         return; // Nothing to do
 
@@ -134,29 +116,9 @@ static void loadCGFX(const std::set<std::string> &files,
     if(alreadyLoaded)
         return; // This texture is already loaded
 
-    if(isGif && !skipMask)
-    {
-        if(files.find(maskPathC) != files.end())
-            maskToUse = maskPathC;
-        else if(files.find(maskPath) != files.end())
-            maskToUse = maskPath;
-
-#ifdef DEBUG_BUILD
-        pLogDebug("Trying to load custom GFX: %s with mask %s", imgToUse.c_str(), maskToUse.c_str());
-#endif
-        newTexture = frmMain.lazyLoadPicture(imgToUse, maskToUse, origPath);
-        success = newTexture.inited;
-        loadedPath = imgToUse;
-    }
-    else
-    {
-#ifdef DEBUG_BUILD
-        pLogDebug("Trying to load custom GFX: %s", imgToUse.c_str());
-#endif
-        newTexture = frmMain.lazyLoadPicture(imgToUse);
-        success = newTexture.inited;
-        loadedPath = imgToUse;
-    }
+    newTexture = frmMain.lazyLoadPicture(imgToUse);
+    success = newTexture.inited;
+    loadedPath = imgToUse;
 
     if(success)
     {
@@ -190,7 +152,6 @@ static void restoreLevelBackupTextures()
             *t.remote_height = t.height;
         if(t.remote_isCustom)
             *t.remote_isCustom = false;
-        SDL_assert_release(t.remote_texture);
         frmMain.deleteTexture(*t.remote_texture);
         *t.remote_texture = t.texture;
     }
@@ -208,7 +169,6 @@ static void restoreWorldBackupTextures()
             *t.remote_height = t.height;
         if(t.remote_isCustom)
             *t.remote_isCustom = false;
-        SDL_assert_release(t.remote_texture);
         frmMain.deleteTexture(*t.remote_texture);
         *t.remote_texture = t.texture;
     }
@@ -492,7 +452,7 @@ void UnloadGFX()
     // Do nothing
 }
 
-static SDL_INLINE void getExistingFiles(std::set<std::string> &existingFiles)
+static void getExistingFiles(std::set<std::string> &existingFiles)
 {
     DirMan searchDir(FileNamePath);
     std::vector<std::string> files;
@@ -740,11 +700,6 @@ void UpdateLoad()
 {
     std::string state;
     bool draw = false;
-    if(IntProc::isEnabled())
-    {
-        state = IntProc::getState();
-        draw = true;
-    }
 
     if(LoadCoinsT <= SDL_GetTicks())
     {

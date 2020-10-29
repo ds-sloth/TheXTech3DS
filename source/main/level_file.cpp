@@ -761,7 +761,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
 
     SoundPause[13] = 100;
     overTime = 0;
-    GoalTime = DK_GetTicks() + 1000;
+    GoalTime = SDL_GetTicks() + 1000;
     fpsCount = 0;
     fpsTime = 0;
     cycleCount = 0;

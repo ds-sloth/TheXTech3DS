@@ -26,23 +26,9 @@
 #ifndef STD_PICTURE_H
 #define STD_PICTURE_H
 
-#include <vector>
-#ifdef DEBUG_BUILD
 #include <string>
-#endif
+#include <citro2d.h>
 
-typedef unsigned int    GLenum;
-typedef int             GLint;
-typedef unsigned int    GLuint;
-
-struct PGEColor
-{
-    float r = 0.0f;
-    float g = 0.0f;
-    float b = 0.0f;
-};
-
-struct SDL_Texture;
 struct StdPicture
 {
 #ifdef DEBUG_BUILD
@@ -55,22 +41,11 @@ struct StdPicture
     // Frame width and height (for animation sprite textures)
     int frame_w = 0;
     int frame_h = 0;
-    // Original size (if texture got scaled while loading)
-    int w_orig = 0;
-    int h_orig = 0;
-    // Difference between original and initial size
-    float w_scale = 1.0f;
-    float h_scale = 1.0f;
 
+    std::string path = "";
     bool lazyLoaded = false;
-    std::vector<char> raw;
-    std::vector<char> rawMask;
-    bool isMaskPng = false;
-    SDL_Texture *texture = nullptr;
-    GLenum format = 0;
-    GLint  nOfColors = 0;
-    PGEColor ColorUpper;
-    PGEColor ColorLower;
+    C2D_SpriteSheet texture = nullptr;
+    C2D_Image image;
 };
 
 #endif // STD_PICTURE_H

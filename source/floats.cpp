@@ -22,9 +22,8 @@
  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE.
  */
-
-#ifndef FLOATS_H
-#define FLOATS_H
+// #include <SDL2/SDL_types.h>
+#include <Utils/maths.h>
 
 /**
  * @brief Comparison of two floating point numbers
@@ -32,12 +31,22 @@
  * @param b Second argument
  * @return true whe both arguments are equal (almost)
  */
-bool fEqual(double a, double b);
+bool fEqual(double a, double b)
+{
+    int64_t ai = int64_t(Maths::lRound(a * 1000000.0));
+    int64_t bi = int64_t(Maths::lRound(b * 1000000.0));
+    return ai == bi;
+}
+
 /**
  * @brief Comparison of two floating point numbers
  * @param a First argument
  * @param b Second argument
  * @return true whe both arguments are equal (almost)
  */
-bool fEqual(float a, float b);
-#endif // FLOATS_H
+bool fEqual(float a, float b)
+{
+    int64_t ai = int64_t(Maths::lRound(a * 10000.0f));
+    int64_t bi = int64_t(Maths::lRound(b * 10000.0f));
+    return ai == bi;
+}

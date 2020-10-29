@@ -97,14 +97,15 @@ void DoCredits()
     {
         for(A = 1; A <= 2; A++)
         {
-            if(((getKeyState(vbKeyEscape) == KEY_PRESSED) | (getKeyState(vbKeySpace) == KEY_PRESSED) | (getKeyState(vbKeyReturn) == KEY_PRESSED)) != 0)
-            {
-                CreditChop = 300;
-                EndCredits = 0;
-                SetupCredits();
-                GameMenu = true;
-                GameOutro = false;
-            }
+            // TODO
+            // if(((getKeyState(vbKeyEscape) == KEY_PRESSED) | (getKeyState(vbKeySpace) == KEY_PRESSED) | (getKeyState(vbKeyReturn) == KEY_PRESSED)) != 0)
+            // {
+            //     CreditChop = 300;
+            //     EndCredits = 0;
+            //     SetupCredits();
+            //     GameMenu = true;
+            //     GameOutro = false;
+            // }
         }
     }
 }

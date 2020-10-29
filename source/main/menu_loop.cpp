@@ -70,23 +70,12 @@ void MenuLoop()
 //    SingleCoop = 0
     SingleCoop = 0;
 
-    bool altPressed = getKeyState(SDL_SCANCODE_LALT) == KEY_PRESSED ||
-                      getKeyState(SDL_SCANCODE_RALT) == KEY_PRESSED;
-    bool escPressed = getKeyState(SDL_SCANCODE_ESCAPE) == KEY_PRESSED;
-    bool spacePressed = getKeyState(SDL_SCANCODE_SPACE) == KEY_PRESSED;
-    bool returnPressed = getKeyState(SDL_SCANCODE_RETURN) == KEY_PRESSED;
-    bool upPressed = getKeyState(SDL_SCANCODE_UP) == KEY_PRESSED;
-    bool downPressed = getKeyState(SDL_SCANCODE_DOWN) == KEY_PRESSED;
-
-    bool menuDoPress = (returnPressed && !altPressed) || spacePressed;
-    bool menuBackPress = (escPressed && !altPressed);
-
 //    With Player(1).Controls
     {
         Controls_t &c = Player[1].Controls;
 
-        menuDoPress |= (c.Start || c.Jump) && !altPressed;
-        menuBackPress |= c.Run && !altPressed;
+        bool menuDoPress = (c.Start || c.Jump);
+        bool menuBackPress = c.Run;
 
 //    If frmMain.MousePointer <> 99 Then
         if(frmMain.MousePointer != 99)
@@ -101,703 +90,275 @@ void MenuLoop()
         {
             bool k = false;
             k |= menuDoPress;
-            k |= upPressed;
-            k |= downPressed;
-            k |= escPressed;
+            k |= menuBackPress;
 
             if(!k)
                 MenuCursorCanMove = true;
-//    End If
         }
-//    'For the menu controls
-//        If getNewKeyboard = False And getNewJoystick = False Then
         if(!getNewKeyboard && !getNewJoystick)
         {
-//            If .Up = True Or (GetKeyState(vbKeyUp) And KEY_PRESSED) Then
-            if(c.Up || upPressed)
+            if(c.Up)
             {
-//                If MenuCursorCanMove = True Then
                 if(MenuCursorCanMove)
                 {
-//                    MenuCursor = MenuCursor - 1
                     MenuCursor -= 1;
-//                    If MenuMode >= 100 Then
                     if(MenuMode >= 100)
                     {
-//                        Do While (MenuCursor = PlayerCharacter - 1 And _
-//                                 (MenuMode = 300 Or MenuMode = 500)) Or _
-//                                  blockCharacter(MenuCursor + 1) = True
                         while((MenuCursor == (PlayerCharacter - 1) &&
                               (MenuMode == 300 || MenuMode == 500)) ||
                                blockCharacter[MenuCursor + 1])
                         {
-//                            MenuCursor = MenuCursor - 1
                             MenuCursor -= 1;
-//                            If MenuCursor < 0 Then MenuCursor = numCharacters - 1
                             if(MenuCursor < 0)
                                 MenuCursor = numCharacters - 1;
-//                        Loop
                         }
-//                    End If
                     }
-//                    PlaySound 26
                     PlaySound(26);
-//                End If
                 }
-//                MenuCursorCanMove = False
                 MenuCursorCanMove = false;
-//            ElseIf .Down = True Or (GetKeyState(vbKeyDown) And KEY_PRESSED) Then
             }
-            else if(c.Down || downPressed)
+            else if(c.Down)
             {
-//                If MenuCursorCanMove = True Then
                 if(MenuCursorCanMove)
                 {
-//                    MenuCursor = MenuCursor + 1
                     MenuCursor += 1;
-//                    If MenuMode >= 100 Then
                     if(MenuMode >= 100)
                     {
-//                        Do While (MenuCursor = PlayerCharacter - 1 And _
-//                                 (MenuMode = 300 Or MenuMode = 500)) Or _
-//                                  blockCharacter(MenuCursor + 1) = True
                         while((MenuCursor == (PlayerCharacter - 1) &&
                               (MenuMode == 300 || MenuMode == 500)) ||
                                blockCharacter[MenuCursor + 1])
                         {
-//                            MenuCursor = MenuCursor + 1
                             MenuCursor += 1;
-//                            If MenuCursor >= numCharacters Then MenuCursor = 0
                             if(MenuCursor >= numCharacters)
                                 MenuCursor = 0;
-//                        Loop
                         }
-//                    End If
                     }
-//                    PlaySound 26
                     PlaySound(26);
-//                End If
                 }
-//                MenuCursorCanMove = False
                 MenuCursorCanMove = false;
-//            End If
             }
-//        End If
         }
 
 //        If MenuMode = 0 Then ' Main Menu
         // Main Menu
         if(MenuMode == 0)
         {
-//            If MenuMouseMove = True Then
-            if(MenuMouseMove)
+            if(menuBackPress && MenuCursorCanMove)
             {
-//                For A = 0 To 4
-                For(A, 0, 4)
+                if(MenuCursor != 2)
                 {
-//                    If MenuMouseY >= 350 + A * 30 And MenuMouseY <= 366 + A * 30 Then
-                    if(MenuMouseY >= 350 + A * 30 && MenuMouseY <= 366 + A * 30)
-                    {
-//                        If A = 0 Then
-                        if(A == 0)
-//                            menuLen = 18 * Len("1 player game") - 2
-                            menuLen = 18 * std::strlen("1 player game") - 2;
-//                        ElseIf A = 1 Then
-                        else if(A == 1)
-//                            menuLen = 18 * Len("2 player game") - 2
-                            menuLen = 18 * std::strlen("2 player game") - 2;
-//                        ElseIf A = 2 Then
-                        else if(A == 2)
-//                            menuLen = 18 * Len("battle game")
-                            menuLen = 18 * std::strlen("battle game");
-//                        ElseIf A = 3 Then
-                        else if(A == 3)
-//                            menuLen = 18 * Len("options")
-                            menuLen = 18 * std::strlen("options");
-//                        Else
-                        else
-//                            menuLen = 18 * Len("exit")
-                            menuLen = 18 * std::strlen("exit");
-//                        End If
-
-//                        If MenuMouseX >= 300 And MenuMouseX <= 300 + menuLen Then
-                        if(MenuMouseX >= 300 && MenuMouseX <= 300 + menuLen)
-                        {
-//                            If MenuMouseRelease = True And MenuMouseDown = True Then MenuMouseClick = True
-                            if(MenuMouseRelease && MenuMouseDown) MenuMouseClick = true;
-//                            If MenuCursor <> A Then
-                            if(MenuCursor != A)
-                            {
-//                                PlaySound 26
-                                PlaySound(26);
-//                                MenuCursor = A
-                                MenuCursor = A;
-//                            End If
-                            }
-//                        End If
-                        }
-//                    End If
-                    }
-//                Next A
-                }
-//            End If
-            }
-
-//            If (GetKeyState(vbKeyEscape) And KEY_PRESSED) And MenuCursorCanMove = True Then
-            if(escPressed && MenuCursorCanMove)
-            {
-//                If MenuCursor <> 4 Then
-                if(MenuCursor != 4)
-                {
-//                    MenuCursor = 4
-                    MenuCursor = 4;
-//                    PlaySound 26
+                    MenuCursor = 2;
                     PlaySound(26);
-//                End If
                 }
-//            ElseIf ((.Jump = True Or _
-//                     .Start = True Or _
-//                      (GetKeyState(vbKeySpace) And KEY_PRESSED) Or _
-//                      (GetKeyState(vbKeyReturn) And KEY_PRESSED)) And _
-//                       MenuCursorCanMove = True) Or MenuMouseClick = True Then
             }
-            else if((menuDoPress && MenuCursorCanMove) || MenuMouseClick)
+            else if(menuDoPress && MenuCursorCanMove)
             {
-//                MenuCursorCanMove = False
                 MenuCursorCanMove = false;
-//                PlayerCharacter = 0
                 PlayerCharacter = 0;
-//                PlayerCharacter2 = 0
                 PlayerCharacter2 = 0;
-//                If MenuCursor = 0 Then
                 if(MenuCursor == 0)
                 {
-//                    PlaySound 29
                     PlaySound(29);
-//                    MenuMode = 1
                     MenuMode = 1;
-//                    FindWorlds
                     FindWorlds();
-//                    MenuCursor = 0
                     MenuCursor = 0;
-//                ElseIf MenuCursor = 1 Then
                 }
                 else if(MenuCursor == 1)
                 {
-//                    PlaySound 29
                     PlaySound(29);
-//                    MenuMode = 3
                     MenuMode = 3;
-//                    MenuCursor = 0
                     MenuCursor = 0;
-//                ElseIf MenuCursor = 4 Then
                 }
                 else if(MenuCursor == 2)
                 {
-//                    PlaySound 29
                     PlaySound(29);
-//                    BitBlt myBackBuffer, 0, 0, ScreenW, ScreenH, 0, 0, 0, vbWhiteness
-//                    BitBlt frmMain.hdc, 0, 0, frmMain.ScaleWidth, frmMain.ScaleHeight, 0, 0, 0, vbWhiteness
                     frmMain.clearBuffer();
-//                    StopMusic
                     StopMusic();
-//                    DoEvents
                     frmMain.repaint();
                     DoEvents();
-//                    Sleep 500
                     PGE_Delay(500);
-//                    KillIt
                     KillIt();
-//                End If
                 }
-//            End If
             }
-//            If MenuCursor > 4 Then MenuCursor = 0
             if(MenuCursor > 2) MenuCursor = 0;
-//            If MenuCursor < 0 Then MenuCursor = 4
             if(MenuCursor < 0) MenuCursor = 2;
-//        ElseIf MenuMode = 100 Or MenuMode = 200 Or MenuMode = 300 Or MenuMode = 400 Or MenuMode = 500 Then  'Character Select
         }
 
         // Character Select
         else if(MenuMode == 100 || MenuMode == 200 || MenuMode == 300 || MenuMode == 400 || MenuMode == 500)
         {
-//            If MenuMouseMove = True Then
-            if(MenuMouseMove)
+            if(MenuCursorCanMove)
             {
-//                B = 0
-                B = 0;
-//                For A = 0 To 4
-                For(A, 0, 4)
+                if(menuBackPress)
                 {
-//                    If blockCharacter(A + 1) = True Then
-                    if(blockCharacter[A + 1])
-                    {
-//                        B = B - 30
-                        B -= 30;
-                    }
-//                    Else
-                    else
-                    {
-//                        If MenuMouseY >= 350 + A * 30 + B And MenuMouseY <= 366 + A * 30 + B Then
-                        if(MenuMouseY >= 350 + A * 30 + B && MenuMouseY <= 366 + A * 30 + B)
-                        {
-//                            If A = 0 Then
-                            if(A == 0)
-                            {
-//                                menuLen = 18 * Len("mario game") + 2
-                                menuLen = 18 * std::strlen("mario game") + 2;
-//                            ElseIf A = 3 Or A = 5 Then
-                            } else if(A == 3 || A == 5) {
-//                                menuLen = 18 * Len("toad game")
-                                menuLen = 18 * std::strlen("toad game");
-//                            Else
-                            } else {
-//                                menuLen = 18 * Len("luigi game")
-                                menuLen = 18 * std::strlen("luigi game");
-//                            End If
-                            }
-//                            If MenuMouseX >= 300 And MenuMouseX <= 300 + menuLen Then
-                            if(MenuMouseX >= 300 && MenuMouseX <= 300 + menuLen)
-                            {
-//                                If MenuMouseRelease = True And MenuMouseDown = True Then MenuMouseClick = True
-                                if(MenuMouseRelease && MenuMouseDown)
-                                    MenuMouseClick = true;
-//                                If MenuCursor <> A Then
-                                if(MenuCursor != A)
-                                {
-//                                    If ((MenuMode = 300 Or MenuMode = 500) And PlayerCharacter - 1 = A) Or _
-//                                       (blockCharacter(A + 1) = True) And _
-//                                        MenuMouseClick = True Then
-                                    if(
-                                        ((MenuMode == 300 || MenuMode == 500) && PlayerCharacter - 1 == A) ||
-                                        ((blockCharacter[A + 1]) && MenuMouseClick)
-                                    )
-                                    {
-//                                        MenuMouseClick = False
-                                        MenuMouseClick = false;
-//                                    Else
-                                    } else {
-//                                        PlaySound 26
-                                        PlaySound(26);
-//                                        MenuCursor = A
-                                        MenuCursor = A;
-//                                    End If
-                                    }
-//                                End If
-                                }
-//                            End If
-                            }
-//                        End If
-                        }
-//                    End If
-                    }
-//                Next A
-                }
-//            End If
-            }
-
-//            If MenuCursorCanMove = True Or MenuMouseClick = True Or MenuMouseBack = True Then
-            if(MenuCursorCanMove || MenuMouseClick || MenuMouseBack)
-            {
-//                If .Run = True Or (GetKeyState(vbKeyEscape) And KEY_PRESSED) Or MenuMouseBack = True Then
-                if(menuBackPress || MenuMouseBack)
-                {
-//                    If MenuMode = 300 Then
                     if(MenuMode == 300)
                     {
-//                        MenuMode = 200
                         MenuMode = 200;
-//                        MenuCursor = PlayerCharacter - 1
                         MenuCursor = PlayerCharacter - 1;
-//                    ElseIf MenuMode = 500 Then
                     } else if(MenuMode == 500) {
-//                        MenuMode = 400
                         MenuMode = 400;
-//                        MenuCursor = PlayerCharacter - 1
                         MenuCursor = PlayerCharacter - 1;
-//                    Else
                     } else {
-//                        MenuCursor = selWorld - 1
                         MenuCursor = selWorld - 1;
-//                        MenuMode = MenuMode / 100
                         MenuMode = MenuMode / 100;
-//                    End If
                     }
-//                    MenuCursorCanMove = False
                     MenuCursorCanMove = false;
-//                    PlaySound 26
                     PlaySound(26);
-//                ElseIf .Jump = True Or .Start = True Or _
-//                        (GetKeyState(vbKeySpace) And KEY_PRESSED) Or _
-//                        (GetKeyState(vbKeyReturn) And KEY_PRESSED) Or _
-//                         MenuMouseClick = True Then
                 }
-                else if(menuDoPress || MenuMouseClick)
+                else if(menuDoPress)
                 {
-//                    PlaySound 29
                     PlaySound(29);
-//                    If MenuMode = 100 Then
                     if(MenuMode == 100)
                     {
-//                        PlayerCharacter = MenuCursor + 1
                         PlayerCharacter = MenuCursor + 1;
-//                        MenuMode = 10
                         MenuMode = 10;
-//                        MenuCursor = 0
                         MenuCursor = 0;
-//                    ElseIf MenuMode = 200 Then
                     } else if(MenuMode == 200) {
-//                        PlayerCharacter = MenuCursor + 1
                         PlayerCharacter = MenuCursor + 1;
-//                        MenuMode = 300
                         MenuMode = 300;
-//                        MenuCursor = PlayerCharacter2
                         MenuCursor = PlayerCharacter2;
-//                    ElseIf MenuMode = 300 Then
                     } else if(MenuMode == 300) {
-//                        PlayerCharacter2 = MenuCursor + 1
                         PlayerCharacter2 = MenuCursor + 1;
-//                        MenuMode = 20
                         MenuMode = 20;
-//                        MenuCursor = 0
                         MenuCursor = 0;
-//                    ElseIf MenuMode = 400 Then
                     } else if(MenuMode == 400) {
-//                        PlayerCharacter = MenuCursor + 1
                         PlayerCharacter = MenuCursor + 1;
-//                        MenuMode = 500
                         MenuMode = 500;
-//                        MenuCursor = PlayerCharacter2 - 1
                         MenuCursor = PlayerCharacter2 - 1;
-//                        If MenuCursor < 0 Then MenuCursor = 0
                         if(MenuCursor < 0) MenuCursor = 0;
-//                    ElseIf MenuMode = 500 Then
                     } else if(MenuMode == 500) {
-//                        PlayerCharacter2 = MenuCursor + 1
                         PlayerCharacter2 = MenuCursor + 1;
-//                        MenuCursor = 0
                         MenuCursor = 0;
-//                        StartBattleMode
                         StartBattleMode();
-//                        Exit Sub
                         return;
-//                    End If
                     }
-//                    MenuCursorCanMove = False
                     MenuCursorCanMove = false;
-//                End If
                 }
-//            End If
             }
 
-//            If MenuMode > 0 Then
             if(MenuMode > 0)
             {
-//                If MenuCursor > numCharacters - 1 Then
                 if(MenuCursor > numCharacters - 1)
                 {
-//                    MenuCursor = 0
                     MenuCursor = 0;
-//                    Do While (MenuCursor = PlayerCharacter - 1 And (MenuMode = 300 Or MenuMode = 500)) Or _
-//                              blockCharacter(MenuCursor + 1) = True
                     while((MenuCursor == PlayerCharacter - 1 && (MenuMode == 300 || MenuMode == 500)) ||
                           blockCharacter[MenuCursor + 1])
                     {
-//                        MenuCursor = MenuCursor + 1
                         MenuCursor = MenuCursor + 1;
-//                    Loop
                     }
-//                End If
                 }
-//                If MenuCursor < 0 Then
                 if(MenuCursor < 0)
                 {
-//                    MenuCursor = numCharacters - 1
                     MenuCursor = numCharacters - 1;
-//                    Do While (MenuCursor = PlayerCharacter - 1 And (MenuMode = 300 Or MenuMode = 500)) Or _
-//                              blockCharacter(MenuCursor + 1) = True
                     while((MenuCursor == PlayerCharacter - 1 && (MenuMode == 300 || MenuMode == 500)) ||
                           blockCharacter[MenuCursor + 1])
                     {
-//                        MenuCursor = MenuCursor - 1
                         MenuCursor = MenuCursor - 1;
-//                    Loop
                     }
-//                End If
                 }
-//            End If
             }
 
-//            Do While ((MenuMode = 300 Or MenuMode = 500) And MenuCursor = PlayerCharacter - 1) Or _
-//                       blockCharacter(MenuCursor + 1) = True
             while(((MenuMode == 300 || MenuMode == 500) && MenuCursor == PlayerCharacter - 1) ||
                    blockCharacter[MenuCursor + 1])
             {
-//                MenuCursor = MenuCursor + 1
                 MenuCursor = MenuCursor + 1;
-//            Loop
             }
 
-//            If MenuMode >= 100 Then
             if(MenuMode >= 100)
             {
-//                If MenuCursor >= numCharacters Then
                 if(MenuCursor >= numCharacters)
                 {
-//                    MenuCursor = 0
                     MenuCursor = 0;
-//                Else
                 } else {
-//                    For A = 1 To numPlayers
                     For(A, 1, numPlayers)
                     {
-//                        Player(A).Character = MenuCursor + 1
                         Player[A].Character = MenuCursor + 1;
-//                        SizeCheck A
                         SizeCheck(A);
-//                    Next A
                     }
-//                    For A = 1 To numNPCs
                     For(A, 1, numNPCs)
                     {
-//                        If NPC(A).Type = 13 Then NPC(A).Special = MenuCursor + 1
                         if(NPC[A].Type == 13)
                             NPC[A].Special = MenuCursor + 1;
-//                    Next A
                     }
-//                End If
                 }
-//            End If
             }
         }
-//        ElseIf MenuMode = 1 Or MenuMode = 2 Or MenuMode = 4 Then 'World Select
 
         // World Select
         else if(MenuMode == 1 || MenuMode == 2 || MenuMode == 4)
         {
-//            If ScrollDelay > 0 Then
-            if(ScrollDelay > 0)
+            if(MenuCursorCanMove)
             {
-//                MenuMouseMove = True
-                MenuMouseMove = true;
-//                ScrollDelay = ScrollDelay - 1
-                ScrollDelay = ScrollDelay - 1;
-//            End If
-            }
-//            If MenuMouseMove = True Then
-            if(MenuMouseMove)
-            {
-//                B = 0
-                B = 0;
-//                For A = minShow - 1 To maxShow - 1
-                For(A, minShow - 1, maxShow - 1)
+                if(menuBackPress)
                 {
-//                    If MenuMouseY >= 350 + B * 30 And MenuMouseY <= 366 + B * 30 Then
-                    if(MenuMouseY >= 350 + B * 30 && MenuMouseY <= 366 + B * 30)
-                    {
-//                        menuLen = 19 * Len(SelectWorld(A + 1).WorldName)
-                        menuLen = 19 * static_cast<int>(SelectWorld[A + 1].WorldName.size());
-//                        If MenuMouseX >= 300 And MenuMouseX <= 300 + menuLen Then
-                        if(MenuMouseX >= 300 && MenuMouseX <= 300 + menuLen)
-                        {
-//                            If MenuMouseRelease = True And MenuMouseDown = True Then MenuMouseClick = True
-                            if(MenuMouseRelease && MenuMouseDown)
-                                MenuMouseClick = true;
-//                            If MenuCursor <> A And ScrollDelay = 0 Then
-                            if(MenuCursor != A && ScrollDelay == 0)
-                            {
-//                                ScrollDelay = 10
-                                ScrollDelay = 10;
-//                                PlaySound 26
-                                PlaySound(26);
-//                                MenuCursor = A
-                                MenuCursor = A;
-//                            End If
-                            }
-//                        End If
-                        }
-//                    End If
-                    }
-//                    B = B + 1
-                    B += 1;
-//                Next A
-                }
-//            End If
-            }
-
-//            If MenuCursorCanMove = True Or MenuMouseClick = True Or MenuMouseBack = True Then
-            if(MenuCursorCanMove || MenuMouseClick || MenuMouseBack)
-            {
-//                If .Run = True Or (GetKeyState(vbKeyEscape) And KEY_PRESSED) Or MenuMouseBack = True Then
-                if(menuBackPress || MenuMouseBack)
-                {
-//                    MenuCursor = MenuMode - 1
                     MenuCursor = MenuMode - 1;
-//                    If MenuMode = 4 Then MenuCursor = 2
                     if(MenuMode == 4)
                         MenuCursor = 2;
-//                    MenuMode = 0
                     MenuMode = 0;
-//'world select back
-
-//                    PlaySound 26
                     PlaySound(26);
-//                    MenuCursorCanMove = False
                     MenuCursorCanMove = false;
-//                ElseIf .Jump = True Or .Start = True Or _
-//                       (GetKeyState(vbKeySpace) And KEY_PRESSED) Or _
-//                       (GetKeyState(vbKeyReturn) And KEY_PRESSED) Or MenuMouseClick = True Then
                 }
-                else if(menuDoPress || MenuMouseClick)
+                else if(menuDoPress)
                 {
-//                    PlaySound 29
                     PlaySound(29);
-//                    selWorld = MenuCursor + 1
                     selWorld = MenuCursor + 1;
-//                    FindSaves
                     FindSaves();
-//                    For A = 1 To numCharacters
                     For(A, 1, numCharacters)
                     {
-//                        If MenuMode = 4 Then
                         if(MenuMode == 4) {
-//                            blockCharacter(A) = False
                             blockCharacter[A] = false;
-//                        Else
                         } else {
-//                            blockCharacter(A) = SelectWorld(selWorld).blockChar(A)
                             blockCharacter[A] = SelectWorld[selWorld].blockChar[A];
-//                        End If
                         }
-//                    Next A
                     }
-//                    MenuMode = MenuMode * 100
                     MenuMode = MenuMode * 100;
-//                    MenuCursor = 0
                     MenuCursor = 0;
-//                    If MenuMode = 400 And PlayerCharacter <> 0 Then MenuCursor = PlayerCharacter - 1
                     if(MenuMode == 400 && PlayerCharacter != 0) MenuCursor = PlayerCharacter - 1;
-//                    MenuCursorCanMove = False
                     MenuCursorCanMove = false;
-//                End If
                 }
-//            End If
             }
 
-//            If MenuMode < 100 Then
+            // if we didn't just pick a world
             if(MenuMode < 100)
             {
-//                If MenuCursor >= NumSelectWorld Then MenuCursor = 0
                 if(MenuCursor >= NumSelectWorld)
                     MenuCursor = 0;
-//                If MenuCursor < 0 Then MenuCursor = NumSelectWorld - 1
                 if(MenuCursor < 0)
                     MenuCursor = NumSelectWorld - 1;
-//            End If
             }
-//        ElseIf MenuMode = 10 Or MenuMode = 20 Then 'Save Select
         }
 
         // Save Select
         else if(MenuMode == 10 || MenuMode == 20)
         {
-//            If MenuMouseMove = True Then
-            if(MenuMouseMove)
+            if(MenuCursorCanMove)
             {
-//                For A = 0 To 2
-                For(A, 0, 2)
+                if(menuBackPress)
                 {
-//                    If MenuMouseY >= 350 + A * 30 And MenuMouseY <= 366 + A * 30 Then
-                    if(MenuMouseY >= 350 + A * 30 && MenuMouseY <= 366 + A * 30)
-                    {
-//                        menuLen = 18 * Len("slot 1 empty") - 2
-                        menuLen = 18 * std::strlen("slot 1 empty") - 2;
-//                        If SaveSlot(A + 1) >= 0 Then menuLen = 18 * Len("slot ... 100") - 2
-                        if(SaveSlot[A + 1] >= 0)
-                            menuLen = 18 * std::strlen("slot ... 100") - 2;
-//                        If SaveStars(A + 1) > 0 Then menuLen = 288 + Len(SaveStars(A + 1)) * 18
-                        if(SaveStars[A + 1] > 0)
-                            menuLen = 288 + 2/*sizeof(short) == 2 in VB6*/ * 18;
-//                        If MenuMouseX >= 300 And MenuMouseX <= 300 + menuLen Then
-                        if(MenuMouseX >= 300 && MenuMouseX <= 300 + menuLen)
-                        {
-//                            If MenuMouseRelease = True And MenuMouseDown = True Then MenuMouseClick = True
-                            if(MenuMouseRelease && MenuMouseDown)
-                                MenuMouseClick = true;
-//                            If MenuCursor <> A Then
-                            if(MenuCursor != A)
-                            {
-//                                PlaySound 26
-                                PlaySound(26);
-//                                MenuCursor = A
-                                MenuCursor = A;
-//                            End If
-                            }
-//                        End If
-                        }
-//                    End If
-                    }
-//                Next A
-                }
-//            End If
-            }
-//            If MenuCursorCanMove = True Or MenuMouseClick = True Or MenuMouseBack = True Then
-            if(MenuCursorCanMove || MenuMouseClick || MenuMouseBack)
-            {
-//                If .Run = True Or (GetKeyState(vbKeyEscape) And KEY_PRESSED) Or MenuMouseBack = True Then
-                if(menuBackPress || MenuMouseBack)
-                {
-//'save select back
-//                    If AllCharBlock > 0 Then
                     if(AllCharBlock > 0) {
-//                        MenuMode = MenuMode / 10
                         MenuMode = MenuMode / 10;
-//                        MenuCursor = selWorld - 1
                         MenuCursor = selWorld - 1;
-//                    Else
                     } else {
-//                        If MenuMode = 10 Then
                         if(MenuMode == 10) {
-//                            MenuCursor = PlayerCharacter - 1
                             MenuCursor = PlayerCharacter - 1;
-//                            MenuMode = 100
                             MenuMode = 100;
-//                        Else
                         } else {
-//                            MenuMode = 300
                             MenuMode = 300;
-//                            MenuCursor = PlayerCharacter2 - 1
                             MenuCursor = PlayerCharacter2 - 1;
-//                        End If
                         }
-//                    End If
                     }
-//                    MenuCursorCanMove = False
                     MenuCursorCanMove = false;
-//                    PlaySound 29
                     PlaySound(29);
-//                ElseIf .Jump = True Or .Start = True Or _
-//                       (GetKeyState(vbKeySpace) And KEY_PRESSED) Or _
-//                       (GetKeyState(vbKeyReturn) And KEY_PRESSED) Or _
-//                       MenuMouseClick = True Then
                 }
-                else if(menuDoPress || MenuMouseClick)
+                else if(menuDoPress)
                 {
-//                    PlaySound 29
                     PlaySound(29);
-//                    numPlayers = MenuMode / 10
                     numPlayers = MenuMode / 10;
-//                    For A = 1 To numCharacters
                     For(A, 1, numCharacters)
                     {
-//                        SavedChar(A) = blankPlayer
                         SavedChar[A] = blankPlayer;
-//                        SavedChar(A).Character = A
                         SavedChar[A].Character = A;
-//                        SavedChar(A).State = 1
                         SavedChar[A].State = 1;
-//                    Next A
                     }
                     Player[1].State = 1;
                     Player[1].Mount = 0;
@@ -821,60 +382,35 @@ void MenuLoop()
                     Player[2].YoshiRed = false;
                     Player[2].YoshiYellow = false;
                     Player[2].Hearts = 0;
-//                    If numPlayers <= 2 And PlayerCharacter > 0 Then
                     if(numPlayers <= 2 && PlayerCharacter > 0) {
-//                        Player(1).Character = PlayerCharacter
                         Player[1].Character = PlayerCharacter;
-//                        PlayerCharacter = 0
                         PlayerCharacter = 0;
-//                    End If
                     }
-//                    If numPlayers = 2 And PlayerCharacter2 > 0 Then
                     if(numPlayers == 2 && PlayerCharacter2 > 0)
                     {
-//                        Player(2).Character = PlayerCharacter2
                         Player[2].Character = PlayerCharacter2;
-//                        PlayerCharacter2 = 0
                         PlayerCharacter2 = 0;
-//                    End If
                     }
-//                    selSave = MenuCursor + 1
                     selSave = MenuCursor + 1;
-//                    numStars = 0
                     numStars = 0;
-//                    Coins = 0
                     Coins = 0;
-//                    Score = 0
                     Score = 0;
-//                    Lives = 3
                     Lives = 3;
-//                    LevelSelect = True
                     LevelSelect = true;
-//                    GameMenu = False
                     GameMenu = false;
-//                    BitBlt myBackBuffer, 0, 0, ScreenW, ScreenH, 0, 0, 0, vbWhiteness
-//                    BitBlt frmMain.hdc, 0, 0, frmMain.ScaleWidth, frmMain.ScaleHeight, 0, 0, 0, vbWhiteness
                     frmMain.clearBuffer();
                     frmMain.repaint();
-//                    StopMusic
                     StopMusic();
-//                    DoEvents
                     DoEvents();
-//                    Sleep 500
                     PGE_Delay(500);
 
                     ClearGame();
-//                    OpenWorld SelectWorld(selWorld).WorldPath & SelectWorld(selWorld).WorldFile
                     OpenWorld(SelectWorld[selWorld].WorldPath + SelectWorld[selWorld].WorldFile);
-//                    If SaveSlot(selSave) >= 0 Then
                     if(SaveSlot[selSave] >= 0)
                     {
-//                        If NoMap = False Then StartLevel = ""
                         if(!NoMap)
                             StartLevel.clear();
-//                        LoadGame
                         LoadGame();
-//                    End If
                     }
 
                     if(WorldUnlock)
@@ -937,80 +473,15 @@ void MenuLoop()
         // Options
         else if(MenuMode == 3)
         {
-//            If MenuMouseMove = True Then
-            if(MenuMouseMove == true)
-            {
-//                For A = 0 To 3
-                For(A, 0, 3)
+            if(MenuCursorCanMove) {
+                if(menuBackPress)
                 {
-//                    If MenuMouseY >= 350 + A * 30 And MenuMouseY <= 366 + A * 30 Then
-                    if(MenuMouseY >= 350 + A * 30 && MenuMouseY <= 366 + A * 30)
-                    {
-//                        If A = 0 Then
-                        if(A == 0)
-//                            menuLen = 18 * Len("player 1 controls") - 4
-                            menuLen = 18 * std::strlen("player 1 controls") - 4;
-//                        ElseIf A = 1 Then
-                        else if(A == 1)
-//                            menuLen = 18 * Len("player 2 controls") - 4
-                            menuLen = 18 * std::strlen("player 2 controls") - 4;
-//                        ElseIf A = 2 Then
-                        else if(A == 2)
-                        {
-//                            If resChanged = True Then
-                            if(resChanged == true)
-//                                menuLen = 18 * Len("windowed mode")
-                                menuLen = 18 * std::strlen("windowed mode");
-//                            Else
-                            else
-//                                menuLen = 18 * Len("fullscreen mode")
-                                menuLen = 18 * std::strlen("fullscreen mode");
-//                            End If
-//                        Else
-                        } else {
-//                            menuLen = 18 * Len("view credits") - 2
-                            menuLen = 18 * std::strlen("view credits") - 2;
-//                        End If
-                        }
-
-//                        If MenuMouseX >= 300 And MenuMouseX <= 300 + menuLen Then
-                        if(MenuMouseX >= 300 && MenuMouseX <= 300 + menuLen) {
-//                            If MenuMouseRelease = True And MenuMouseDown = True Then MenuMouseClick = True
-                            if(MenuMouseRelease && MenuMouseDown)
-                                MenuMouseClick = true;
-//                            If MenuCursor <> A Then
-                            if(MenuCursor != A) {
-//                                PlaySound 26
-                                PlaySound(26);
-//                                MenuCursor = A
-                                MenuCursor = A;
-//                            End If
-                            }
-//                        End If
-                        }
-//                    End If
-                    }
-//                Next A
-                }
-//            End If
-            }
-
-//            If MenuCursorCanMove = True Or MenuMouseClick = True Or MenuMouseBack = True Then
-            if(MenuCursorCanMove || MenuMouseClick || MenuMouseBack) {
-//                If .Run = True Or (GetKeyState(vbKeyEscape) And KEY_PRESSED) Or MenuMouseBack = True Then
-                if(menuBackPress || MenuMouseBack)
-                {
-//                    MenuMode = 0
                     MenuMode = 0;
-//                    MenuCursor = 3
                     MenuCursor = 3;
-//                    MenuCursorCanMove = False
                     MenuCursorCanMove = false;
-//                    PlaySound 26
                     PlaySound(26);
-//                ElseIf .Jump = True Or .Start = True Or (GetKeyState(vbKeySpace) And KEY_PRESSED) Or (GetKeyState(vbKeyReturn) And KEY_PRESSED) Or MenuMouseClick = True Then
                 }
-                else if(menuDoPress || MenuMouseClick)
+                else if(menuDoPress)
                 {
 //                    MenuCursorCanMove = False
                     MenuCursorCanMove = false;
@@ -1073,217 +544,14 @@ void MenuLoop()
         // Input Settings
         else if(MenuMode == 31 || MenuMode == 32)
         {
-//            If MenuMouseMove = True And getNewJoystick = False And getNewKeyboard = False Then
-            if(MenuMouseMove && !getNewJoystick && !getNewKeyboard)
+            if(MenuCursorCanMove || !getNewJoystick)
             {
-//                If useJoystick(MenuMode - 30) = 0 Then
-                if(useJoystick[MenuMode - 30] == 0)
+                if(getNewJoystick)
                 {
-//                    For A = 0 To 10
-                    For(A, 0, 10)
-                    {
-//                        If MenuMouseY >= 260 - 44 + A * 30 And MenuMouseY <= 276 - 44 + A * 30 Then
-                        if(MenuMouseY >= 260 - 44 + A * 30 && MenuMouseY <= 276 - 44 + A * 30)
-                        {
-                            switch(A)
-                            {
-//                            If A = 0 Then
-//                                menuLen = 18 * Len("INPUT......KEYBOARD")
-                            default:
-                            case 0:
-                                menuLen = 18 * std::strlen("INPUT......KEYBOARD");
-                                break;
-//                            ElseIf A = 1 Then
-//                                menuLen = 18 * Len("UP........." & CheckKey(Chr(conKeyboard(MenuMode - 30).Up)))
-                            case 1:
-                                menuLen = 18 * static_cast<int>(fmt::format_ne("UP.........{0}",
-                                                        getKeyName(conKeyboard[MenuMode - 30].Up)).size());
-                                break;
-//                            ElseIf A = 2 Then
-//                                menuLen = 18 * Len("UP........." & CheckKey(Chr(conKeyboard(MenuMode - 30).Down)))
-                            case 2:
-                                menuLen = 18 * static_cast<int>(fmt::format_ne("UP.........{0}",
-                                                        getKeyName(conKeyboard[MenuMode - 30].Down)).size());
-                                break;
-//                            ElseIf A = 3 Then
-//                                menuLen = 18 * Len("UP........." & CheckKey(Chr(conKeyboard(MenuMode - 30).Left)))
-                            case 3:
-                                menuLen = 18 * static_cast<int>(fmt::format_ne("UP.........{0}",
-                                                        getKeyName(conKeyboard[MenuMode - 30].Left)).size());
-                                break;
-//                            ElseIf A = 4 Then
-//                                menuLen = 18 * Len("UP........." & CheckKey(Chr(conKeyboard(MenuMode - 30).Right)))
-                            case 4:
-                                menuLen = 18 * static_cast<int>(fmt::format_ne("UP.........{0}",
-                                                        getKeyName(conKeyboard[MenuMode - 30].Right)).size());
-                                break;
-//                            ElseIf A = 5 Then
-//                                menuLen = 18 * Len("UP........." & CheckKey(Chr(conKeyboard(MenuMode - 30).Run)))
-                            case 5:
-                                menuLen = 18 * static_cast<int>(fmt::format_ne("UP.........{0}",
-                                                        getKeyName(conKeyboard[MenuMode - 30].Run)).size());
-                                break;
-//                            ElseIf A = 6 Then
-//                                menuLen = 18 * Len("UP........." & CheckKey(Chr(conKeyboard(MenuMode - 30).AltRun)))
-                            case 6:
-                                menuLen = 18 * static_cast<int>(fmt::format_ne("UP.........{0}",
-                                                        getKeyName(conKeyboard[MenuMode - 30].AltRun)).size());
-                                break;
-//                            ElseIf A = 7 Then
-//                                menuLen = 18 * Len("UP........." & CheckKey(Chr(conKeyboard(MenuMode - 30).Jump)))
-                            case 7:
-                                menuLen = 18 * static_cast<int>(fmt::format_ne("UP.........{0}",
-                                                        getKeyName(conKeyboard[MenuMode - 30].Jump)).size());
-                                break;
-//                            ElseIf A = 8 Then
-//                                menuLen = 18 * Len("UP........." & CheckKey(Chr(conKeyboard(MenuMode - 30).AltJump)))
-                            case 8:
-                                menuLen = 18 * static_cast<int>(fmt::format_ne("UP.........{0}",
-                                                        getKeyName(conKeyboard[MenuMode - 30].AltJump)).size());
-                                break;
-//                            ElseIf A = 9 Then
-//                                menuLen = 18 * Len("UP........." & CheckKey(Chr(conKeyboard(MenuMode - 30).Drop)))
-                            case 9:
-                                menuLen = 18 * static_cast<int>(fmt::format_ne("UP.........{0}",
-                                                        getKeyName(conKeyboard[MenuMode - 30].Drop)).size());
-                                break;
-//                            ElseIf A = 10 Then
-                            case 10:
-                                menuLen = 18 * static_cast<int>(fmt::format_ne("UP.........{0}",
-                                                        getKeyName(conKeyboard[MenuMode - 30].Start)).size());
-                                break;
-//                                menuLen = 18 * Len("UP........." & CheckKey(Chr(conKeyboard(MenuMode - 30).Start)))
-//                            End If
-                            }
-//                            If MenuMouseX >= 300 And MenuMouseX <= 300 + menuLen Then
-                            if(MenuMouseX >= 300 && MenuMouseX <= 300 + menuLen)
-                            {
-//                                If MenuMouseRelease = True And MenuMouseDown = True Then MenuMouseClick = True
-                                if(MenuMouseRelease && MenuMouseDown)
-                                    MenuMouseClick = true;
-//                                If MenuCursor <> A Then
-                                if(MenuCursor != A)
-                                {
-//                                    PlaySound 26
-                                    PlaySound(26);
-//                                    MenuCursor = A
-                                    MenuCursor = A;
-//                                End If
-                                }
-//                            End If
-                            }
-//                        End If
-                        }
-//                    Next A
-                    }
-//                Else
-                }
-                else
-                {
-//                    For A = 0 To 6
-                    For(A, 0, 10)
-                    {
-//                        If MenuMouseY >= 260 - 44 + A * 30 And MenuMouseY <= 276 + A * 30 - 44 Then
-                        if(MenuMouseY >= 260 - 44 + A * 30 && MenuMouseY <= 276 + A * 30 - 44)
-                        {
-//                            If A = 0 Then
-                            if(A == 0) {
-//                                menuLen = 18 * Len("INPUT......JOYSTICK 1") - 2
-                                menuLen = 18 * std::strlen("INPUT......JOYSTICK 1") - 2;
-//                            Else
-                            } else {
-//                                menuLen = 18 * Len("RUN........_")
-                                menuLen = 18 * std::strlen("RUN........_");
-//                            End If
-                            }
-//                            If MenuMouseX >= 300 And MenuMouseX <= 300 + menuLen Then
-                            if(MenuMouseX >= 300 && MenuMouseX <= 300 + menuLen)
-                            {
-//                                If MenuMouseRelease = True And MenuMouseDown = True Then MenuMouseClick = True
-                                if(MenuMouseRelease && MenuMouseDown)
-                                    MenuMouseClick = true;
-//                                If MenuCursor <> A Then
-                                if(MenuCursor != A)
-                                {
-//                                    PlaySound 26
-                                    PlaySound(26);
-//                                    MenuCursor = A
-                                    MenuCursor = A;
-//                                End If
-                                }
-//                            End If
-                            }
-//                        End If
-                        }
-//                    Next A
-                    }
-//                End If
-                }
-//            End If
-            }
-
-//            If MenuCursorCanMove = True Or _
-//              ((getNewKeyboard = False And getNewJoystick = False) And _
-//              (MenuMouseClick = True Or MenuMouseBack = True)) Then
-            if(MenuCursorCanMove || ((!getNewKeyboard && !getNewJoystick) && (MenuMouseClick || MenuMouseBack)))
-            {
-//                If getNewKeyboard = True Then
-                if(getNewKeyboard)
-                {
-//                    If inputKey <> 0 Then
-                    if(inputKey != 0)
-                    {
-//                        getNewKeyboard = False
-                        getNewKeyboard = false;
-//                        MenuCursorCanMove = False
-                        MenuCursorCanMove = false;
-//                        PlaySound 29
-                        PlaySound(29);
-//                        If MenuCursor = 1 Then
-                        if(MenuCursor == 1) {
-//                            conKeyboard(MenuMode - 30).Up = inputKey
-                            conKeyboard[MenuMode - 30].Up = inputKey;
-//                        ElseIf MenuCursor = 2 Then conKeyboard(MenuMode - 30).Down = inputKey
-                        } else if(MenuCursor == 2) {
-                            conKeyboard[MenuMode - 30].Down = inputKey;
-//                        ElseIf MenuCursor = 3 Then conKeyboard(MenuMode - 30).Left = inputKey
-                        } else if(MenuCursor == 3) {
-                            conKeyboard[MenuMode - 30].Left = inputKey;
-//                        ElseIf MenuCursor = 4 Then conKeyboard(MenuMode - 30).Right = inputKey
-                        } else if(MenuCursor == 4) {
-                            conKeyboard[MenuMode - 30].Right = inputKey;
-//                        ElseIf MenuCursor = 5 Then conKeyboard(MenuMode - 30).Run = inputKey
-                        } else if(MenuCursor == 5) {
-                            conKeyboard[MenuMode - 30].Run = inputKey;
-//                        ElseIf MenuCursor = 6 Then conKeyboard(MenuMode - 30).AltRun = inputKey
-                        } else if(MenuCursor == 6) {
-                            conKeyboard[MenuMode - 30].AltRun = inputKey;
-//                        ElseIf MenuCursor = 7 Then conKeyboard(MenuMode - 30).Jump = inputKey
-                        } else if(MenuCursor == 7) {
-                            conKeyboard[MenuMode - 30].Jump = inputKey;
-//                        ElseIf MenuCursor = 8 Then conKeyboard(MenuMode - 30).AltJump = inputKey
-                        } else if(MenuCursor == 8) {
-                            conKeyboard[MenuMode - 30].AltJump = inputKey;
-//                        ElseIf MenuCursor = 9 Then conKeyboard(MenuMode - 30).Drop = inputKey
-                        } else if(MenuCursor == 9) {
-                            conKeyboard[MenuMode - 30].Drop = inputKey;
-//                        ElseIf MenuCursor = 10 Then conKeyboard(MenuMode - 30).Start = inputKey
-                        } else if(MenuCursor == 10) {
-                            conKeyboard[MenuMode - 30].Start = inputKey;
-//                        End If
-                        }
-//                    End If
-                    }
-//                ElseIf getNewJoystick = True Then
-                }
-                else if(getNewJoystick)
-                {
-                    int JoyNum = useJoystick[MenuMode - 30] - 1;
-                    SDL_JoystickUpdate();
                     KM_Key joyKey;
-                    bool gotNewKey = PollJoystick(JoyNum, joyKey);
+                    bool gotNewKey = PollJoystick(joyKey);
 
-                    if(!JoyIsKeyDown(JoyNum, oldJumpJoy))
+                    if(!JoyIsKeyDown(oldJumpJoy))
                     {
                         oldJumpJoy.type = -1;
                         if(gotNewKey)
@@ -1312,7 +580,8 @@ void MenuLoop()
                             getNewJoystick = false;
                             MenuCursorCanMove = false;
                         }
-                        else if(getKeyState(vbKeyEscape) == KEY_PRESSED)
+                        /*
+                        else if(getKeyState(vbKeyEscape) == KEY_PRESSED) // would like to make timeout......
                         {
                             if(MenuCursor == 1)
                                 conJoystick[MenuMode - 30].Up = lastJoyButton;
@@ -1336,12 +605,12 @@ void MenuLoop()
                                 conJoystick[MenuMode - 30].Start = lastJoyButton;
                             getNewJoystick = false;
                             MenuCursorCanMove = false;
-                        }
+                        } */
                     }
                 }
                 else
                 {
-                    if(menuBackPress || MenuMouseBack)
+                    if(menuBackPress)
                     {
                         SaveConfig();
                         MenuCursor = MenuMode - 31;
@@ -1349,152 +618,75 @@ void MenuLoop()
                         MenuCursorCanMove = false;
                         PlaySound(26);
                     }
-                    else if(menuDoPress || MenuMouseClick)
+                    else if(menuDoPress)
                     {
-                        if(MenuCursor == 0)
+                        if(MenuCursor == 1)
                         {
-                            PlaySound(29);
-                            useJoystick[MenuMode - 30] = useJoystick[MenuMode - 30] + 1;
-                            if(useJoystick[MenuMode - 30] > numJoysticks)
-                                useJoystick[MenuMode - 30] = 0;
+                            lastJoyButton = conJoystick[MenuMode - 30].Up;
+                            conJoystick[MenuMode - 30].Up.type = -1;
                         }
-                        else
+                        else if(MenuCursor == 2)
                         {
-                            if(useJoystick[MenuMode - 30] == 0)
-                            {
-                                getNewKeyboard = true;
-                                switch(MenuCursor)
-                                {
-                                case 1:
-                                    conKeyboard[MenuMode - 30].Up = -1;
-                                    break;
-                                case 2:
-                                    conKeyboard[MenuMode - 30].Down = -1;
-                                    break;
-                                case 3:
-                                    conKeyboard[MenuMode - 30].Left = -1;
-                                    break;
-                                case 4:
-                                    conKeyboard[MenuMode - 30].Right = -1;
-                                    break;
-                                case 5:
-                                    conKeyboard[MenuMode - 30].Run = -1;
-                                    break;
-                                case 6:
-                                    conKeyboard[MenuMode - 30].AltRun = -1;
-                                    break;
-                                case 7:
-                                    conKeyboard[MenuMode - 30].Jump = -1;
-                                    break;
-                                case 8:
-                                    conKeyboard[MenuMode - 30].AltJump = -1;
-                                    break;
-                                case 9:
-                                    conKeyboard[MenuMode - 30].Drop = -1;
-                                    break;
-                                case 10:
-                                    conKeyboard[MenuMode - 30].Start = -1;
-                                    break;
-                                default:
-                                    break;
-                                }
-                                inputKey = 0;
-                            }
-                            else
-                            {
-                                if(MenuCursor == 1)
-                                {
-                                    lastJoyButton = conJoystick[MenuMode - 30].Up;
-                                    conJoystick[MenuMode - 30].Up.type = -1;
-                                }
-                                else if(MenuCursor == 2)
-                                {
-                                    lastJoyButton = conJoystick[MenuMode - 30].Down;
-                                    conJoystick[MenuMode - 30].Down.type = -1;
-                                }
-                                else if(MenuCursor == 3)
-                                {
-                                    lastJoyButton = conJoystick[MenuMode - 30].Left;
-                                    conJoystick[MenuMode - 30].Left.type = -1;
-                                }
-                                else if(MenuCursor == 4)
-                                {
-                                    lastJoyButton = conJoystick[MenuMode - 30].Right;
-                                    conJoystick[MenuMode - 30].Right.type = -1;
-                                }
-                                else if(MenuCursor == 5)
-                                {
-                                    lastJoyButton = conJoystick[MenuMode - 30].Run;
-                                    conJoystick[MenuMode - 30].Run.type = -1;
-                                }
-                                else if(MenuCursor == 6)
-                                {
-                                    lastJoyButton = conJoystick[MenuMode - 30].AltRun;
-                                    conJoystick[MenuMode - 30].AltRun.type = -1;
-                                }
-                                else if(MenuCursor == 7)
-                                {
-                                    lastJoyButton = conJoystick[MenuMode - 30].Jump;
-                                    oldJumpJoy = conJoystick[MenuMode - 30].Jump;
-                                    conJoystick[MenuMode - 30].Jump.type = -1;
-                                }
-                                else if(MenuCursor == 8)
-                                {
-                                    lastJoyButton = conJoystick[MenuMode - 30].AltJump;
-                                    conJoystick[MenuMode - 30].AltJump.type = -1;
-                                }
-                                else if(MenuCursor == 9)
-                                {
-                                    lastJoyButton = conJoystick[MenuMode - 30].Drop;
-                                    conJoystick[MenuMode - 30].Drop.type = -1;
-                                }
-                                else if(MenuCursor == 10)
-                                {
-                                    lastJoyButton = conJoystick[MenuMode - 30].Start;
-                                    conJoystick[MenuMode - 30].Start.type = -1;
-                                }
-                                getNewJoystick = true;
-                                MenuCursorCanMove = false;
-                            }
+                            lastJoyButton = conJoystick[MenuMode - 30].Down;
+                            conJoystick[MenuMode - 30].Down.type = -1;
                         }
+                        else if(MenuCursor == 3)
+                        {
+                            lastJoyButton = conJoystick[MenuMode - 30].Left;
+                            conJoystick[MenuMode - 30].Left.type = -1;
+                        }
+                        else if(MenuCursor == 4)
+                        {
+                            lastJoyButton = conJoystick[MenuMode - 30].Right;
+                            conJoystick[MenuMode - 30].Right.type = -1;
+                        }
+                        else if(MenuCursor == 5)
+                        {
+                            lastJoyButton = conJoystick[MenuMode - 30].Run;
+                            conJoystick[MenuMode - 30].Run.type = -1;
+                        }
+                        else if(MenuCursor == 6)
+                        {
+                            lastJoyButton = conJoystick[MenuMode - 30].AltRun;
+                            conJoystick[MenuMode - 30].AltRun.type = -1;
+                        }
+                        else if(MenuCursor == 7)
+                        {
+                            lastJoyButton = conJoystick[MenuMode - 30].Jump;
+                            oldJumpJoy = conJoystick[MenuMode - 30].Jump;
+                            conJoystick[MenuMode - 30].Jump.type = -1;
+                        }
+                        else if(MenuCursor == 8)
+                        {
+                            lastJoyButton = conJoystick[MenuMode - 30].AltJump;
+                            conJoystick[MenuMode - 30].AltJump.type = -1;
+                        }
+                        else if(MenuCursor == 9)
+                        {
+                            lastJoyButton = conJoystick[MenuMode - 30].Drop;
+                            conJoystick[MenuMode - 30].Drop.type = -1;
+                        }
+                        else if(MenuCursor == 10)
+                        {
+                            lastJoyButton = conJoystick[MenuMode - 30].Start;
+                            conJoystick[MenuMode - 30].Start.type = -1;
+                        }
+                        getNewJoystick = true;
                         MenuCursorCanMove = false;
                     }
                 }
-//            End If
             }
 
-//            If MenuMode <> 3 Then
+//            If you haven't returned....
             if(MenuMode != 3)
             {
                 if(MenuCursor > 10)
                     MenuCursor = 0;
                 if(MenuCursor < 0)
                     MenuCursor = 10;
-#if 0
-//                If useJoystick(MenuMode - 30) = 0 Then
-                if(useJoystick[MenuMode - 30] == 0) {
-//                    If MenuCursor > 10 Then MenuCursor = 0
-                    if(MenuCursor > 10)
-                        MenuCursor = 0;
-//                    If MenuCursor < 0 Then MenuCursor = 10
-                    if(MenuCursor < 0)
-                        MenuCursor = 10;
-//                Else
-                } else {
-//                    If MenuCursor > 6 Then MenuCursor = 0
-                    if(MenuCursor > 10)
-                        MenuCursor = 0;
-//                    If MenuCursor < 0 Then MenuCursor = 6
-                    if(MenuCursor < 0)
-                        MenuCursor = 10;
-//                End If
-                }
-//            End If
-#endif
             }
-//        End If
-        }
 //    End With ' Player.Controls
+        }
     }
 
 

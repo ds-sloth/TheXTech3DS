@@ -166,7 +166,7 @@ static bool tryJPEG(SDL_RWops* file, uint32_t *w, uint32_t *h)
     char magic[12], raw[JPEG_BUFFER_SIZE];
     char *head = nullptr;
     size_t chunk_size = 0;
-    Sint64 pos;
+    int64_t pos;
 
     SDL_RWseek(file, 0, RW_SEEK_SET);
 
@@ -197,8 +197,8 @@ static bool tryJPEG(SDL_RWops* file, uint32_t *w, uint32_t *h)
 
             if(SDL_memcmp(head, "\xFF\xE1", 2) == 0) /* EXIF, skip it!*/
             {
-                const Sint64 curPos = pos + (head - raw);
-                Sint64 toSkip = BE16(head, 2);
+                const int64_t curPos = pos + (head - raw);
+                int64_t toSkip = BE16(head, 2);
                 SDL_RWseek(file, curPos + toSkip + 2, RW_SEEK_SET);
                 continue;
             }

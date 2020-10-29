@@ -1,12 +1,7 @@
 #ifndef PGE_DELAY_H
 #define PGE_DELAY_H
 
-#ifdef __EMSCRIPTEN__
-#   include <emscripten.h>
-#   define PGE_Delay(x) emscripten_sleep(x)
-#else
-#   include <SDL2/SDL_timer.h>
-#   define PGE_Delay(x) SDL_Delay(x)
-#endif
+#include <3ds.h>
+#define PGE_Delay(x) svcSleepThread(x*1000000)
 
 #endif // PGE_DELAY_H

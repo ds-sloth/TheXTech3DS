@@ -25,7 +25,6 @@
 
 #include <Logger/logger.h>
 #include <Utils/files.h>
-#include <InterProcess/intproc.h>
 #include <pge_delay.h>
 #include <fmt_format_ne.h>
 
@@ -131,9 +130,6 @@ int GameMain(const CmdLineSetup_t &setup)
     SizableBlocks();
     LoadGFX(); // load the graphics from file
     SetupVars(); //Setup Variables
-
-    if(setup.interprocess)
-        IntProc::init();
 
     LoadingInProcess = false;
 
@@ -1166,121 +1162,56 @@ void UpdateMacro()
 void InitControls()
 {
     int A = 0;
-//    int B = 0;
-    bool newJoystick = false;
-
-    int joysticksCount = InitJoysticks();
-
-    for(int i = 0; i < joysticksCount; ++i)
-    {
-        newJoystick = StartJoystick(i);
-        if(newJoystick) {
-            A += 1;
-        } else {
-            break;
-        }
-    }
-    numJoysticks = A;
-
-    /* // Crazy Redigit's solution, useless
-//    If numJoysticks = 0 Then
-    if(numJoysticks == 0) {
-//        useJoystick(1) = 0
-        useJoystick[1] = 0;
-//        useJoystick(2) = 0
-        useJoystick[2] = 0;
-//    ElseIf numJoysticks = 1 Then
-    } else if(numJoysticks == 1) {
-//        useJoystick(1) = 1
-        useJoystick[1] = 1;
-//        useJoystick(2) = 0
-        useJoystick[2] = 0;
-//    Else
-    } else {
-//        useJoystick(1) = 1
-        useJoystick[1] = 1;
-//        useJoystick(2) = 2
-        useJoystick[2] = 2;
-//    End If
-    }
-    */
-
-//    '
-    useJoystick[1] = 0;
-    useJoystick[2] = 0;
-//    '
+    useJoystick[1] = 1;
+    useJoystick[2] = 1;
 
     For(A, 1, 2)
     {
         {
             auto &j = conJoystick[A];
-            j.Up.val = SDL_HAT_UP;
-            j.Up.type = ConJoystick_t::JoyHat;
-            j.Up.id = 0;
-            j.Down.val = SDL_HAT_DOWN;
-            j.Down.type = ConJoystick_t::JoyHat;
-            j.Down.id = 0;
-            j.Left.val = SDL_HAT_LEFT;
-            j.Left.id = 0;
-            j.Left.type = ConJoystick_t::JoyHat;
-            j.Right.val = SDL_HAT_RIGHT;
-            j.Right.type = ConJoystick_t::JoyHat;
-            j.Right.id = 0;
+            j.Up.id = KEYCODE_PAD_UP;
+            j.Up.val = 1;
+            j.Up.type = ConJoystick_t::JoyButton;
 
-            j.Run.id = 2;
+            j.Down.id = KEYCODE_PAD_DOWN;
+            j.Down.val = 1;
+            j.Down.type = ConJoystick_t::JoyButton;
+
+            j.Left.id = KEYCODE_PAD_LEFT;
+            j.Left.val = 1;
+            j.Left.type = ConJoystick_t::JoyButton;
+
+            j.Right.id = KEYCODE_PAD_RIGHT;
+            j.Right.val = 1;
+            j.Right.type = ConJoystick_t::JoyButton;
+
+            j.Run.id = KEYCODE_B;
             j.Run.val = 1;
             j.Run.type = ConJoystick_t::JoyButton;
 
-            j.AltRun.id = 3;
+            j.AltRun.id = KEYCODE_Y;
             j.AltRun.val = 1;
             j.AltRun.type = ConJoystick_t::JoyButton;
 
-            j.Jump.id = 0;
+            j.Jump.id = KEYCODE_A;
             j.Jump.val = 1;
             j.Jump.type = ConJoystick_t::JoyButton;
 
-            j.AltJump.id = 1;
+            j.AltJump.id = KEYCODE_X;
             j.AltJump.val = 1;
             j.AltJump.type = ConJoystick_t::JoyButton;
 
-            j.Drop.id = 6;
+            j.Drop.id = KEYCODE_SELECT;
             j.Drop.val = 1;
             j.Drop.type = ConJoystick_t::JoyButton;
 
-            j.Start.id = 7;
+            j.Start.id = KEYCODE_START;
             j.Start.val = 1;
             j.Start.type = ConJoystick_t::JoyButton;
         }
     }
 
-    conKeyboard[1].Down = vbKeyDown;
-    conKeyboard[1].Left = vbKeyLeft;
-    conKeyboard[1].Up = vbKeyUp;
-    conKeyboard[1].Right = vbKeyRight;
-    conKeyboard[1].Jump = vbKeyZ;
-    conKeyboard[1].Run = vbKeyX;
-    conKeyboard[1].Drop = vbKeyShift;
-    conKeyboard[1].Start = vbKeyEscape;
-    conKeyboard[1].AltJump = vbKeyA;
-    conKeyboard[1].AltRun = vbKeyS;
-
-    conKeyboard[2].Down = vbKeyDown;
-    conKeyboard[2].Left = vbKeyLeft;
-    conKeyboard[2].Up = vbKeyUp;
-    conKeyboard[2].Right = vbKeyRight;
-    conKeyboard[2].Jump = vbKeyZ;
-    conKeyboard[2].Run = vbKeyX;
-    conKeyboard[2].Drop = vbKeyShift;
-    conKeyboard[2].Start = vbKeyEscape;
-    conKeyboard[2].AltJump = vbKeyA;
-    conKeyboard[2].AltRun = vbKeyS;
-
     OpenConfig();
-
-    if(useJoystick[1] > numJoysticks)
-        useJoystick[1] = 0;
-    if(useJoystick[2] > numJoysticks)
-        useJoystick[2] = 0;
 }
 
 
