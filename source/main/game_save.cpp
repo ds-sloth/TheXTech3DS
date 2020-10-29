@@ -136,13 +136,13 @@ void LoadGame()
         FileFormats::ReadSMBX64SavFileF(savePathAncient, sav);
     else
     {
-        pLogDebug("Game save file not found: %s", savePath.c_str());
+        printf("Game save file not found: %s", savePath.c_str());
         return;
     }
 
     if(!sav.meta.ReadFileValid)
     {
-        pLogWarning("Invalid game save file: %s [%s]; ", sav.meta.filename.c_str(), sav.meta.ERROR_info.c_str());
+        printf("Invalid game save file: %s [%s]; ", sav.meta.filename.c_str(), sav.meta.ERROR_info.c_str());
         return;
     }
 

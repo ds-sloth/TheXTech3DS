@@ -23,7 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <Logger/logger.h>
+// #include <Logger/logger.h>
 #include <Utils/files.h>
 #include <pge_delay.h>
 #include <fmt_format_ne.h>
@@ -340,7 +340,7 @@ int GameMain(const CmdLineSetup_t &setup)
                 PlayerCharacter2 = 0;
             }
 
-            pLogDebug("Clear check-points at Game Menu start");
+            printf("Clear check-points at Game Menu start");
             Checkpoint.clear();
             CheckpointsList.clear();
             WorldPlayer[1].Frame = 0;
@@ -1270,7 +1270,7 @@ void CheckActive()
 
         if(!focusLost)
         {
-            pLogDebug("Window Focus lost");
+            printf("Window Focus lost");
             focusLost = true;
         }
 
@@ -1285,7 +1285,7 @@ void CheckActive()
     }
 
     if(focusLost)
-        pLogDebug("Window Focus got back");
+        printf("Window Focus got back");
 
     if(MusicPaused)
         SoundResumeAll();
@@ -1332,7 +1332,7 @@ void AddCredit(std::string newCredit)
     if(numCredits > maxCreditsLines)
     {
         numCredits = maxCreditsLines;
-        pLogWarning("Can't add more credits lines: max limit has been excited ({0} linex maximum)", maxCreditsLines);
+        printf("Can't add more credits lines: max limit has been excited ({0} linex maximum)", maxCreditsLines);
         return;
     }
     Credit[numCredits].Text = newCredit;

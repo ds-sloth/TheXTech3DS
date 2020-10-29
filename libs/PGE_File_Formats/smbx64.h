@@ -46,7 +46,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = input.toUInt(&ok);
-        if(!ok) throw std::invalid_argument("Could not convert to unsigned int");
+        if(!ok) printf("EEEK!! Could not convert to unsigned int");
         #else
         *out = static_cast<unsigned int>(std::stoul(input));
         #endif
@@ -57,7 +57,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = input.toULong(&ok);
-        if(!ok) throw std::invalid_argument("Could not convert to unsigned long");
+        if(!ok) printf("EEEK!! Could not convert to unsigned long");
         #else
         *out = std::stoul(input);
         #endif
@@ -68,7 +68,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = input.toULongLong(&ok);
-        if(!ok) throw std::invalid_argument("Could not convert to unsigned long long");
+        if(!ok) printf("EEEK!! Could not convert to unsigned long long");
         #else
         *out = std::stoull(input);
         #endif
@@ -78,7 +78,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = static_cast<int>(input.toUInt(&ok));
-        if(!ok) throw std::invalid_argument("Could not convert to unsigned int");
+        if(!ok) printf("EEEK!! Could not convert to unsigned int");
         #else
         *out = static_cast<int>(static_cast<unsigned int>(std::stoul(input)));
         #endif
@@ -88,7 +88,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = static_cast<long>(input.toULong(&ok));
-        if(!ok) throw std::invalid_argument("Could not convert to unsigned long");
+        if(!ok) printf("EEEK!! Could not convert to unsigned long");
         #else
         *out = static_cast<long>(std::stoul(input));
         #endif
@@ -98,7 +98,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = static_cast<long long>(input.toULongLong(&ok));
-        if(!ok) throw std::invalid_argument("Could not convert to unsigned long long");
+        if(!ok) printf("EEEK!! Could not convert to unsigned long long");
         #else
         *out = static_cast<long long>(std::stoull(input));
         #endif
@@ -109,7 +109,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = input.toInt(&ok);
-        if(!ok) throw std::invalid_argument("Could not convert to int");
+        if(!ok) printf("EEEK!! Could not convert to int");
         #else
         *out = std::stoi(input);
         #endif
@@ -120,7 +120,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = input.toLong(&ok);
-        if(!ok) throw std::invalid_argument("Could not convert to long");
+        if(!ok) printf("EEEK!! Could not convert to long");
         #else
         *out = std::stol(input);
         #endif
@@ -130,7 +130,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = input.toLongLong(&ok);
-        if(!ok) throw std::invalid_argument("Could not convert to long long");
+        if(!ok) printf("EEEK!! Could not convert to long long");
         #else
         *out = std::stoll(input);
         #endif
@@ -142,7 +142,7 @@ namespace SMBX64
 #ifdef PGE_FILES_QT
         bool ok=true;
         *out = input.toFloat(&ok);
-        if(!ok) throw std::invalid_argument("Could not convert to Float");
+        if(!ok) printf("EEEK!! Could not convert to Float");
 #else
         *out = std::stof(input);
 #endif
@@ -154,7 +154,7 @@ namespace SMBX64
 #ifdef PGE_FILES_QT
         bool ok=true;
         *out = input.toDouble(&ok);
-        if(!ok) throw std::invalid_argument("Could not convert to Float");
+        if(!ok) printf("EEEK!! Could not convert to Float");
 #else
         *out = std::stod(input);
 #endif
@@ -167,7 +167,7 @@ namespace SMBX64
         else if(input != "0") // FIXME: Is it correct? Or too hackish?
             *out = true;
         else
-            throw std::invalid_argument(std::string("Could not convert to bool (must be empty, \"0\", \"!0\" or \"1\")"));
+            printf("EEEK!! Could not convert to bool (must be empty, \"0\", \"!0\" or \"1\")");
     }
 
     inline void ReadCSVBool(bool*out, PGESTRING &input)
@@ -185,7 +185,7 @@ namespace SMBX64
         else if( input == "!0" || input == "1" )
             *out = true;
         else
-            throw std::invalid_argument(std::string("Could not convert CSV Bool (must be #TRUE# or #FALSE#)"));
+            printf("EEEK!! Could not convert CSV Bool (must be #TRUE# or #FALSE#)");
     }
 
     inline void ReadCSVBool(int*out, PGESTRING &input)
@@ -203,7 +203,7 @@ namespace SMBX64
         else if( input == "!0" || input == "1"  )
             *out = 1;
         else
-            throw std::invalid_argument(std::string("Could not convert CSV Bool (must be #TRUE# or #FALSE#)"));
+            printf("EEEEK!! Could not convert CSV Bool (must be #TRUE# or #FALSE#)");
     }
 
     inline void ReadCSVBool(long*out, PGESTRING &input)
@@ -221,7 +221,7 @@ namespace SMBX64
         else if( input == "!0" || input == "1" )
             *out = 1;
         else
-            throw std::invalid_argument(std::string("Could not convert CSV Bool (must be #TRUE# or #FALSE#)"));
+            printf("EEEEK!! Could not convert CSV Bool (must be #TRUE# or #FALSE#)");
     }
 
     inline void ReadSIntFromFloat(int*out, PGESTRING &input)
@@ -229,7 +229,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = qRound(input.toDouble(&ok));
-        if(!ok) throw std::invalid_argument("Could not convert to Double");
+        if(!ok) printf("EEEK!! Could not convert to Double");
         #else
         *out = static_cast<int>(std::round(std::stod(input)));
         #endif
@@ -240,7 +240,7 @@ namespace SMBX64
         #ifdef PGE_FILES_QT
         bool ok=true;
         *out = static_cast<long>(std::round(input.toDouble(&ok)));
-        if(!ok) throw std::invalid_argument("Could not convert to Double");
+        if(!ok) printf("EEEK!! Could not convert to Double");
         #else
         *out = static_cast<long>(std::round(std::stod(input)));
         #endif

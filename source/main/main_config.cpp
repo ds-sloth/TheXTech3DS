@@ -31,7 +31,6 @@
 #include <IniProcessor/ini_processing.h>
 #include <fmt_format_ne.h>
 #include <AppPath/app_path.h>
-#include <Logger/logger.h>
 
 void OpenConfig_preSetup()
 {
@@ -112,7 +111,7 @@ void OpenConfig()
     if(resBool && !resChanged)
         ChangeScreen();
 
-    pLogDebug("Loaded config: %s", configPath.c_str());
+    printf("Loaded config: %s", configPath.c_str());
 }
 
 void SaveConfig()
@@ -162,5 +161,5 @@ void SaveConfig()
     AppPathManager::syncFs();
 #endif
 
-    pLogDebug("Saved config: %s", configPath.c_str());
+    printf("Saved config: %s", configPath.c_str());
 }

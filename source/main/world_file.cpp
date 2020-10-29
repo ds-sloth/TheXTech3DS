@@ -32,7 +32,7 @@
 #include <Utils/strings.h>
 #include <Utils/files.h>
 #include <Utils/dir_list_ci.h>
-#include <Logger/logger.h>
+// #include <Logger/logger.h>
 #include <PGE_File_Formats/file_formats.h>
 
 void OpenWorld(std::string FilePath)
@@ -124,7 +124,7 @@ void OpenWorld(std::string FilePath)
 
         if(terra.Type > maxTileType) // Drop ID to 1 for Tiles of out of range IDs
         {
-            pLogWarning("TILE-%d ID is out of range (max types %d), reset to TILE-1", terra.Type, maxTileType);
+            printf("TILE-%d ID is out of range (max types %d), reset to TILE-1", terra.Type, maxTileType);
             terra.Type = 1;
         }
     }
@@ -151,7 +151,7 @@ void OpenWorld(std::string FilePath)
 
         if(scene.Type > maxSceneType) // Drop ID to 1 for Scenery of out of range IDs
         {
-            pLogWarning("TILE-%d ID is out of range (max types %d), reset to TILE-1", scene.Type, maxSceneType);
+            printf("TILE-%d ID is out of range (max types %d), reset to TILE-1", scene.Type, maxSceneType);
             scene.Type = 1;
         }
     }
@@ -180,7 +180,7 @@ void OpenWorld(std::string FilePath)
 
         if(pp.Type > maxPathType) // Drop ID to 1 for Path of out of range IDs
         {
-            pLogWarning("PATH-%d ID is out of range (max types %d), reset to PATH-1", pp.Type, maxPathType);
+            printf("PATH-%d ID is out of range (max types %d), reset to PATH-1", pp.Type, maxPathType);
             pp.Type = 1;
         }
     }
@@ -220,7 +220,7 @@ void OpenWorld(std::string FilePath)
 
         if(ll.Type > maxLevelType) // Drop ID to 1 for Levels of out of range IDs
         {
-            pLogWarning("PATH-%d ID is out of range (max types %d), reset to PATH-1", ll.Type, maxLevelType);
+            printf("PATH-%d ID is out of range (max types %d), reset to PATH-1", ll.Type, maxLevelType);
             ll.Type = 1;
         }
     }

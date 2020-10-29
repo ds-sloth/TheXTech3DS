@@ -23,7 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <Logger/logger.h>
+// #include <Logger/logger.h>
 #include <Utils/elapsed_timer.h>
 #include <pge_delay.h>
 #include <fmt_format_ne.h>

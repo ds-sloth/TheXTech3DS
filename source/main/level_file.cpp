@@ -36,7 +36,7 @@
 #include <DirManager/dirman.h>
 #include <Utils/files.h>
 #include <Utils/dir_list_ci.h>
-#include <Logger/logger.h>
+// #include <Logger/logger.h>
 #include <PGE_File_Formats/file_formats.h>
 
 
@@ -74,7 +74,7 @@ bool OpenLevel(std::string FilePath)
     LevelData lvl;
     if(!FileFormats::OpenLevelFile(FilePath, lvl))
     {
-        pLogWarning("Error of level \"%s\" file loading: %s (line %d).",
+        printf("Error of level \"%s\" file loading: %s (line %ld).",
                     FilePath.c_str(),
                     lvl.meta.ERROR_info.c_str(),
                     lvl.meta.ERROR_linenum);
@@ -237,7 +237,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
 
         if(block.Type > maxBlockType) // Drop ID to 1 for blocks of out of range IDs
         {
-            pLogWarning("Block-%d ID is out of range (max types %d), reset to Block-1", block.Type, maxBlockType);
+            printf("Block-%d ID is out of range (max types %d), reset to Block-1", block.Type, maxBlockType);
             block.Type = 1;
         }
     }
@@ -291,7 +291,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
 
         if(bgo.Type > maxBackgroundType) // Drop ID to 1 for BGOs of out of range IDs
         {
-            pLogWarning("BGO-%d ID is out of range (max types %d), reset to BGO-1", bgo.Type, maxBackgroundType);
+            printf("BGO-%d ID is out of range (max types %d), reset to BGO-1", bgo.Type, maxBackgroundType);
             bgo.Type = 1;
         }
     }
@@ -319,7 +319,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
 
         if(npc.Type > maxNPCType) // Drop ID to 1 for NPCs of out of range IDs
         {
-            pLogWarning("NPC-%d ID is out of range (max types %d), reset to NPC-1", npc.Type, maxNPCType);
+            printf("NPC-%d ID is out of range (max types %d), reset to NPC-1", npc.Type, maxNPCType);
             npc.Type = 1;
         }
 

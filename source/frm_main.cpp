@@ -32,7 +32,7 @@
 #include "custom_draw_image.h"
 
 #include <AppPath/app_path.h>
-#include <Logger/logger.h>
+// #include <Logger/logger.h>
 #include <Utils/files.h>
 #include <Utils/elapsed_timer.h>
 #include <DirManager/dirman.h>
@@ -66,9 +66,9 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
 
     bool res = false;
 
-    LoadLogSettings(setup.interprocess, setup.verboseLogging);
+    // LoadLogSettings(setup.interprocess, setup.verboseLogging);
     //Write into log the application start event
-    pLogDebug("<Application started>");
+    printf("<Application started>");
 
     updateViewport();
 
@@ -88,8 +88,8 @@ void FrmMain::freeSDL()
     C3D_Fini();
     gfxExit();
 
-    pLogDebug("<Application closed>");
-    CloseLog();
+    printf("<Application closed>");
+    // CloseLog();
 }
 
 void FrmMain::show()
@@ -444,7 +444,8 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
 
     if(!tx.texture)
     {
-        D_pLogWarningNA("Attempt to render an empty texture!");
+        // D_printfNA("Attempt to render an empty texture!");
+        printf("Attempt to render an empty texture!\n");
         return;
     }
 

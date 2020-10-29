@@ -28,7 +28,7 @@
 
 #include "sound.h"
 
-#include <Logger/logger.h>
+// #include <Logger/logger.h>
 #include <IniProcessor/ini_processing.h>
 // #include <SDL2/SDL_mixer_ext.h>
 #include <Utils/files.h>
@@ -108,7 +108,7 @@ void InitMixerX()
 
     if(g_mixerLoaded)
         return;
-    // pLogDebug("Opening sound...");
+    // printf("Opening sound...");
     // Mix_Init(MIX_INIT_MID|MIX_INIT_MOD|MIX_INIT_FLAC|MIX_INIT_OGG|MIX_INIT_OPUS|MIX_INIT_MP3);
     // if(Mix_OpenAudio(44100, AUDIO_S16LSB, 2, 2048) < 0)
     // {
@@ -158,7 +158,7 @@ static void AddMusic(const std::string &root,
         Music_t m;
         m.path = root + f;
         m.volume = volume;
-        pLogDebug("Adding music [%s] '%s'", alias.c_str(), m.path.c_str());
+        printf("Adding music [%s] '%s'", alias.c_str(), m.path.c_str());
         auto a = music.find(alias);
         if(a == music.end())
             music.insert({alias, m});
@@ -221,7 +221,7 @@ static void AddSfx(const std::string &root,
                 else
                 {
                     m.chunk = backup;
-                    // pLogWarning("ERROR: SFX '%s' loading error: %s", m.path.c_str(), Mix_GetError());
+                    // printf("ERROR: SFX '%s' loading error: %s", m.path.c_str(), Mix_GetError());
                 }
             }
         }
@@ -230,7 +230,7 @@ static void AddSfx(const std::string &root,
             SFX_t m;
             m.path = root + f;
             m.volume = 128;
-            pLogDebug("Adding SFX [%s] '%s'", alias.c_str(), m.path.c_str());
+            printf("Adding SFX [%s] '%s'", alias.c_str(), m.path.c_str());
             // m.chunk = Mix_LoadWAV(m.path.c_str());
             m.channel = -1;
             if(m.chunk)
@@ -243,7 +243,7 @@ static void AddSfx(const std::string &root,
             }
             else
             {
-                // pLogWarning("ERROR: SFX '%s' loading error: %s", m.path.c_str(), Mix_GetError());
+                // printf("ERROR: SFX '%s' loading error: %s", m.path.c_str(), Mix_GetError());
                 if(!isCustom)
                     g_errorsSfx++;
             }
@@ -265,7 +265,7 @@ void SoundPauseAll()
 {
     if(noSound)
         return;
-    pLogDebug("Pause all sound");
+    printf("Pause all sound");
     // Mix_Pause(-1);
     // Mix_PauseMusic();
 }
@@ -274,7 +274,7 @@ void SoundResumeAll()
 {
     if(noSound)
         return;
-    pLogDebug("Resume all sound");
+    printf("Resume all sound");
     // Mix_Resume(-1);
     // Mix_ResumeMusic();
 }
@@ -297,7 +297,7 @@ void PlayMusic(std::string Alias, int fadeInMs)
         // g_curMusic = Mix_LoadMUS(m.path.c_str());
         if(!g_curMusic)
         {
-            // pLogWarning("Music '%s' opening error: %s", m.path.c_str(), Mix_GetError());
+            // printf("Music '%s' opening error: %s", m.path.c_str(), Mix_GetError());
         }
         else
         {
@@ -342,7 +342,7 @@ void StartMusic(int A, int fadeInMs)
         std::string mus = fmt::format_ne("wmusic{0}", A);
         if(curWorldMusic == g_customWldMusicId)
         {
-            pLogDebug("Starting custom music [%s]", curWorldMusicFile.c_str());
+            printf("Starting custom music [%s]", curWorldMusicFile.c_str());
             // if(g_curMusic)
             //     Mix_FreeMusic(g_curMusic);
             // g_curMusic = Mix_LoadMUS((FileNamePath + "/" + curWorldMusicFile).c_str());
@@ -354,7 +354,7 @@ void StartMusic(int A, int fadeInMs)
         }
         else
         {
-            pLogDebug("Starting world music [%s]", mus.c_str());
+            printf("Starting world music [%s]", mus.c_str());
             PlayMusic(mus, fadeInMs);
         }
         musicName = mus;
@@ -363,11 +363,11 @@ void StartMusic(int A, int fadeInMs)
     {
         StopMusic();
         if(FreezeNPCs) {
-            pLogDebug("Starting special music [stmusic]");
+            printf("Starting special music [stmusic]");
             PlayMusic("stmusic", fadeInMs);
             musicName = "stmusic";
         } else {
-            pLogDebug("Starting special music [smusic]");
+            printf("Starting special music [smusic]");
             PlayMusic("smusic", fadeInMs);
             musicName = "smusic";
         }
@@ -380,7 +380,7 @@ void StartMusic(int A, int fadeInMs)
         std::string mus = fmt::format_ne("music{0}", curMusic);
         if(curMusic == g_customLvlMusicId)
         {
-            // pLogDebug("Starting custom music [%s]", CustomMusic[A].c_str());
+            // printf("Starting custom music [%s]", CustomMusic[A].c_str());
             // if(g_curMusic)
             //     Mix_FreeMusic(g_curMusic);
             // g_curMusic = Mix_LoadMUS((FileNamePath + "/" + CustomMusic[A]).c_str());
@@ -392,7 +392,7 @@ void StartMusic(int A, int fadeInMs)
         }
         else
         {
-            pLogDebug("Starting level music [%s]", mus.c_str());
+            printf("Starting level music [%s]", mus.c_str());
             PlayMusic(mus);
         }
         musicName = mus;
@@ -406,7 +406,7 @@ void StopMusic()
     if(!musicPlaying || noSound)
         return;
 
-    pLogDebug("Stopping music");
+    printf("Stopping music");
 
     // Mix_HaltMusic();
     // if(g_curMusic)
@@ -419,7 +419,7 @@ void FadeOutMusic(int ms)
 {
     if(!musicPlaying || noSound)
         return;
-    pLogDebug("Fading out music");
+    printf("Fading out music");
     // Mix_FadeOutMusic(ms);
     musicPlaying = false;
 }
@@ -532,7 +532,7 @@ void InitSound()
     UpdateLoad();
     if(!Files::fileExists(musicIni) && !Files::fileExists(sfxIni))
     {
-        pLogWarning("music.ini and sounds.ini are missing");
+        printf("music.ini and sounds.ini are missing");
         // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
         //                          "music.ini and sounds.ini are missing",
         //                          "Files music.ini and sounds.ini are not exist, game will work without default music and SFX.",
@@ -543,7 +543,7 @@ void InitSound()
     }
     else if(!Files::fileExists(musicIni))
     {
-        pLogWarning("music.ini is missing");
+        printf("music.ini is missing");
         // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
         //                          "music.ini is missing",
         //                          "File music.ini is not exist, game will work without default music.",
@@ -551,7 +551,7 @@ void InitSound()
     }
     else if(!Files::fileExists(sfxIni))
     {
-        pLogWarning("sounds.ini is missing");
+        printf("sounds.ini is missing");
         // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
         //                          "sounds.ini is missing",
         //                          "File sounds.ini is not exist, game will work without SFX.",
@@ -578,7 +578,8 @@ void InitSound()
 
     if(g_errorsSfx > 0)
     {
-        std::string msg = fmt::format_ne("Failed to load some SFX assets. Loo a log file to get more details:\n{0}", getLogFilePath());
+        printf("had an SFX error...\n");
+        // std::string msg = fmt::format_ne("Failed to load some SFX assets. Loo a log file to get more details:\n{0}", getLogFilePath());
         // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Sounds loading error", msg.c_str(), frmMain.getWindow());
     }
 }

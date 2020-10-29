@@ -23,7 +23,6 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <Logger/logger.h>
 #include <pge_delay.h>
 
 #include "../globals.h"
@@ -65,7 +64,7 @@ void GameLoop()
     {
         EndLevel = true;
         ErrorQuit = false;
-        pLogWarning("Quit level because of an error");
+        printf("Quit level because of an error");
         frmMain.clearBuffer();
     }
 
@@ -75,7 +74,7 @@ void GameLoop()
         {
             if(Checkpoint == FullFileName)
             {
-                pLogDebug("Clear check-points at GameLoop()");
+                printf("Clear check-points at GameLoop()");
                 Checkpoint.clear();
                 CheckpointsList.clear();
             }
@@ -444,7 +443,7 @@ void PauseGame(int plr)
                                 break;
                             case 2: // Reset checkpoints
                                 stopPause = true;
-                                pLogDebug("Clear check-points from a menu");
+                                printf("Clear check-points from a menu");
                                 Checkpoint.clear();
                                 CheckpointsList.clear();
                                 numStars = 0;

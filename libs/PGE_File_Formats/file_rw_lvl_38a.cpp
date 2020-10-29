@@ -112,7 +112,7 @@ bool FileFormats::ReadSMBX38ALvlFileHeaderT(PGE_FileFormats_misc::TextInput &inf
 
     inf.seek(0, PGE_FileFormats_misc::TextFileInput::begin);
 
-    try
+    // try
     {
         CSVPGEReader readerBridge(&inf);
         auto dataReader = MakeCSVReaderForPGESTRING(&readerBridge, '|');
@@ -162,28 +162,28 @@ bool FileFormats::ReadSMBX38ALvlFileHeaderT(PGE_FileFormats_misc::TextInput &inf
                 dataReader.ReadDataLine();
         }
     }
-    catch(const std::exception &err)
-    {
-        FileData.meta.ReadFileValid = false;
-        FileData.meta.ERROR_info = "Invalid file format, detected file SMBX-" + fromNum(FileData.meta.RecentFormatVersion) + " format\n"
-                                   "Caused by: \n" + PGESTRING(exception_to_pretty_string(err).c_str());
-        FileData.meta.ERROR_linenum = inf.getCurrentLineNumber();
-        FileData.meta.ERROR_linedata = "";
-        return false;
-    }
-    catch(...)
-    {
-        /*
-         * This is an attempt to fix crash on Windows 32 bit release assembly,
-         * and possible, on some other platforms too
-         */
-        FileData.meta.ReadFileValid = false;
-        FileData.meta.ERROR_info = "Invalid file format, detected file SMBX-" + fromNum(FileData.meta.RecentFormatVersion) + " format\n"
-                                   "Caused by unknown exception\n";
-        FileData.meta.ERROR_linenum = inf.getCurrentLineNumber();
-        FileData.meta.ERROR_linedata = "";
-        return false;
-    }
+    // catch(const std::exception &err)
+    // {
+    //     FileData.meta.ReadFileValid = false;
+    //     FileData.meta.ERROR_info = "Invalid file format, detected file SMBX-" + fromNum(FileData.meta.RecentFormatVersion) + " format\n"
+    //                                "Caused by: \n" + PGESTRING(exception_to_pretty_string(err).c_str());
+    //     FileData.meta.ERROR_linenum = inf.getCurrentLineNumber();
+    //     FileData.meta.ERROR_linedata = "";
+    //     return false;
+    // }
+    // catch(...)
+    // {
+
+    //      * This is an attempt to fix crash on Windows 32 bit release assembly,
+    //      * and possible, on some other platforms too
+
+    //     FileData.meta.ReadFileValid = false;
+    //     FileData.meta.ERROR_info = "Invalid file format, detected file SMBX-" + fromNum(FileData.meta.RecentFormatVersion) + " format\n"
+    //                                "Caused by unknown exception\n";
+    //     FileData.meta.ERROR_linenum = inf.getCurrentLineNumber();
+    //     FileData.meta.ERROR_linedata = "";
+    //     return false;
+    // }
 
     FileData.CurSection = 0;
     FileData.playmusic = 0;
@@ -295,7 +295,7 @@ bool FileFormats::ReadSMBX38ALvlFile(PGE_FileFormats_misc::TextInput &in, LevelD
 
     in.seek(0, PGE_FileFormats_misc::TextFileInput::begin);
 
-    try
+    // try
     {
         CSVPGEReader readerBridge(&in);
         auto dataReader = MakeCSVReaderForPGESTRING(&readerBridge, '|');
@@ -1227,60 +1227,60 @@ bool FileFormats::ReadSMBX38ALvlFile(PGE_FileFormats_misc::TextInput &in, LevelD
                 dataReader.ReadDataLine();
         }//while is not EOF
     }
-    catch(const std::exception &err)
-    {
-        // First we try to extract the line number out of the nested exception.
-        const std::exception *curErr = &err;
-        const std::nested_exception *possibleNestedException = dynamic_cast<const std::nested_exception *>(curErr);
+    // catch(const std::exception &err)
+    // {
+    //     // First we try to extract the line number out of the nested exception.
+    //     const std::exception *curErr = &err;
+    //     const std::nested_exception *possibleNestedException = dynamic_cast<const std::nested_exception *>(curErr);
 
-        if(possibleNestedException)
-        {
-            try
-            {
-                std::rethrow_exception(possibleNestedException->nested_ptr());
-            }
-            catch(const parse_error &parseErr)
-            {
-                FileData.meta.ERROR_linenum = static_cast<long>(parseErr.get_line_number());
-            }
-            catch(...)
-            {
-                // Do Nothing
-            }
-        }
+    //     if(possibleNestedException)
+    //     {
+    //         try
+    //         {
+    //             std::rethrow_exception(possibleNestedException->nested_ptr());
+    //         }
+    //         catch(const parse_error &parseErr)
+    //         {
+    //             FileData.meta.ERROR_linenum = static_cast<long>(parseErr.get_line_number());
+    //         }
+    //         catch(...)
+    //         {
+    //             // Do Nothing
+    //         }
+    //     }
 
-        // Now fill in the error data.
-        FileData.meta.ReadFileValid = false;
-        FileData.meta.ERROR_info = "Invalid file format, detected file SMBX-" + fromNum(FileData.meta.RecentFormatVersion) + " format\n"
-                                   "Caused by: \n" + PGESTRING(exception_to_pretty_string(err).c_str());
-        if(!IsEmpty(identifier))
-            FileData.meta.ERROR_info += "\n Field type " + identifier;
+    //     // Now fill in the error data.
+    //     FileData.meta.ReadFileValid = false;
+    //     FileData.meta.ERROR_info = "Invalid file format, detected file SMBX-" + fromNum(FileData.meta.RecentFormatVersion) + " format\n"
+    //                                "Caused by: \n" + PGESTRING(exception_to_pretty_string(err).c_str());
+    //     if(!IsEmpty(identifier))
+    //         FileData.meta.ERROR_info += "\n Field type " + identifier;
 
-        // If we were unable to find error line number from the exception, then get the line number from the file reader.
-        if(FileData.meta.ERROR_linenum == 0)
-            FileData.meta.ERROR_linenum = in.getCurrentLineNumber();
+    //     // If we were unable to find error line number from the exception, then get the line number from the file reader.
+    //     if(FileData.meta.ERROR_linenum == 0)
+    //         FileData.meta.ERROR_linenum = in.getCurrentLineNumber();
 
-        FileData.meta.ERROR_linedata = "";
-        return false;
-    }
-    catch(...)
-    {
-        /*
-         * This is an attempt to fix crash on Windows 32 bit release assembly,
-         * and possible, on some other platforms too
-         */
-        // Now fill in the error data.
-        FileData.meta.ReadFileValid = false;
-        FileData.meta.ERROR_info = "Invalid file format, detected file SMBX-" + fromNum(FileData.meta.RecentFormatVersion) + " format\n"
-                                   "Caused by unknown exception\n";
-        if(!IsEmpty(identifier))
-            FileData.meta.ERROR_info += "\n Field type " + identifier;
-        // If we were unable to find error line number from the exception, then get the line number from the file reader.
-        if(FileData.meta.ERROR_linenum == 0)
-            FileData.meta.ERROR_linenum = in.getCurrentLineNumber();
-        FileData.meta.ERROR_linedata = "";
-        return false;
-    }
+    //     FileData.meta.ERROR_linedata = "";
+    //     return false;
+    // }
+    // catch(...)
+    // {
+    //     /*
+    //      * This is an attempt to fix crash on Windows 32 bit release assembly,
+    //      * and possible, on some other platforms too
+    //      */
+    //     // Now fill in the error data.
+    //     FileData.meta.ReadFileValid = false;
+    //     FileData.meta.ERROR_info = "Invalid file format, detected file SMBX-" + fromNum(FileData.meta.RecentFormatVersion) + " format\n"
+    //                                "Caused by unknown exception\n";
+    //     if(!IsEmpty(identifier))
+    //         FileData.meta.ERROR_info += "\n Field type " + identifier;
+    //     // If we were unable to find error line number from the exception, then get the line number from the file reader.
+    //     if(FileData.meta.ERROR_linenum == 0)
+    //         FileData.meta.ERROR_linenum = in.getCurrentLineNumber();
+    //     FileData.meta.ERROR_linedata = "";
+    //     return false;
+    // }
 
     LevelAddInternalEvents(FileData);
     FileData.CurSection = 0;

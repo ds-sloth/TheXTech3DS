@@ -17,9 +17,9 @@
  * or see <http://www.gnu.org/licenses/>.
  */
 
-#include <SDL2/SDL_messagebox.h>
-#include <SDL2/SDL_version.h>
-#include <SDL2/SDL_mixer_ext.h>
+// #include <SDL2/SDL_messagebox.h>
+// #include <SDL2/SDL_version.h>
+// #include <SDL2/SDL_mixer_ext.h>
 #include <cstdlib>
 #include <signal.h>
 
@@ -302,7 +302,7 @@ static void removePersonalData(std::string &log)
 
 static std::string getStacktrace()
 {
-    D_pLogDebugNA("Initializing std::string...");
+    D_printfNA("Initializing std::string...");
     std::string bkTrace;
 
 #if defined(_WIN32)
@@ -312,11 +312,11 @@ static std::string getStacktrace()
     void  *array[400];
     int size;
     char **strings;
-    D_pLogDebugNA("Requesting backtrace...");
+    D_printfNA("Requesting backtrace...");
     size = backtrace(array, 400);
-    D_pLogDebugNA("Converting...");
+    D_printfNA("Converting...");
     strings = backtrace_symbols(array, size);
-    D_pLogDebugNA("Filling std::string...");
+    D_printfNA("Filling std::string...");
 
     for(int j = 0; j < size; j++)
     {
@@ -324,14 +324,14 @@ static std::string getStacktrace()
         bkTrace.push_back('\n');
     }
 
-    D_pLogDebugNA("DONE!");
+    D_printfNA("DONE!");
 
 #elif defined(__ANDROID__)
     const size_t max = 400;
     void *buffer[max];
     std::ostringstream oss;
     androidDumpBacktrace(oss, buffer, captureBacktrace(buffer, max));
-    D_pLogDebugNA("DONE!");
+    D_printfNA("DONE!");
     bkTrace = oss.str();
 
 #else
@@ -453,11 +453,11 @@ static void handle_signal(int signal, siginfo_t *siginfo, void * /*context*/)
 #ifndef _WIN32  //Unsupported signals by Windows
 
     case SIGHUP:
-        pLogWarning("Terminal was closed");
+        printf("Terminal was closed");
         abortEngine(signal);
 
     case SIGQUIT:
-        pLogWarning("<Quit command>");
+        printf("<Quit command>");
         abortEngine(signal);
 
     case SIGKILL:
@@ -614,7 +614,7 @@ static void handle_signal(int signal, siginfo_t *siginfo, void * /*context*/)
 
     case SIGSEGV:
     {
-        D_pLogDebugNA("\n===========================================================\n"
+        D_printfNA("\n===========================================================\n"
                       "Attempt to take a backtrace..."
                       "(if log ends before \"DONE\" will be shown, seems also trouble in the backtracing function too...)");
         std::string stack = getStacktrace();

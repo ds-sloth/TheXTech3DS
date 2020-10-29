@@ -33,8 +33,6 @@
 #include "../blocks.h"
 #include "../graphics.h"
 
-#include <Logger/logger.h>
-
 void NPCHit(int A, int B, int C)
 {
     NPC_t tempNPC;
@@ -1305,7 +1303,7 @@ void NPCHit(int A, int B, int C)
             NPC[A].RealSpeedX = 0;
             NPC[A].Special = 0;
             NPC[A].Frame = 0;
-            pLogDebug("Shell stomp, X distance: [%g], Y=[%g]", std::abs(NPC[numNPCs].Location.X - NPC[A].Location.X), NPC[numNPCs].Location.Y);
+            printf("Shell stomp, X distance: [%g], Y=[%g]", std::abs(NPC[numNPCs].Location.X - NPC[A].Location.X), NPC[numNPCs].Location.Y);
             if(NPC[A].Type >= 109 && NPC[A].Type <= 120)
                 NewEffect(10, NPC[A].Location);
         }

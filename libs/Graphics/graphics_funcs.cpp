@@ -20,7 +20,7 @@
 #include <FileMapper/file_mapper.h>
 
 #include "graphics_funcs.h"
-#include <Logger/logger.h>
+// #include <Logger/logger.h>
 
 #ifdef DEBUG_BUILD
 #include <Utils/elapsed_timer.h>
@@ -106,9 +106,9 @@ FIBITMAP *GraphicsHelps::loadImage(std::string file, bool convertTo32bit)
     }
 
 #ifdef DEBUG_BUILD
-    D_pLogDebug("File read of texture %s passed in %d nanoseconds", file.c_str(), static_cast<int>(fReadTimeElapsed));
-    D_pLogDebug("Conv to 32-bit of %s passed in %d nanoseconds", file.c_str(), static_cast<int>(imgConvertElapsed));
-    D_pLogDebug("Total Loading of image %s passed in %d nanoseconds", file.c_str(), static_cast<int>(loadingTime.nanoelapsed()));
+    D_printf("File read of texture %s passed in %d nanoseconds", file.c_str(), static_cast<int>(fReadTimeElapsed));
+    D_printf("Conv to 32-bit of %s passed in %d nanoseconds", file.c_str(), static_cast<int>(imgConvertElapsed));
+    D_printf("Total Loading of image %s passed in %d nanoseconds", file.c_str(), static_cast<int>(loadingTime.nanoelapsed()));
 #endif
     return img;
 }

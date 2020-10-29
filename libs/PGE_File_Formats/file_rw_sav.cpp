@@ -98,7 +98,7 @@ bool FileFormats::ReadSMBX64SavFile(PGE_FileFormats_misc::TextInput &in, Gamesav
     //Enable strict mode for SMBX LVL file format
     FileData.meta.smbx64strict = true;
 
-    try
+    // try
     {
         ///////////////////////////////////////Begin file///////////////////////////////////////
         nextLine();
@@ -228,23 +228,23 @@ successful:
         FileData.meta.ReadFileValid = true;
         return true;
     }
-    catch(const std::exception &err)
-    {
-        if(file_format > 0)
-            FileData.meta.ERROR_info = "Detected file format: SMBX-" + fromNum(file_format) + " is invalid\n";
-        else
-            FileData.meta.ERROR_info = "It is not an SMBX game save file\n";
-        #ifdef PGE_FILES_QT
-        FileData.meta.ERROR_info += QString::fromStdString(exception_to_pretty_string(err));
-        #else
-        FileData.meta.ERROR_info += exception_to_pretty_string(err);
-        #endif
-        FileData.meta.ERROR_linenum = in.getCurrentLineNumber();
-        FileData.meta.ERROR_linedata = line;
-        FileData.meta.ReadFileValid = false;
-        PGE_CutLength(FileData.meta.ERROR_linedata, 50);
-        PGE_FilterBinary(FileData.meta.ERROR_linedata);
-        return false;
-    }
+    // catch(const std::exception &err)
+    // {
+    //     if(file_format > 0)
+    //         FileData.meta.ERROR_info = "Detected file format: SMBX-" + fromNum(file_format) + " is invalid\n";
+    //     else
+    //         FileData.meta.ERROR_info = "It is not an SMBX game save file\n";
+    //     #ifdef PGE_FILES_QT
+    //     FileData.meta.ERROR_info += QString::fromStdString(exception_to_pretty_string(err));
+    //     #else
+    //     FileData.meta.ERROR_info += exception_to_pretty_string(err);
+    //     #endif
+    //     FileData.meta.ERROR_linenum = in.getCurrentLineNumber();
+    //     FileData.meta.ERROR_linedata = line;
+    //     FileData.meta.ReadFileValid = false;
+    //     PGE_CutLength(FileData.meta.ERROR_linedata, 50);
+    //     PGE_FilterBinary(FileData.meta.ERROR_linedata);
+    //     return false;
+    // }
 }
 

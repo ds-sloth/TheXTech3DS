@@ -100,7 +100,7 @@ void SetupPlayers()
             Player[A].State = 2;
             Player[A].Hearts = 2;
         }
-        pLogDebug("Clear check-points at Battle Mode begining");
+        printf("Clear check-points at Battle Mode begining");
         Checkpoint.clear();
         CheckpointsList.clear();
     }
@@ -342,7 +342,7 @@ void SetupPlayers()
 
     if(Checkpoint == FullFileName && !Checkpoint.empty()) // if this level has a checkpoint the put the player in the correct position
     {
-        pLogDebug("Trying to restore %zu checkpoints...", CheckpointsList.size());
+        printf("Trying to restore %zu checkpoints...", CheckpointsList.size());
         for(int cpId = 0; cpId < int(CheckpointsList.size()); cpId++)
         {
             auto &cp = CheckpointsList[size_t(cpId)];
@@ -384,7 +384,7 @@ void SetupPlayers()
                         Player[B].Location.Y = Block[C].Location.Y - Player[B].Location.Height;
                         Player[B].Location.X = NPC[A].Location.X + NPC[A].Location.Width / 2.0 - Player[B].Location.Width / 2.0;
                         CheckSection(B);
-                        pLogDebug("Restore player %d at checkpoint ID=%d by X=%g, Y=%g",
+                        printf("Restore player %d at checkpoint ID=%d by X=%g, Y=%g",
                                   B, cp.id, Player[B].Location.X, Player[B].Location.Y);
                     }
 
@@ -401,7 +401,7 @@ void SetupPlayers()
     // if not in the level for the checkpoint, blank the checkpoint
     else if(StartLevel != FileNameFull)
     {
-        pLogDebug("Clear check-points at SetupPlayers()");
+        printf("Clear check-points at SetupPlayers()");
         Checkpoint.clear();
         CheckpointsList.clear();
     }

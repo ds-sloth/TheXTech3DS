@@ -23,7 +23,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#include <Logger/logger.h>
+// #include <Logger/logger.h>
 // #include <SDL2/SDL.h>
 // #include <SDL2/SDL_messagebox.h>
 #include <pge_delay.h>
@@ -60,7 +60,7 @@ void CheatCode(char NewKey)
         CheatString.erase(0, 1);
     oldString = CheatString;
 
-//    D_pLogDebug("Cheat string: [%s]\n", CheatString.c_str());
+//    D_printf("Cheat string: [%s]\n", CheatString.c_str());
 
 #ifdef ENABLE_ANTICHEAT_TRAP
     if(strstr(CheatString.c_str(), "redigitiscool"))
@@ -1738,7 +1738,7 @@ void CheatCode(char NewKey)
 
     if(cheated)
     {
-        pLogDebug("Cheating detected!!! [%s]\n", newCheat.c_str());
+        printf("Cheating detected!!! [%s]\n", newCheat.c_str());
         Cheater = true;
     }
 }

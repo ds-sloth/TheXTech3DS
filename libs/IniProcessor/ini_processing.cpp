@@ -461,15 +461,15 @@ bool IniProcessing::parseFile(const char *filename)
     if(valid)
     {
         *(tmp + size) = '\0';//null terminate last line
-        try
-        {
+        // try
+        // {
             valid = parseHelper(tmp, static_cast<size_t>(size));
-        }
-        catch(...)
-        {
-            valid = false;
-            m_params.errorCode = ERR_SECTION_SYNTAX;
-        }
+        // }
+        // catch(...)
+        // {
+            // valid = false;
+            // m_params.errorCode = ERR_SECTION_SYNTAX;
+        // }
     }
     #endif
 
@@ -744,17 +744,17 @@ void IniProcessing::read(const char *key, bool &dest, bool defVal)
         return;
     }
 
-    try
-    {
+    // try
+    // {
         long num = std::strtol(buff, 0, 0);
         dest = num != 0l;
         return;
-    }
-    catch(...)
-    {
-        dest = false;
-        return;
-    }
+    // }
+    // catch(...)
+    // {
+        // dest = false;
+        // return;
+    // }
 }
 
 void IniProcessing::read(const char *key, unsigned char &dest, unsigned char defVal)
@@ -987,8 +987,8 @@ inline void StrToNumVectorHelper(const std::string &source, TList &dest, const t
         while(std::getline(ss, item, ','))
         {
             std::remove(item.begin(), item.end(), ' ');
-            try
-            {
+            // try
+            // {
                 if(std::is_same<T, int>::value ||
                    std::is_same<T, long>::value ||
                    std::is_same<T, short>::value)
@@ -1001,11 +1001,11 @@ inline void StrToNumVectorHelper(const std::string &source, TList &dest, const t
                     dest.push_back(std::strtof(item.c_str(), NULL));
                 else
                     dest.push_back(std::strtod(item.c_str(), NULL));
-            }
-            catch(...)
-            {
-                dest.pop_back();
-            }
+            // }
+            // catch(...)
+            // {
+            //     dest.pop_back();
+            // }
         }
 
         if(dest.empty())

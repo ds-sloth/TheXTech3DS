@@ -122,7 +122,7 @@ static void loadCGFX(const std::set<std::string> &files,
 
     if(success)
     {
-        pLogDebug("Loaded custom GFX: %s", loadedPath.c_str());
+        printf("Loaded custom GFX: %s", loadedPath.c_str());
         isCustom = true;
         texture = newTexture;
         if(width)

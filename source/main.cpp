@@ -27,7 +27,7 @@
 #include <AppPath/app_path.h>
 #include <Utils/strings.h>
 #include <Utils/files.h>
-#include <CrashHandler/crash_handler.h>
+// #include <CrashHandler/crash_handler.h>
 #include <cstring>
 
 static void strToPlayerSetup(int player, const std::string &setupString)
@@ -96,7 +96,7 @@ int main(int argc, char**argv)
 {
     CmdLineSetup_t setup;
 
-    CrashHandler::initSigs();
+    // CrashHandler::initSigs();
 
     AppPathManager::initAppPath();
     AppPath = AppPathManager::assetsRoot();
