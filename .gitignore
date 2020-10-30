@@ -1,2 +1,5 @@
 build/*
 *.o
+gfx/*
+out/*
+TheXTech3DS.*

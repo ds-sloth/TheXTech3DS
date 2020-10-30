@@ -120,12 +120,12 @@ bool FileFormats::ReadSMBX38ALvlFileHeaderT(PGE_FileFormats_misc::TextInput &inf
         dataReader.ReadDataLine();
 
         if(!PGE_StartsWith(fileIndentifier, "SMBXFile"))
-            throw std::logic_error("Invalid file format");
+            printf("EEEK!! Invalid file format\n");
 
         FileData.meta.RecentFormatVersion = toUInt(PGE_SubStr(fileIndentifier, 8, -1));
 
         if(FileData.meta.RecentFormatVersion > latest_version_38a)
-            throw std::logic_error("File format has newer version which is not supported yet");
+            printf("EEEK!! File format has newer version which is not supported yet\n");
 
         while(!inf.eof())
         {
@@ -303,12 +303,12 @@ bool FileFormats::ReadSMBX38ALvlFile(PGE_FileFormats_misc::TextInput &in, LevelD
         dataReader.ReadDataLine();
 
         if(!PGE_StartsWith(fileIndentifier, "SMBXFile"))
-            throw std::logic_error("Invalid file format");
+            printf("EEEK! Invalid file format");
 
         FileData.meta.RecentFormatVersion = toUInt(PGE_SubStr(fileIndentifier, 8, -1));
 
         if(FileData.meta.RecentFormatVersion > latest_version_38a)
-            throw std::logic_error("File format has newer version which is not supported yet");
+            printf("EEEK!! File format has newer version which is not supported yet\n");
 
         while(!in.eof())
         {
@@ -934,7 +934,7 @@ bool FileFormats::ReadSMBX38ALvlFile(PGE_FileFormats_misc::TextInput &in, LevelD
                             PGESTRINGList raw_data;
                             PGE_SPLITSTRING(raw_data, nextSet.expression_autoscrool_x, "_");
                             if(raw_data.size() % 4)
-                                throw(std::invalid_argument("Event path data entries count is not multiple 4!"));
+                                printf("EEEK! Event path data entries count is not multiple 4!\n");
                             for(pge_size_t pe = 0; pe < raw_data.size(); pe+= 4)
                             {
                                 LevelEvent_Sets::AutoScrollStopPoint stop;
@@ -1042,7 +1042,7 @@ bool FileFormats::ReadSMBX38ALvlFile(PGE_FileFormats_misc::TextInput &in, LevelD
                     {
                     case 0:
                         if(!SMBX64::IsUInt(nextFieldStr))
-                            throw std::invalid_argument("Cannot convert field 1 to int.");
+                            printf("EEEK! Cannot convert field 1 to int.\n");
 
                         eventdata.sound_id = toLong(nextFieldStr);
                         spawnNpcReaderCurrentIndex++;
@@ -1050,7 +1050,7 @@ bool FileFormats::ReadSMBX38ALvlFile(PGE_FileFormats_misc::TextInput &in, LevelD
 
                     case 1:
                         if(!SMBX64::IsUInt(nextFieldStr))
-                            throw std::invalid_argument("Cannot convert field 2 to int.");
+                            printf("EEEK! Cannot convert field 2 to int.\n");
 
                         eventdata.end_game = toLong(nextFieldStr);
                         spawnNpcReaderCurrentIndex++;

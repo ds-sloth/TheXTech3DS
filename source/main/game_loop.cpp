@@ -416,6 +416,7 @@ void PauseGame(int plr)
                                         } while(Player[A].Character == Player[B].Character || blockCharacter[Player[A].Character]);
                                     }
                                     Player[A] = SavedChar[Player[A].Character];
+                                    printf("this one!?!?\n");
                                     SetupPlayers();
                                 }
                             }

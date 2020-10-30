@@ -26,6 +26,7 @@
 #include "../globals.h"
 #include "../graphics.h"
 #include "../collision.h"
+#include <pge_delay.h>
 
 
 void DrawBackground(int S, int Z)
@@ -38,6 +39,7 @@ void DrawBackground(int S, int Z)
     if(LevelEditor == true)
         LevelREAL[S] = level[S];
     level[S] = LevelREAL[S];
+    printf("Background is %d", Background2[S]);
 
     A = 1; // Blocks
     if(Background2[S] == 1)
@@ -1808,7 +1810,10 @@ void DrawBackground(int S, int Z)
     A = 58; // SMW Night
     if(Background2[S] == 58)
     {
-        int tempVar97 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        int tempVar97 = (int)(floor((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5)) + 1;
+        printf("hmmm?? %f,%f,%d", level[S].Width, level[S].X, GFXBackground2Width[A]);
+        printf("hmmm?? %d", tempVar97);
+        if (tempVar97 > 10) tempVar97 = 10;
         for(B = 0; B <= tempVar97; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
@@ -1825,6 +1830,7 @@ void DrawBackground(int S, int Z)
             tempLocation.Width = GFXBackground2Width[A];
             if(vScreenCollision(Z, tempLocation))
             {
+                printf("rendering a texture...!");
                 frmMain.renderTexture(vScreenX[Z] + tempLocation.X,
                                       vScreenY[Z] + tempLocation.Y,
                                       GFXBackground2Width[A],
@@ -1833,8 +1839,10 @@ void DrawBackground(int S, int Z)
                                       0,
                                       (GFXBackground2Height[A] / 4.0) * SpecialFrame[6]
                 );
+                printf("rendered!?!");
             }
         }
+        PGE_Delay(10000);
     }
     level[S] = tempLevel;
 

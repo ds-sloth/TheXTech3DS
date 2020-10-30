@@ -143,20 +143,20 @@ namespace CSVReader
             template<typename ToType>
             inline void SafeConvert(ToType *to, const StrT &from)
             {
-                try
-                {
+                // try
+                // {
                     Converter::Convert(to, from);
-                }
-                catch(...)
-                {
-                    ThrowParseErrorInCatchContext();
-                }
+                // }
+                // catch(...)
+                // {
+                //     ThrowParseErrorInCatchContext();
+                // }
             }
 
-            inline void ThrowParseErrorInCatchContext()
-            {
-                std::throw_with_nested(parse_error(std::string("Failed to parse field ") + std::to_string(_fieldTracker) + " at line " + std::to_string(_lineTracker), _lineTracker, _fieldTracker));
-            }
+            // inline void ThrowParseErrorInCatchContext()
+            // {
+            //     std::throw_with_nested(parse_error(std::string("Failed to parse field ") + std::to_string(_fieldTracker) + " at line " + std::to_string(_lineTracker), _lineTracker, _fieldTracker));
+            // }
         };
     }
     // ========= Utils END ===========
@@ -576,7 +576,7 @@ namespace CSVReader
             else if(field == "!0" || field == "1") // FIXME: Is it correct? Or too hackish?
                 *out = true;
             else
-                throw std::invalid_argument(std::string("Could not convert to bool (must be empty, \"0\", \"!0\" or \"1\"), got \"") + field + std::string("\""));
+                std::cout << ("EEEEK! Could not convert to bool (must be empty, \"0\", \"!0\" or \"1\"), got \"\n");
         }
         static void Convert(StrType *out, const StrType &field)
         {
@@ -645,9 +645,9 @@ namespace CSVReader
         inline void ThrowIfOutOfBounds()
         {
             if(this->_currentCharIndex > StrTUtils::length(this->_currentLine))
-                throw parse_error("Expected " + std::to_string(this->_currentTotalFields) + " CSV-Fields, got "
-                                  + std::to_string(this->_fieldTracker) + " at line "
-                                  + std::to_string(this->_lineTracker) + "!", this->_lineTracker, this->_fieldTracker);
+                std::cout << ("Oooooops... Expected " + std::to_string(this->_currentTotalFields) + " CSV-Fields, got "
+                                   + std::to_string(this->_fieldTracker) + " at line "
+                                   + std::to_string(this->_lineTracker) + "!\n");
         }
         template<class T, class... RestValues>
         void ReadNext(T nextVal, RestValues &&... restVals)
@@ -678,7 +678,7 @@ namespace CSVReader
             this->SafeConvert(nextVal.Get(), this->NextField());
 
             if(!nextVal.Validate())
-                throw std::logic_error("Validation failed at field " + std::to_string(this->_fieldTracker) + " at line " + std::to_string(this->_lineTracker) + "!");
+                std::cout << ("EEEK! Validation failed at field " + std::to_string(this->_fieldTracker) + " at line " + std::to_string(this->_lineTracker) + "!\n");
 
             this->_fieldTracker++;
             ReadNext(std::forward<RestValues>(restVals)...);
@@ -691,7 +691,7 @@ namespace CSVReader
 
             this->SafeConvert(nextVal.Get(), this->NextField());
             if(!nextVal.Validate())
-                throw std::logic_error("Validation failed at field " + std::to_string(this->_fieldTracker) + " at line " + std::to_string(this->_lineTracker) + "!");
+                std::cout << ("EEEK! Validation failed at field " + std::to_string(this->_fieldTracker) + " at line " + std::to_string(this->_lineTracker) + "!\n");
             nextVal.PostProcess();
 
             this->_fieldTracker++;
@@ -710,7 +710,7 @@ namespace CSVReader
                 if(!optionalObj.ShouldAssingDefaultOnEmpty() || StrTUtils::length(nextField) > 0) {
                     this->SafeConvert(optionalObj.Get(), nextField);
                     if (!optionalObj.Validate())
-                        throw std::logic_error("Validation failed at field " + std::to_string(this->_fieldTracker) + " at line " + std::to_string(this->_lineTracker) + "!");
+                        std::cout << ("EEEK! Validation failed at field " + std::to_string(this->_fieldTracker) + " at line " + std::to_string(this->_lineTracker) + "!\n");
                     optionalObj.PostProcess();
                 } else {
                     optionalObj.AssignDefault();
@@ -731,14 +731,14 @@ namespace CSVReader
             // ThrowIfOutOfBounds() would have thrown already
             if(!(this->_currentCharIndex >= StrTUtils::length(this->_currentLine)))
             {
-                try
-                {
+                // try
+                // {
                     subReaderObj.ReadDataLine(this->NextField());
-                }
-                catch(...)
-                {
-                    this->ThrowParseErrorInCatchContext();
-                }
+                // }
+                // catch(...)
+                // {
+                //     this->ThrowParseErrorInCatchContext();
+                // }
             }
 
             this->_fieldTracker++;
@@ -751,14 +751,14 @@ namespace CSVReader
         {
             ThrowIfOutOfBounds();
 
-            try
-            {
+            // try
+            // {
                 subBatchReaderObj.ReadDataLine(this->NextField());
-            }
-            catch(...)
-            {
-                this->ThrowParseErrorInCatchContext();
-            }
+            // }
+            // catch(...)
+            // {
+            //     this->ThrowParseErrorInCatchContext();
+            // }
 
             this->_fieldTracker++;
             ReadNext(std::forward<RestValues>(restVals)...);
@@ -774,14 +774,14 @@ namespace CSVReader
             // ThrowIfOutOfBounds() would have thrown already
             if(!(this->_currentCharIndex >= StrTUtils::length(this->_currentLine)))
             {
-                try
-                {
+                // try
+                // {
                     iteratorObj.ReadDataLine(this->NextField());
-                }
-                catch(...)
-                {
-                    this->ThrowParseErrorInCatchContext();
-                }
+                // }
+                // catch(...)
+                // {
+                //     this->ThrowParseErrorInCatchContext();
+                // }
             }
 
             this->_fieldTracker++;
@@ -865,7 +865,7 @@ namespace CSVReader
             for(int i = 1; i < fieldNum; i++)
             {
                 if(this->_currentCharIndex >= StrTUtils::length(this->_currentLine))
-                    throw std::logic_error("Expected " + std::to_string(fieldNum) + " CSV-Fields, got " + std::to_string(i - 1) + " @ line " + std::to_string(this->_lineTracker) + "!");
+                    std::cout << ("EEEK! Expected " + std::to_string(fieldNum) + " CSV-Fields, got " + std::to_string(i - 1) + " @ line " + std::to_string(this->_lineTracker) + "!\n");
 
                 this->SkipField();
             }

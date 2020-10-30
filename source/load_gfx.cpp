@@ -248,7 +248,10 @@ void LoadGFX()
         p = GfxRoot + fmt::format_ne("background2/background2-{0}.png", A);
         if(Files::fileExists(p))
         {
-            GFXBackground2BMP[A] = frmMain.lazyLoadPicture(p);
+            if (A == 58)
+                GFXBackground2BMP[A] = frmMain.LoadPicture(p);
+            else
+                GFXBackground2BMP[A] = frmMain.lazyLoadPicture(p);
             GFXBackground2Width[A] = GFXBackground2BMP[A].w;
             GFXBackground2Height[A] = GFXBackground2BMP[A].h;
         }

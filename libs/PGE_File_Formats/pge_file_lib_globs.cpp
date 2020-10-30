@@ -1340,24 +1340,24 @@ void FileInfo::rebuildData()
     m_baseName.clear();
 
     //Take full path
-#ifdef PGE_FILES_QT
-    m_filePath = QFileInfo(m_filePath).absoluteFilePath();
-#else
-#   ifndef _WIN32
-    char *rez = NULL;
-    char buf[PATH_MAXLEN + 1];
-    rez = realpath(m_filePath.c_str(), buf);
-    if(rez)
-        m_filePath = buf;
-#   else
-    wchar_t bufW[MAX_PATH + 1];
-    DWORD ret = 0;
-    ret = GetFullPathNameW(Str2WStr(m_filePath).c_str(), MAX_PATH, bufW, nullptr);
-    if(ret != 0)
-        m_filePath = WStr2Str(bufW);
-    std::replace(m_filePath.begin(), m_filePath.end(), '\\', '/');
-#   endif
-#endif
+// #ifdef PGE_FILES_QT
+//     m_filePath = QFileInfo(m_filePath).absoluteFilePath();
+// #else
+// #   ifndef _WIN32
+//     char *rez = NULL;
+//     char buf[PATH_MAXLEN + 1];
+//     rez = realpath(m_filePath.c_str(), buf);
+//     if(rez)
+//         m_filePath = buf;
+// #   else
+//     wchar_t bufW[MAX_PATH + 1];
+//     DWORD ret = 0;
+//     ret = GetFullPathNameW(Str2WStr(m_filePath).c_str(), MAX_PATH, bufW, nullptr);
+//     if(ret != 0)
+//         m_filePath = WStr2Str(bufW);
+//     std::replace(m_filePath.begin(), m_filePath.end(), '\\', '/');
+// #   endif
+// #endif
 
     //Read directory path
     i = static_cast<int>(m_filePath.size() - 1);

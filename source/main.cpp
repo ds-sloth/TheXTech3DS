@@ -29,6 +29,7 @@
 #include <Utils/files.h>
 // #include <CrashHandler/crash_handler.h>
 #include <cstring>
+#include <pge_delay.h>
 
 static void strToPlayerSetup(int player, const std::string &setupString)
 {
@@ -117,6 +118,7 @@ int main(int argc, char**argv)
     }
 
     int ret = GameMain(setup);
+    PGE_Delay(10000);
     frmMain.freeSDL();
 
     return ret;

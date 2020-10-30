@@ -57,6 +57,8 @@ static bool bindJoystickKey(uint32_t keys, KM_Key &k)
 
 void UpdateControls()
 {
+    hidScanInput();
+
     uint32_t keys = hidKeysHeld();
 
     int A = 0;
@@ -88,6 +90,7 @@ void UpdateControls()
 
             if(c.Up && c.Down)
             {
+                printf("testing those controls!\n");
                 c.Up = false;
                 c.Down = false;
             }

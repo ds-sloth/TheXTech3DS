@@ -236,30 +236,30 @@ struct EditorControls_t
 
 
 //Public Type conKeyboard  'Input settings for the keyboard
-struct ConKeyboard_t
-{
-//    Up As Integer
-    int Up = 0;
-//    Down As Integer
-    int Down = 0;
-//    Left As Integer
-    int Left = 0;
-//    Right As Integer
-    int Right = 0;
-//    Jump As Integer
-    int Jump = 0;
-//    AltJump As Integer
-    int AltJump = 0;
-//    Run As Integer
-    int Run = 0;
-//    AltRun As Integer
-    int AltRun = 0;
-//    Drop As Integer
-    int Drop = 0;
-//    Start As Integer
-    int Start = 0;
-//End Type
-};
+// struct ConKeyboard_t
+// {
+// //    Up As Integer
+//     int Up = 0;
+// //    Down As Integer
+//     int Down = 0;
+// //    Left As Integer
+//     int Left = 0;
+// //    Right As Integer
+//     int Right = 0;
+// //    Jump As Integer
+//     int Jump = 0;
+// //    AltJump As Integer
+//     int AltJump = 0;
+// //    Run As Integer
+//     int Run = 0;
+// //    AltRun As Integer
+//     int AltRun = 0;
+// //    Drop As Integer
+//     int Drop = 0;
+// //    Start As Integer
+//     int Start = 0;
+// //End Type
+// };
 
 struct KM_Key
 {
@@ -302,7 +302,7 @@ struct ConJoystick_t
 };
 
 //Public conKeyboard(1 To 2) As conKeyboard  'player 1 and 2's controls
-extern RangeArr<ConKeyboard_t, 1, 2> conKeyboard;
+// extern RangeArr<ConKeyboard_t, 1, 2> conKeyboard;
 
 //Public conJoystick(1 To 2) As conJoystick
 extern RangeArr<ConJoystick_t, 1, 2> conJoystick;

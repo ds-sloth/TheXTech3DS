@@ -90,12 +90,12 @@ bool FileFormats::ReadSMBX38AWldFileHeaderT(PGE_FileFormats_misc::TextInput &inf
         dataReader.ReadDataLine();
 
         if(!PGE_StartsWith(fileIndentifier, "SMBXFile"))
-            throw std::logic_error("Invalid file format");
+            printf("EEEK! Invalid file format\n");
 
         FileData.meta.RecentFormatVersion = toUInt(PGE_SubStr(fileIndentifier, 8, -1));
 
         if(FileData.meta.RecentFormatVersion > latest_version_38a)
-            throw std::logic_error("File format has newer version which is not supported yet");
+            printf("EEEEK! File format has newer version which is not supported yet\n");
 
         while(!inf.eof())
         {
@@ -317,12 +317,12 @@ bool FileFormats::ReadSMBX38AWldFile(PGE_FileFormats_misc::TextInput& in, WorldD
         dataReader.ReadDataLine();
 
         if(!PGE_StartsWith(fileIndentifier, "SMBXFile"))
-            throw std::logic_error("Invalid file format");
+            printf("EEEK! Invalid file format\n");
 
         FileData.meta.RecentFormatVersion = toUInt(PGE_SubStr(fileIndentifier, 8, -1));
 
         if(FileData.meta.RecentFormatVersion > latest_version_38a)
-            throw std::logic_error("File format has newer version which is not supported yet");
+            printf("EEEEEK! File format has newer version which is not supported yet\n");
 
         while(!in.eof())
         {

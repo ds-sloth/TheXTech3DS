@@ -77,14 +77,6 @@ void MenuLoop()
         bool menuDoPress = (c.Start || c.Jump);
         bool menuBackPress = c.Run;
 
-//    If frmMain.MousePointer <> 99 Then
-        if(frmMain.MousePointer != 99)
-        {
-//        frmMain.MousePointer = 99
-            frmMain.MousePointer = 99;
-            showCursor(0);
-//    End If
-        }
 //    If .Up = False And .Down = False And .Jump = False And .Run = False And .Start = False Then
         if(!c.Up && !c.Down && !c.Jump && !c.Run && !c.Start)
         {
@@ -439,7 +431,11 @@ void MenuLoop()
                             WorldLevel[A].Active = true;
                     }
 
+                    printf("hmmm...\n");
+
                     SetupPlayers();
+
+                    printf("helloooo\n");
 
                     if(!StartLevel.empty())
                     {
@@ -447,10 +443,12 @@ void MenuLoop()
                         SoundPause[26] = 200;
                         LevelSelect = false;
 
+                        printf("worldddd...!\n");
                         GameThing();
                         ClearLevel();
 
                         PGE_Delay(1000);
+                        printf("nomnom...!\n");
                         std::string levelPath = SelectWorld[selWorld].WorldPath + StartLevel;
                         if(!OpenLevel(levelPath))
                         {
@@ -458,6 +456,7 @@ void MenuLoop()
                             PauseGame(1);
                             ErrorQuit = true;
                         }
+                        printf("nom!!...!\n");
                     }
                     return;
                 }
@@ -1355,6 +1354,7 @@ void MenuLoop()
 //    UpdatePlayer
     UpdatePlayer();
 //    UpdateGraphics
+    printf("updating graphics!\n");
     UpdateGraphics();
 //    UpdateSound
     UpdateSound();
@@ -1362,95 +1362,6 @@ void MenuLoop()
     UpdateEvents();
 
 
-//    If MenuMouseDown = True Then
-    if(MenuMouseDown)
-    {
-//        If Rnd * 100 > 40 Then
-        if(dRand() * 100 > 40.0)
-        {
-//            NewEffect 80, newLoc(MenuMouseX - vScreenX(1), MenuMouseY - vScreenY(1))
-            NewEffect(80, newLoc(MenuMouseX - vScreenX[1], MenuMouseY - vScreenY[1]));
-//            Effect(numEffects).Location.SpeedX = Rnd * 4 - 2
-            Effect[numEffects].Location.SpeedX = dRand() * 4 - 2;
-//            Effect(numEffects).Location.SpeedY = Rnd * 4 - 2
-            Effect[numEffects].Location.SpeedY = dRand() * 4 - 2;
-//        End If
-        }
-//        For A = 1 To numNPCs
-        For(A, 1, numNPCs)
-        {
-//            If NPC(A).Active = True Then
-            if(NPC[A].Active)
-            {
-//                If CheckCollision(newLoc(MenuMouseX - vScreenX(1), MenuMouseY - vScreenY(1)), NPC(A).Location) = True Then
-                if(CheckCollision(newLoc(MenuMouseX - vScreenX[1], MenuMouseY - vScreenY[1]), NPC[A].Location))
-                {
-//                    If NPCIsACoin(NPC(A).Type) = False Then
-                    if(!NPCIsACoin[NPC[A].Type])
-                    {
-//                        NPC(0) = NPC(A)
-                        NPC[0] = NPC[A];
-//                        NPC(0).Location.X = MenuMouseX - vScreenX(1)
-                        NPC[0].Location.X = MenuMouseX - vScreenX[1];
-//                        NPC(0).Location.Y = MenuMouseY - vScreenY(1)
-                        NPC[0].Location.Y = MenuMouseY - vScreenY[1];
-//                        NPCHit A, 3, 0
-                        NPCHit(A, 3, 0);
-//                    Else
-                    } else {
-//                        NewEffect 78, NPC(A).Location
-                        NewEffect(78, NPC[A].Location);
-//                        NPC(A).Killed = 9
-                        NPC[A].Killed = 9;
-//                    End If
-                    }
-//                End If
-                }
-//            End If
-            }
-//        Next A
-        }
-//        For A = 1 To numBlock
-        For(A, 1, numBlock)
-        {
-//            If Block(A).Hidden = False Then
-            if(!Block[A].Hidden)
-            {
-//                If CheckCollision(newLoc(MenuMouseX - vScreenX(1), MenuMouseY - vScreenY(1)), Block(A).Location) = True Then
-                if(CheckCollision(newLoc(MenuMouseX - vScreenX[1], MenuMouseY - vScreenY[1]), Block[A].Location))
-                {
-//                    BlockHit A
-                    BlockHit(A);
-//                    BlockHitHard A
-                    BlockHitHard(A);
-//                End If
-                }
-//            End If
-            }
-//        Next A
-        }
-//    End If
-    }
-
-//    MenuMouseMove = False
-    MenuMouseMove = false;
-//    MenuMouseClick = False
-    MenuMouseClick = false;
-//    If MenuMouseDown = True Then
-    if(MenuMouseDown)
-    {
-//        MenuMouseRelease = False
-        MenuMouseRelease = false;
-//    Else
-    }
-    else
-    {
-//        MenuMouseRelease = True
-        MenuMouseRelease = true;
-//    End If
-    }
-//    MenuMouseBack = False
-    MenuMouseBack = false;
 }
 
 void FindWorlds()

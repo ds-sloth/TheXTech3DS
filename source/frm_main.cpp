@@ -64,6 +64,8 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
     C2D_Prepare();
     consoleInit(GFX_BOTTOM, NULL);
 
+    top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
+
     bool res = false;
 
     // LoadLogSettings(setup.interprocess, setup.verboseLogging);
@@ -142,6 +144,20 @@ int FrmMain::setFullScreen(bool fs)
 bool FrmMain::isSdlError()
 {
     return false;
+}
+
+void FrmMain::initDraw()
+{
+    // enter the draw context!
+    C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+    C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 1.0f, 1.0f));
+    C2D_SceneBegin(top);
+}
+
+void FrmMain::finalizeDraw()
+{
+    // leave the draw context and wait for vblank...
+    C3D_FrameEnd(0);
 }
 
 void FrmMain::repaint()
@@ -283,8 +299,11 @@ StdPicture FrmMain::LoadPicture(std::string path)
     return target;
 }
 
+// #include <iostream>
+
 StdPicture FrmMain::lazyLoadPicture(std::string path)
 {
+    // std::cout << "lazy loading" + path;
     StdPicture target;
     if(!GameIsActive)
         return target; // do nothing when game is closed
@@ -297,6 +316,7 @@ StdPicture FrmMain::lazyLoadPicture(std::string path)
     target.inited = true;
 
     target.lazyLoaded = true;
+    // lazyLoad(target);
     return target;
 }
 
@@ -321,6 +341,8 @@ void FrmMain::lazyLoad(StdPicture &target)
     C2D_SpriteSheet sourceImage;
 
     sourceImage = C2D_SpriteSheetLoad(target.path.c_str()); // some other source image
+
+    if (!sourceImage) return;
 
     loadTexture(target, sourceImage);
 }

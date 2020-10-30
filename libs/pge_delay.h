@@ -2,6 +2,6 @@
 #define PGE_DELAY_H
 
 #include <3ds.h>
-#define PGE_Delay(x) svcSleepThread(x*1000000)
+#define PGE_Delay(x) svcSleepThread((int64_t)x*1000000l)
 
 #endif // PGE_DELAY_H

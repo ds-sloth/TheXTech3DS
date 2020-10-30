@@ -30,25 +30,27 @@ DEALINGS IN THE SOFTWARE.
 #include <sys/stat.h>
 #include <unistd.h>
 #include <memory.h>
+#include <stdlib.h>
 
 #include "dirman.h"
 #include "dirman_private.h"
-#include <mutex>
+// #include <mutex>
 
-static std::mutex g_dirManMutex;
+// static std::mutex g_dirManMutex;
 
-#define PUT_THREAD_GUARD() \
-    std::lock_guard<std::mutex> guard(g_dirManMutex);\
-    (void)guard;
+#define PUT_THREAD_GUARD()
+    // std::lock_guard<std::mutex> guard(g_dirManMutex);\
+    // (void)guard;
 
 void DirMan::DirMan_private::setPath(const std::string &dirPath)
 {
-    char resolved_path[PATH_MAX];
-    memset(resolved_path, 0, PATH_MAX);
-    char* realPath = realpath(dirPath.c_str(), resolved_path);
-    (void)realPath;
-    m_dirPath = resolved_path;
-    delEnd(m_dirPath, '/');
+    m_dirPath = dirPath;
+    // char resolved_path[PATH_MAX];
+    // memset(resolved_path, 0, PATH_MAX);
+    // char* realPath = realpath(dirPath.c_str(), resolved_path);
+    // (void)realPath;
+    // m_dirPath = resolved_path;
+    // delEnd(m_dirPath, '/');
 }
 
 bool DirMan::DirMan_private::getListOfFiles(std::vector<std::string> &list, const std::vector<std::string> &suffix_filters)
@@ -66,9 +68,11 @@ bool DirMan::DirMan_private::getListOfFiles(std::vector<std::string> &list, cons
         if(strcmp(dent->d_name, ".") == 0 || strcmp(dent->d_name, "..") == 0)
             continue;
 
-        if(fstatat(dirfd(srcdir), dent->d_name, &st, 0) < 0)
+        if(dent->d_type == DT_UNKNOWN) {
+            printf("Oh no, DT_UNKNOWN!!\n");
             continue;
-        if(S_ISREG(st.st_mode))
+        }
+        else if (dent->d_type == DT_REG)
         {
             if(matchSuffixFilters(dent->d_name, suffix_filters))
                 list.push_back(dent->d_name);
@@ -92,10 +96,11 @@ bool DirMan::DirMan_private::getListOfFolders(std::vector<std::string>& list, co
         if(strcmp(dent->d_name, ".") == 0 || strcmp(dent->d_name, "..") == 0)
             continue;
 
-        if(fstatat(dirfd(srcdir), dent->d_name, &st, 0) < 0)
+        if(dent->d_type == DT_UNKNOWN) {
+            printf("Oh no, DT_UNKNOWN!!\n");
             continue;
-
-        if(S_ISDIR(st.st_mode))
+        }
+        else if (dent->d_type == DT_DIR)
         {
             if(matchSuffixFilters(dent->d_name, suffix_filters))
                 list.push_back(dent->d_name);
@@ -127,12 +132,14 @@ bool DirMan::DirMan_private::fetchListFromWalker(std::string &curPath, std::vect
         if(strcmp(dent->d_name, ".") == 0 || strcmp(dent->d_name, "..") == 0)
             continue;
 
-        if(fstatat(dirfd(srcdir), dent->d_name, &st, 0) < 0)
+        if(dent->d_type == DT_UNKNOWN) {
+            printf("Oh no, DT_UNKNOWN!!\n");
             continue;
+        }
 
-        if(S_ISDIR(st.st_mode))
+        if(dent->d_type == DT_DIR)
             m_walkerState.digStack.push(path + "/" + dent->d_name);
-        else if(S_ISREG(st.st_mode))
+        else if(dent->d_type == DT_REG)
         {
             if(matchSuffixFilters(dent->d_name, m_walkerState.suffix_filters))
                 list.push_back(dent->d_name);

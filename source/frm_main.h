@@ -77,6 +77,8 @@ public:
     int setFullScreen(bool fs);
     bool isSdlError();
 
+    void initDraw();
+    void finalizeDraw();
     void repaint();
     void updateViewport();
     void resetViewport();
@@ -141,6 +143,8 @@ private:
     int viewport_y = 0;
     int viewport_w = 0;
     int viewport_h = 0;
+
+    C3D_RenderTarget* top;
 
     SDL_Point MapToScr(int x, int y);
 };

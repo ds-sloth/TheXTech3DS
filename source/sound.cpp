@@ -158,7 +158,7 @@ static void AddMusic(const std::string &root,
         Music_t m;
         m.path = root + f;
         m.volume = volume;
-        printf("Adding music [%s] '%s'", alias.c_str(), m.path.c_str());
+        // printf("Adding music [%s] '%s'", alias.c_str(), m.path.c_str());
         auto a = music.find(alias);
         if(a == music.end())
             music.insert({alias, m});
@@ -230,7 +230,7 @@ static void AddSfx(const std::string &root,
             SFX_t m;
             m.path = root + f;
             m.volume = 128;
-            printf("Adding SFX [%s] '%s'", alias.c_str(), m.path.c_str());
+            // printf("Adding SFX [%s] '%s'", alias.c_str(), m.path.c_str());
             // m.chunk = Mix_LoadWAV(m.path.c_str());
             m.channel = -1;
             if(m.chunk)
