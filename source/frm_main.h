@@ -48,6 +48,8 @@ class FrmMain
     bool m_sdlLoaded = false;
     const uint8_t *m_keyboardState = nullptr;
     uint32_t m_lastMousePress = 0;
+    std::set<StdPicture*> m_bigPictures;
+    uint32_t currentFrame = 0;
     int m_ri; // SDL_RendererInfo
     int defaultDepth = 0;
 public:
@@ -87,12 +89,13 @@ public:
 
     StdPicture LoadPicture(std::string path);
     StdPicture lazyLoadPicture(std::string path);
+    bool freeTextureMem();
     void deleteTexture(StdPicture &tx, bool lazyUnload = false);
     void clearAllTextures();
 
     void clearBuffer();
-    void renderRect(int x, int y, int w, int h, float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, bool filled = true, int depth=-10000);
-    void renderRectBR(int _left, int _top, int _right, int _bottom, float red, float green, float blue, float alpha, int depth=-10000);
+    void renderRect(int x, int y, int w, int h, uint8_t red = 255, uint8_t green = 255, uint8_t blue = 255, uint8_t alpha = 255, bool filled = true, int depth=-10000);
+    void renderRectBR(int _left, int _top, int _right, int _bottom, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, int depth=-10000);
 
     void renderCircle(int cx, int cy, int radius, float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, bool filled = true, int depth=-10000);
 

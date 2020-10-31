@@ -126,7 +126,7 @@ void GameLoop()
         times[7] = clock();
         UpdateEvents();
         times[8] = clock();
-        printf("frame\tlayers\tNPCs\tblocks\tFX\tplayer\tGFX\tsound\tevents\n");
+/*        printf("frame\tlayers\tNPCs\tblocks\tFX\tplayer\tGFX\tsound\tevents\n");
         printf("%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", times[0]%10000,
                times[1]-times[0],
                times[2]-times[1],
@@ -135,7 +135,7 @@ void GameLoop()
                times[5]-times[4],
                times[6]-times[5],
                times[7]-times[6],
-               times[8]-times[7]);
+               times[8]-times[7]);*/
 //        If MagicHand = True Then UpdateEditor
         if(MagicHand)
             UpdateEditor();
@@ -254,7 +254,7 @@ void PauseGame(int plr)
     do
     {
         tempTime = SDL_GetTicks();
-        if(tempTime >= gameTime + frameRate || tempTime < gameTime || MaxFPS)
+        if(true)
         {
             if(fpsCount >= 32000) // Fixes Overflow bug
                 fpsCount = 0;

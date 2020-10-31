@@ -43,6 +43,7 @@ struct StdPicture
     int frame_h = 0;
 
     std::string path = "";
+    uint32_t lastDrawFrame = 0;
     bool lazyLoaded = false;
     C2D_SpriteSheet texture = nullptr;
     C2D_Image image;

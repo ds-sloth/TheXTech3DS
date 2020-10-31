@@ -385,7 +385,7 @@ int GameMain(const CmdLineSetup_t &setup)
 
             StartMusic(0);
             SetupPlayers();
-            printf("How are we doing now???");
+            // printf("How are we doing now???");
 
             For(A, 1, numPlayers)
             {
@@ -418,7 +418,7 @@ int GameMain(const CmdLineSetup_t &setup)
                 p.Dead = true;
             }
 
-            printf("Um, now?");
+            // printf("Um, now?");
 
             ProcEvent("Level - Start", true);
             For(A, 2, maxEvents)
@@ -427,7 +427,7 @@ int GameMain(const CmdLineSetup_t &setup)
                     ProcEvent(Events[A].Name, true);
             }
 
-            printf("Merp?");
+            // printf("Merp?");
             overTime = 0;
             GoalTime = SDL_GetTicks() + 1000;
             fpsCount = 0;
@@ -435,16 +435,17 @@ int GameMain(const CmdLineSetup_t &setup)
             cycleCount = 0;
             gameTime = 0;
 
-            printf("Merp??");
+            // printf("Merp??");
             // Update graphics before loop begin (to process inital lazy-unpacking of used sprites)
             UpdateGraphics();
 
-            printf("Merp!!!");
+            // printf("Merp!!!");
             do
             {
                 DoEvents();
                 tempTime = SDL_GetTicks();
-                if(tempTime >= gameTime + frameRate || tempTime < gameTime)
+                // printf("tempTime , gameTime, frameRate: %d, %d, %d\n", tempTime, gameTime, frameRate);
+                if(true)
                 {
                     CheckActive();
                     MenuLoop();   // Run the menu loop
@@ -490,7 +491,7 @@ int GameMain(const CmdLineSetup_t &setup)
                     }
                 }
 
-                PGE_Delay(1);
+                // PGE_Delay(1);
                 if(!GameIsActive) return 0;// Break on quit
 
             } while(GameMenu);
@@ -535,15 +536,19 @@ int GameMain(const CmdLineSetup_t &setup)
 
                 LevelSelect = false;
 
+                printf("this gamething??\n");
                 if(!GoToLevelNoGameThing)
                     GameThing();
                 else
                 {
-                    frmMain.clearBuffer();
-                    frmMain.repaint();
+                    frmMain.initDraw();
+                    frmMain.finalizeDraw();
                 }
+                printf("ClearLevel\n");
                 ClearLevel();
+                printf("hellooo!");
                 PGE_Delay(1000);
+                printf("nextlo!");
 
                 std::string levelPath;
                 if(GoToLevel.empty())
@@ -556,7 +561,7 @@ int GameMain(const CmdLineSetup_t &setup)
 
                 if(!OpenLevel(levelPath))
                 {
-                    MessageText = fmt::format_ne("ERROR: Can't open \"{0}\": file doesn't exist or corrupted.", levelPath);
+                    MessageText = printf("ERROR: Can't open \"%s\": file doesn't exist or corrupted.", levelPath.c_str());
                     PauseGame(1);
                     ErrorQuit = true;
                 }
@@ -576,14 +581,16 @@ int GameMain(const CmdLineSetup_t &setup)
                 GoToLevelNoGameThing = false;
 
                 // Update graphics before loop begin (to process inital lazy-unpacking of used sprites)
+                printf("First gfx2\n");
                 UpdateGraphics2();
+                printf("done!\n");
 
                 do // 'level select loop
                 {
                     FreezeNPCs = false;
                     DoEvents();
                     tempTime = SDL_GetTicks();
-                    if(tempTime >= gameTime + frameRate || tempTime < gameTime || MaxFPS)
+                    if(true)
                     {
                         if(fpsCount >= 32000)
                             fpsCount = 0; // Fixes Overflow bug
@@ -627,7 +634,7 @@ int GameMain(const CmdLineSetup_t &setup)
                         }
                     }
 
-                    PGE_Delay(1);
+                    // PGE_Delay(1);
                     if(!GameIsActive)
                         return 0;// Break on quit
                 } while(LevelSelect);
@@ -637,6 +644,7 @@ int GameMain(const CmdLineSetup_t &setup)
         // MAIN GAME
         else
         {
+            printf("trying to enter main game\n");
             CheatString.clear();
             EndLevel = false;
 
@@ -755,14 +763,16 @@ int GameMain(const CmdLineSetup_t &setup)
             gameTime = 0;
 
             // Update graphics before loop begin (to process inital lazy-unpacking of used sprites)
+            printf("Graphics??\n");
             UpdateGraphics();
+            printf("entering main game!\n");
 
             do // MAIN GAME LOOP
             {
                 DoEvents();
                 tempTime = SDL_GetTicks();
 
-                if(tempTime >= gameTime + frameRate || tempTime < gameTime || MaxFPS)
+                if(true)
                 {
                     CheckActive();
                     if(fpsCount >= 32000) fpsCount = 0; // Fixes Overflow bug

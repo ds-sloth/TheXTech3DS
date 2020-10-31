@@ -36,7 +36,6 @@ void GameThing()
     tempPlayer[1] = Player[1];
     tempPlayer[2] = Player[2];
 
-    printf("maybe this one?\n");
     SetupPlayers();
     Player[1].Location.SpeedY = 0;
     Player[2].Location.SpeedY = 0;
@@ -60,7 +59,7 @@ void GameThing()
     PlayerFrame(1);
     PlayerFrame(2);
 
-    frmMain.clearBuffer();
+    frmMain.initDraw();
 
     for(A = 1; A <= numPlayers; A++)
     {
@@ -79,7 +78,7 @@ void GameThing()
         SuperPrint(std::to_string(int(Lives)), 1, ScreenW / 2.0 + 12, ScreenH / 2.0 + 32);
     }
 
-    frmMain.repaint();
+    frmMain.finalizeDraw();
 
     Player[1] = tempPlayer[1];
     Player[2] = tempPlayer[2];

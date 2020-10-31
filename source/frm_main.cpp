@@ -150,13 +150,14 @@ void FrmMain::initDraw()
 {
     // enter the draw context!
     C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-    C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 1.0f, 1.0f));
+    C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
     C2D_SceneBegin(top);
 }
 
 void FrmMain::finalizeDraw()
 {
     // leave the draw context and wait for vblank...
+    currentFrame ++;
     C3D_FrameEnd(0);
 }
 
@@ -296,6 +297,8 @@ StdPicture FrmMain::LoadPicture(std::string path)
     target = lazyLoadPicture(path);
     lazyLoad(target);
     target.lazyLoaded = false;
+    if(!target.texture)
+        printf("FAILED TO LOAD!!! %s\n", path.c_str());
     return target;
 }
 
@@ -316,9 +319,40 @@ StdPicture FrmMain::lazyLoadPicture(std::string path)
     target.inited = true;
 
     target.lazyLoaded = true;
+
+    // We need to figure out the height and width!
+    std::string sizePath = path + ".size";
+    FILE *fs; // lazy load and unload if it doesn't exist.
+    char contents[10]; // NOT null-terminated: wwww\nhhhh\n
+    fs = fopen(sizePath.c_str(), "r");
+    if (fs != nullptr) {
+        fread(&contents[0], 1, 10, fs);
+        contents[4] = '\0';
+        contents[9] = '\0';
+        target.w = atoi(&contents[0]);
+        target.h = atoi(&contents[5]);
+        if (fclose(fs)) printf("PANIC!!!\n");
+    }
+    else {
+        printf("First-load: %s\n", path.c_str());
+        lazyLoad(target);
+        lazyUnLoad(target);
+        snprintf(&contents[0], 10, "%4d\n%4d", target.w, target.h);
+        contents[9] = '\n';
+        fs = fopen(sizePath.c_str(), "w");
+        if (fs != nullptr)
+        {
+            fwrite(&contents[0], 1, 10, fs);
+            if (fclose(fs)) printf("PANIC!!!\n");
+        }
+        else printf("%s, %s\n", sizePath.c_str(), strerror(errno));
+    }
+
     // lazyLoad(target);
     return target;
 }
+
+#include <pge_delay.h>
 
 void FrmMain::loadTexture(StdPicture &target, C2D_SpriteSheet &sheet)
 {
@@ -330,6 +364,8 @@ void FrmMain::loadTexture(StdPicture &target, C2D_SpriteSheet &sheet)
     target.h = im.subtex->height*2;
 
     m_textureBank.insert(sheet);
+    if (target.w >= 256 || target.h >= 256)
+        m_bigPictures.insert(&target);
 }
 
 
@@ -340,11 +376,59 @@ void FrmMain::lazyLoad(StdPicture &target)
 
     C2D_SpriteSheet sourceImage;
 
+    // printf("Loading %s from %lu to", target.path.c_str(), linearSpaceFree());
     sourceImage = C2D_SpriteSheetLoad(target.path.c_str()); // some other source image
+    // printf(" %lu\n", linearSpaceFree());
 
-    if (!sourceImage) return;
+    if (!sourceImage) {
+        while (linearSpaceFree() < 5000000) // max tex should be 4194304
+        {
+            if (!freeTextureMem()) break;
+        }
+        sourceImage = C2D_SpriteSheetLoad(target.path.c_str());
+    }
+
+    if (!sourceImage) {
+        printf("Permanently failed to load %s\n", target.path.c_str());
+        target.inited = false;
+        return;
+    }
 
     loadTexture(target, sourceImage);
+
+    if (linearSpaceFree() < 2000000) freeTextureMem();
+}
+
+bool FrmMain::freeTextureMem()
+{
+    printf("Freeing texture memory...\n");
+    StdPicture* oldest = nullptr;
+    uint32_t earliestDraw = 0;
+    StdPicture* second_oldest = nullptr;
+    uint32_t second_earliestDraw = 0;
+    for (StdPicture* poss : m_bigPictures)
+    {
+        if ((poss != nullptr) && poss->texture && poss->lazyLoaded)
+        {
+            if ((oldest == nullptr) || (poss->lastDrawFrame < earliestDraw))
+            {
+                second_oldest = oldest;
+                second_earliestDraw = earliestDraw;
+                oldest = poss;
+                earliestDraw = poss->lastDrawFrame;
+            }
+            else if ((second_oldest == nullptr) || (poss->lastDrawFrame < second_earliestDraw))
+            {
+                second_oldest = poss;
+                second_earliestDraw = poss->lastDrawFrame;
+            }
+        }
+    }
+    printf("Clearing %s, %s\n", oldest->path.c_str(), second_oldest->path.c_str());
+    if (!oldest) return false;
+    lazyUnLoad(*oldest);
+    if (second_oldest) lazyUnLoad(*second_oldest);
+    return true;
 }
 
 void FrmMain::lazyUnLoad(StdPicture &target)
@@ -365,12 +449,15 @@ SDL_Point FrmMain::MapToScr(int x, int y)
 
 void FrmMain::deleteTexture(StdPicture &tx, bool lazyUnload)
 {
+    // printf("Clearing %s from %lu", tx.path.c_str(), linearSpaceFree());
     if(!tx.inited || !tx.texture)
     {
         if(!lazyUnload)
             tx.inited = false;
         return;
     }
+
+    if (m_bigPictures.find(&tx) != m_bigPictures.end()) m_bigPictures.erase(&tx);
 
     auto corpseIt = m_textureBank.find(tx.texture);
     if(corpseIt == m_textureBank.end())
@@ -380,6 +467,7 @@ void FrmMain::deleteTexture(StdPicture &tx, bool lazyUnload)
         tx.texture = nullptr;
         if(!lazyUnload)
             tx.inited = false;
+        // printf(" to %lu\n", linearSpaceFree());
         return;
     }
 
@@ -400,6 +488,7 @@ void FrmMain::deleteTexture(StdPicture &tx, bool lazyUnload)
         tx.frame_w = 0;
         tx.frame_h = 0;
     }
+    // printf(" to %lu\n", linearSpaceFree());
 }
 
 void FrmMain::clearAllTextures()
@@ -418,29 +507,21 @@ void FrmMain::clearBuffer()
 void FrmMain::setDefaultDepth(int depth) {
     defaultDepth = depth;
 }
-void FrmMain::renderRect(int x, int y, int w, int h, float red, float green, float blue, float alpha, bool filled, int depth)
+void FrmMain::renderRect(int x, int y, int w, int h, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, bool filled, int depth)
 {
     if (depth == -10000) depth = defaultDepth;
-    uint32_t clr = ((uint32_t)(255.f * red) << 24) +
-                 ((uint32_t)(255.f * green) << 16) +
-                 ((uint32_t)(255.f * blue) << 8) +
-                 ((uint32_t)(255.f * alpha));
+    uint32_t clr = C2D_Color32(red, green, blue, alpha);
 
-    if (filled) {
-        // do the offset thingy
-        C2D_DrawRectSolid(x + viewport_offset_x,
-                          y + viewport_offset_y,
-                          depth,
-                          w,
-                          h,
-                          clr);
-    }
-    else {
-        // do nothing for now... :(
-    }
+    // Filled is always True in this game
+    C2D_DrawRectSolid((x+viewport_offset_x)/2,
+                      (y+viewport_offset_y)/2,
+                      depth,
+                      w/2,
+                      h/2,
+                      clr);
 }
 
-void FrmMain::renderRectBR(int _left, int _top, int _right, int _bottom, float red, float green, float blue, float alpha, int depth)
+void FrmMain::renderRectBR(int _left, int _top, int _right, int _bottom, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, int depth)
 {
     if (depth == -10000) depth = defaultDepth;
     renderRect(_left, _top, _right-_left, _bottom-_top, red, green, blue, alpha, true, depth);
@@ -464,10 +545,12 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
     if(!tx.texture && tx.lazyLoaded)
         lazyLoad(tx);
 
+    tx.lastDrawFrame = currentFrame;
+
     if(!tx.texture)
     {
         // D_printfNA("Attempt to render an empty texture!");
-        printf("Attempt to render an empty texture!\n");
+        // printf("Attempt to render empty %s!\n", tx.path.c_str());
         return;
     }
 
@@ -499,7 +582,7 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
     // SDL_SetTextureAlphaMod(tx.texture, static_cast<unsigned char>(255.f * alpha));
     // SDL_RenderCopyEx(m_gRenderer, tx.texture, &sourceRect, &destRect,
     //                  rotateAngle, center, static_cast<SDL_RendererFlip>(flip));
-    C2D_DrawImage_Custom(tx.image, xDst/2, yDst/2, wDst/2, hDst/2,
+    C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
                          xSrc/2, ySrc/2, wDst/2, hDst/2, depth, flip, 0);
 }
 
@@ -509,10 +592,10 @@ void FrmMain::renderTexture(double xDst, double yDst, double wDst, double hDst,
                             float red, float green, float blue, float alpha, int depth)
 {
     const unsigned int flip = SDL_FLIP_NONE;
-    renderTextureI(Maths::iRound(xDst),
-                   Maths::iRound(yDst),
-                   Maths::iRound(wDst),
-                   Maths::iRound(hDst),
+    renderTextureI((int)xDst,
+                   (int)yDst,
+                   (int)wDst,
+                   (int)hDst,
                    tx,
                    xSrc,
                    ySrc,
@@ -526,10 +609,10 @@ void FrmMain::renderTextureFL(double xDst, double yDst, double wDst, double hDst
                               double rotateAngle, SDL_Point *center, unsigned int flip,
                               float red, float green, float blue, float alpha, int depth)
 {
-    renderTextureI(Maths::iRound(xDst),
-                   Maths::iRound(yDst),
-                   Maths::iRound(wDst),
-                   Maths::iRound(hDst),
+    renderTextureI((int)xDst,
+                   (int)yDst,
+                   (int)wDst,
+                   (int)hDst,
                    tx,
                    xSrc,
                    ySrc,
@@ -539,5 +622,6 @@ void FrmMain::renderTextureFL(double xDst, double yDst, double wDst, double hDst
 
 void FrmMain::renderTexture(int xDst, int yDst, StdPicture &tx, float red, float green, float blue, float alpha, int depth)
 {
-    C2D_DrawImage_Custom_Basic(tx.image, xDst, yDst, depth, 0);
+    if (depth == -10000) depth = defaultDepth;
+    C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, depth, 0);
 }

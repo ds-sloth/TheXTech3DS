@@ -31,6 +31,7 @@
 
 void DrawBackground(int S, int Z)
 {
+    int tempVar;
     int A = 0;
     int B = 0;
     Location_t tempLocation;
@@ -39,12 +40,11 @@ void DrawBackground(int S, int Z)
     if(LevelEditor == true)
         LevelREAL[S] = level[S];
     level[S] = LevelREAL[S];
-    printf("Background is %d", Background2[S]);
 
     A = 1; // Blocks
     if(Background2[S] == 1)
     {
-        int tempVar = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
         for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
@@ -61,8 +61,8 @@ void DrawBackground(int S, int Z)
     A = 2; // Clouds
     if(Background2[S] == 1 || Background2[S] == 2 || Background2[S] == 22)
     {
-        int tempVar2 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
-        for(B = 0; B <= tempVar2; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.75);
             tempLocation.Y = level[S].Height - GFXBackground2Height[A] - ScreenH + 100;
@@ -78,8 +78,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 13)
     {
 
-        int tempVar3 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
-        for(B = 0; B <= tempVar3; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.75);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -103,8 +103,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 2)
     {
 
-        int tempVar4 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar4; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             tempLocation.Y = level[S].Height - GFXBackground2Height[A];
@@ -121,8 +121,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 3)
     {
 
-        int tempVar5 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
-        for(B = 0; B <= tempVar5; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -146,8 +146,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 4)
     {
 
-        int tempVar6 = static_cast<int>(floor(static_cast<double>((level[S].Height - level[S].Y) / GFXBackground2Height[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar6; B++)
+        tempVar = (int)(floor(((level[S].Height - level[S].Y) / GFXBackground2Height[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.Y = level[S].Y + ((B * GFXBackground2Height[A] - B) - (vScreenY[Z] + vScreen[Z].Top + level[S].Y) * 0.5) - 32;
             if(level[S].Width - level[S].X > GFXBackground2Width[A])
@@ -170,8 +170,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 5)
     {
 
-        int tempVar7 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar7; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -195,8 +195,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 6)
     {
 
-        int tempVar8 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar8; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -220,8 +220,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 7)
     {
 
-        int tempVar9 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar9; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             tempLocation.Y = level[S].Y - 32;
@@ -238,8 +238,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 8 || Background2[S] == 9)
     {
 
-        int tempVar10 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
-        for(B = 0; B <= tempVar10; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.75);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -263,8 +263,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 9)
     {
 
-        int tempVar11 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar11; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             tempLocation.Y = level[S].Height - GFXBackground2Height[A];
@@ -281,8 +281,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 10)
     {
 
-        int tempVar12 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar12; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -306,8 +306,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 11)
     {
 
-        int tempVar13 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar13; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -331,8 +331,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 12)
     {
 
-        int tempVar14 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar14; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -356,8 +356,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 14)
     {
 
-        int tempVar15 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar15; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -381,8 +381,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 15)
     {
 
-        int tempVar16 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar16; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -406,8 +406,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 16)
     {
 
-        int tempVar17 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar17; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -431,8 +431,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 17)
     {
 
-        int tempVar18 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar18; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             tempLocation.Y = level[S].Y - 32;
@@ -449,8 +449,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 18)
     {
 
-        int tempVar19 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar19; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A] / 4.0)
@@ -475,8 +475,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 19)
     {
 
-        int tempVar20 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar20; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -500,8 +500,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 20)
     {
 
-        int tempVar21 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar21; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -525,8 +525,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 21)
     {
 
-        int tempVar22 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar22; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -550,8 +550,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 22)
     {
 
-        int tempVar23 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar23; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             tempLocation.Y = level[S].Height - GFXBackground2Height[A] / 4.0;
@@ -568,8 +568,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 23)
     {
 
-        int tempVar24 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar24; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -593,8 +593,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 24)
     {
 
-        int tempVar25 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar25; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             tempLocation.Y = level[S].Y - 32; // Height - GFXBackground2height(a)
@@ -611,8 +611,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 25)
     {
 
-        int tempVar26 = static_cast<int>(floor(static_cast<double>((level[S].Height - level[S].Y) / GFXBackground2Height[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar26; B++)
+        tempVar = (int)(floor(((level[S].Height - level[S].Y) / GFXBackground2Height[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.Y = level[S].Y + ((B * GFXBackground2Height[A] - B) - (vScreenY[Z] + vScreen[Z].Top + level[S].Y) * 0.5) - 32;
             // .X = Level(S).X
@@ -636,8 +636,8 @@ void DrawBackground(int S, int Z)
     A = 26; // Toad's House
     if(Background2[S] == 26)
     {
-        int tempVar27 = int(std::ceil((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5)) + 1;
-        for(B = 0; B <= tempVar27; B++)
+        tempVar = int(std::ceil((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5)) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             tempLocation.Y = level[S].Y - 32; // Height - GFXBackground2height(a)
@@ -659,8 +659,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 27)
     {
 
-        int tempVar28 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar28; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -684,8 +684,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 28)
     {
 
-        int tempVar29 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 3;
-        for(B = 0; B <= tempVar29; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 3;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -709,8 +709,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 29)
     {
 
-        int tempVar30 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar30; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A] / 4.0)
@@ -735,8 +735,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 30)
     {
 
-        int tempVar31 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar31; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A] / 4.0)
@@ -764,8 +764,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 31)
     {
 
-        int tempVar32 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar32; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -789,8 +789,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 32)
     {
 
-        int tempVar33 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar33; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -814,8 +814,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 33)
     {
 
-        int tempVar34 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar34; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -839,8 +839,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 34)
     {
 
-        int tempVar35 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar35; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -864,8 +864,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 35)
     {
 
-        int tempVar36 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar36; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             tempLocation.Y = level[S].Height - GFXBackground2Height[A];
@@ -882,8 +882,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 35 || Background2[S] == 37)
     {
 
-        int tempVar37 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
-        for(B = 0; B <= tempVar37; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.75);
             tempLocation.Y = level[S].Height - GFXBackground2Height[A] - ScreenH + 100;
@@ -899,8 +899,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 36)
     {
 
-        int tempVar38 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
-        for(B = 0; B <= tempVar38; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.75);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -924,8 +924,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 37)
     {
 
-        int tempVar39 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar39; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             tempLocation.Y = level[S].Height - GFXBackground2Height[A];
@@ -942,8 +942,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 38)
     {
 
-        int tempVar40 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar40; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             tempLocation.Y = level[S].Y - 20; // Height - GFXBackground2height(a)
@@ -960,8 +960,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 39)
     {
 
-        int tempVar41 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar41; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1002,8 +1002,8 @@ void DrawBackground(int S, int Z)
         tempLocation.Height = GFXBackground2Height[A];
         tempLocation.Width = GFXBackground2Width[A];
 
-        int tempVar42 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar42; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(vScreenCollision(Z, tempLocation))
@@ -1012,8 +1012,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar43 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.6))) + 1;
-        for(B = 0; B <= tempVar43; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.6))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.6);
             if(vScreenCollision(Z, tempLocation))
@@ -1022,8 +1022,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar44 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.7))) + 1;
-        for(B = 0; B <= tempVar44; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.7))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.7);
             if(vScreenCollision(Z, tempLocation))
@@ -1032,8 +1032,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar45 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.8))) + 1;
-        for(B = 0; B <= tempVar45; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.8))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.8);
             if(vScreenCollision(Z, tempLocation))
@@ -1042,8 +1042,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar46 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.9))) + 1;
-        for(B = 0; B <= tempVar46; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.9))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.9);
             if(vScreenCollision(Z, tempLocation))
@@ -1052,8 +1052,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar47 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.85))) + 1;
-        for(B = 0; B <= tempVar47; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.85))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.85);
             if(vScreenCollision(Z, tempLocation))
@@ -1062,8 +1062,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar48 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.8))) + 1;
-        for(B = 0; B <= tempVar48; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.8))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.8);
             if(vScreenCollision(Z, tempLocation))
@@ -1072,8 +1072,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar49 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
-        for(B = 0; B <= tempVar49; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.75);
             if(vScreenCollision(Z, tempLocation))
@@ -1082,8 +1082,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar50 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.7))) + 1;
-        for(B = 0; B <= tempVar50; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.7))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.7);
             if(vScreenCollision(Z, tempLocation))
@@ -1092,8 +1092,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar51 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
-        for(B = 0; B <= tempVar51; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.75);
             if(vScreenCollision(Z, tempLocation))
@@ -1102,8 +1102,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar52 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.8))) + 1;
-        for(B = 0; B <= tempVar52; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.8))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.8);
             if(vScreenCollision(Z, tempLocation))
@@ -1112,8 +1112,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar53 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.85))) + 1;
-        for(B = 0; B <= tempVar53; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.85))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.85);
             if(vScreenCollision(Z, tempLocation))
@@ -1122,8 +1122,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar54 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.9))) + 1;
-        for(B = 0; B <= tempVar54; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.9))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.9);
             if(vScreenCollision(Z, tempLocation))
@@ -1132,8 +1132,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar55 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.8))) + 1;
-        for(B = 0; B <= tempVar55; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.8))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.8);
             if(vScreenCollision(Z, tempLocation))
@@ -1142,8 +1142,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar56 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.7))) + 1;
-        for(B = 0; B <= tempVar56; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.7))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.7);
             if(vScreenCollision(Z, tempLocation))
@@ -1152,8 +1152,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar57 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.6))) + 1;
-        for(B = 0; B <= tempVar57; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.6))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.6);
             if(vScreenCollision(Z, tempLocation))
@@ -1167,8 +1167,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 41)
     {
 
-        int tempVar58 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
-        for(B = 0; B <= tempVar58; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1191,8 +1191,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 42)
     {
 
-        int tempVar59 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar59; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A] / 4.0)
@@ -1218,8 +1218,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 43)
     {
 
-        int tempVar60 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar60; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1242,8 +1242,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 44)
     {
 
-        int tempVar61 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar61; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1265,8 +1265,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 45)
     {
 
-        int tempVar62 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
-        for(B = 0; B <= tempVar62; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1289,8 +1289,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 46)
     {
 
-        int tempVar63 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
-        for(B = 0; B <= tempVar63; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1313,8 +1313,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 47)
     {
 
-        int tempVar64 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
-        for(B = 0; B <= tempVar64; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1337,8 +1337,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 48)
     {
 
-        int tempVar65 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
-        for(B = 0; B <= tempVar65; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1371,8 +1371,8 @@ void DrawBackground(int S, int Z)
         tempLocation.Height = GFXBackground2Height[A];
         tempLocation.Width = GFXBackground2Width[A];
 
-        int tempVar66 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar66; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(vScreenCollision(Z, tempLocation))
@@ -1381,8 +1381,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar67 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.9))) + 1;
-        for(B = 0; B <= tempVar67; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.9))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.9);
             if(vScreenCollision(Z, tempLocation))
@@ -1391,8 +1391,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar68 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.89))) + 1;
-        for(B = 0; B <= tempVar68; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.89))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.89);
             if(vScreenCollision(Z, tempLocation))
@@ -1401,8 +1401,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar69 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.88))) + 1;
-        for(B = 0; B <= tempVar69; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.88))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.88);
             if(vScreenCollision(Z, tempLocation))
@@ -1411,8 +1411,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar70 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.87))) + 1;
-        for(B = 0; B <= tempVar70; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.87))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.87);
             if(vScreenCollision(Z, tempLocation))
@@ -1421,8 +1421,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar71 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.86))) + 1;
-        for(B = 0; B <= tempVar71; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.86))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.86);
             if(vScreenCollision(Z, tempLocation))
@@ -1431,8 +1431,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar72 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.85))) + 1;
-        for(B = 0; B <= tempVar72; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.85))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.85);
             if(vScreenCollision(Z, tempLocation))
@@ -1441,8 +1441,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar73 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.84))) + 1;
-        for(B = 0; B <= tempVar73; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.84))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.84);
             if(vScreenCollision(Z, tempLocation))
@@ -1451,8 +1451,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar74 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.83))) + 1;
-        for(B = 0; B <= tempVar74; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.83))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.83);
             if(vScreenCollision(Z, tempLocation))
@@ -1475,8 +1475,8 @@ void DrawBackground(int S, int Z)
         tempLocation.Height = GFXBackground2Height[A];
         tempLocation.Width = GFXBackground2Width[A];
 
-        int tempVar75 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar75; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(vScreenCollision(Z, tempLocation))
@@ -1485,8 +1485,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar76 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.65))) + 1;
-        for(B = 0; B <= tempVar76; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.65))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.65);
             if(vScreenCollision(Z, tempLocation))
@@ -1495,8 +1495,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar77 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.6))) + 1;
-        for(B = 0; B <= tempVar77; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.6))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.6);
             if(vScreenCollision(Z, tempLocation))
@@ -1520,8 +1520,8 @@ void DrawBackground(int S, int Z)
         tempLocation.Height = GFXBackground2Height[A];
         tempLocation.Width = GFXBackground2Width[A];
 
-        int tempVar78 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
-        for(B = 0; B <= tempVar78; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.75))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.75);
             if(vScreenCollision(Z, tempLocation))
@@ -1530,8 +1530,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar79 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar79; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(vScreenCollision(Z, tempLocation))
@@ -1554,8 +1554,8 @@ void DrawBackground(int S, int Z)
         tempLocation.Height = GFXBackground2Height[A];
         tempLocation.Width = GFXBackground2Width[A];
 
-        int tempVar80 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar80; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(vScreenCollision(Z, tempLocation))
@@ -1564,8 +1564,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar81 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.9))) + 1;
-        for(B = 0; B <= tempVar81; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.9))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.9);
             if(vScreenCollision(Z, tempLocation))
@@ -1574,8 +1574,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar82 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.89))) + 1;
-        for(B = 0; B <= tempVar82; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.89))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.89);
             if(vScreenCollision(Z, tempLocation))
@@ -1584,8 +1584,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar83 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.88))) + 1;
-        for(B = 0; B <= tempVar83; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.88))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.88);
             if(vScreenCollision(Z, tempLocation))
@@ -1594,8 +1594,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar84 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.87))) + 1;
-        for(B = 0; B <= tempVar84; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.87))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.87);
             if(vScreenCollision(Z, tempLocation))
@@ -1604,8 +1604,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar85 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.86))) + 1;
-        for(B = 0; B <= tempVar85; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.86))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.86);
             if(vScreenCollision(Z, tempLocation))
@@ -1614,8 +1614,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar86 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.85))) + 1;
-        for(B = 0; B <= tempVar86; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.85))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.85);
             if(vScreenCollision(Z, tempLocation))
@@ -1624,8 +1624,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar87 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.84))) + 1;
-        for(B = 0; B <= tempVar87; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.84))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.84);
             if(vScreenCollision(Z, tempLocation))
@@ -1634,8 +1634,8 @@ void DrawBackground(int S, int Z)
             }
         }
 
-        int tempVar88 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.83))) + 1;
-        for(B = 0; B <= tempVar88; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.83))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.83);
             if(vScreenCollision(Z, tempLocation))
@@ -1648,8 +1648,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 53)
     {
 
-        int tempVar89 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
-        for(B = 0; B <= tempVar89; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1672,8 +1672,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 54)
     {
 
-        int tempVar90 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
-        for(B = 0; B <= tempVar90; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1697,8 +1697,8 @@ void DrawBackground(int S, int Z)
     if(Background2[S] == 55)
     {
 
-        int tempVar91 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar91; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A] / 4.0)
@@ -1734,8 +1734,8 @@ void DrawBackground(int S, int Z)
 
 
 
-        int tempVar92 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.65))) + 1;
-        for(B = 0; B <= tempVar92; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.65))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.65);
             if(vScreenCollision(Z, tempLocation))
@@ -1745,8 +1745,8 @@ void DrawBackground(int S, int Z)
         }
 
 
-        int tempVar93 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.6))) + 1;
-        for(B = 0; B <= tempVar93; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.6))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.6);
             if(vScreenCollision(Z, tempLocation))
@@ -1756,8 +1756,8 @@ void DrawBackground(int S, int Z)
         }
 
 
-        int tempVar94 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.55))) + 1;
-        for(B = 0; B <= tempVar94; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.55))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.55);
             if(vScreenCollision(Z, tempLocation))
@@ -1767,8 +1767,8 @@ void DrawBackground(int S, int Z)
         }
 
 
-        int tempVar95 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
-        for(B = 0; B <= tempVar95; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(vScreenCollision(Z, tempLocation))
@@ -1781,8 +1781,8 @@ void DrawBackground(int S, int Z)
     A = 57; // Warehouse
     if(Background2[S] == 57)
     {
-        int tempVar96 = static_cast<int>(floor(static_cast<double>((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
-        for(B = 0; B <= tempVar96; B++)
+        tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 2;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A])
@@ -1810,11 +1810,9 @@ void DrawBackground(int S, int Z)
     A = 58; // SMW Night
     if(Background2[S] == 58)
     {
-        int tempVar97 = (int)(floor((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5)) + 1;
-        printf("hmmm?? %f,%f,%d", level[S].Width, level[S].X, GFXBackground2Width[A]);
-        printf("hmmm?? %d", tempVar97);
-        if (tempVar97 > 10) tempVar97 = 10;
-        for(B = 0; B <= tempVar97; B++)
+        if (!GFXBackground2Width[A]) return;
+        tempVar = (int)(floor((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5)) + 1;
+        for(B = 0; B <= tempVar; B++)
         {
             tempLocation.X = level[S].X + ((B * GFXBackground2Width[A]) - (vScreenX[Z] + vScreen[Z].Left + level[S].X) * 0.5);
             if(level[S].Height - level[S].Y > GFXBackground2Height[A] / 4.0)
@@ -1830,7 +1828,6 @@ void DrawBackground(int S, int Z)
             tempLocation.Width = GFXBackground2Width[A];
             if(vScreenCollision(Z, tempLocation))
             {
-                printf("rendering a texture...!");
                 frmMain.renderTexture(vScreenX[Z] + tempLocation.X,
                                       vScreenY[Z] + tempLocation.Y,
                                       GFXBackground2Width[A],
@@ -1839,10 +1836,8 @@ void DrawBackground(int S, int Z)
                                       0,
                                       (GFXBackground2Height[A] / 4.0) * SpecialFrame[6]
                 );
-                printf("rendered!?!");
             }
         }
-        PGE_Delay(10000);
     }
     level[S] = tempLevel;
 

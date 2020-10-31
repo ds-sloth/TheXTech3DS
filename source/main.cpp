@@ -118,7 +118,7 @@ int main(int argc, char**argv)
     }
 
     int ret = GameMain(setup);
-    PGE_Delay(10000);
+    printf("Quit with code %d...\n", ret);
     frmMain.freeSDL();
 
     return ret;

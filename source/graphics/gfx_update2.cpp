@@ -161,7 +161,7 @@ void UpdateGraphics2()
 //    {
 //        frmMain.renderTexture(0, 0, ScreenW, ScreenH, 0, 0, 0);
 //    }
-    frmMain.clearBuffer();
+    frmMain.initDraw();
 
 //    if(TakeScreen == true)
 //    {
@@ -596,7 +596,7 @@ void UpdateGraphics2()
         }
         if(GamePaused == true)
         {
-            frmMain.renderRect(ScreenW/2 - 190, ScreenH/2 - 100, 380, 200, 0.f, 0.f, 0.f);
+            frmMain.renderRect(ScreenW/2 - 190, ScreenH/2 - 100, 380, 200, 0, 0, 0);
             if(Cheater == false)
             {
                 SuperPrint("CONTINUE", 3, ScreenW/2 - 190 + 62, ScreenH/2 - 100 + 57);
@@ -616,6 +616,6 @@ void UpdateGraphics2()
             SuperPrint(std::to_string(int(PrintFPS)), 1, 8, 8, 0.f, 1.f, 0.f);
         }
 
-        frmMain.repaint();
+        frmMain.finalizeDraw();
     }
 }

@@ -310,9 +310,8 @@ void UpdateGraphics(bool skipRepaint)
             numScreens = 1;
     }
 
-    printf("initing...");
+    // printf("drawing... ");
     frmMain.initDraw();
-    printf("inited!");
 
     if(SingleCoop == 2)
         numScreens = 2;
@@ -349,7 +348,7 @@ void UpdateGraphics(bool skipRepaint)
             {
                 if(numScreens > 1)
                     frmMain.renderRect(vScreen[Z].Left, vScreen[Z].Top,
-                                       vScreen[Z].Width, vScreen[Z].Height, 0.f, 0.f, 0.f, 1.f, true);
+                                       vScreen[Z].Width, vScreen[Z].Height, 0, 0, 0, 255, true);
                 else
                     frmMain.clearBuffer();
             }
@@ -401,14 +400,10 @@ void UpdateGraphics(bool skipRepaint)
             }
         }
 
-    printf("really just getting started...");
-
         if(numScreens > 1) // To separate drawing of screens
             frmMain.setViewport(vScreen[Z].Left, vScreen[Z].Top, vScreen[Z].Width, vScreen[Z].Height);
 
-    printf("done viewport...");
         DrawBackground(S, Z);
-    printf("done background...");
 
 
 //            If LevelEditor = True Then
@@ -1624,21 +1619,18 @@ void UpdateGraphics(bool skipRepaint)
         // clip any off-level draws
         if (vScreen[Z].Width + level[S].X > level[S].Width) {
             B = (vScreen[Z].Width + level[S].X - level[S].Width) / 2;
-            printf("%d\n",B);
             frmMain.renderRect(vScreen[Z].Left, vScreen[Z].Top,
-                               B, vScreen[Z].Height, 0.f, 0.f, 0.f, 1.f, true);
+                               B, vScreen[Z].Height, 0, 0, 0, 255, true);
             frmMain.renderRect(vScreen[Z].Left+vScreen[Z].Width-B, vScreen[Z].Top,
-                               B, vScreen[Z].Height, 0.f, 0.f, 0.f, 1.f, true);
+                               B, vScreen[Z].Height, 0, 0, 0, 255, true);
         }
         if (vScreen[Z].Height + level[S].Y > level[S].Height) {
             B = (vScreen[Z].Height + level[S].Y - level[S].Height) / 2;
             frmMain.renderRect(vScreen[Z].Left, vScreen[Z].Top,
-                               vScreen[Z].Width, B, 0.f, 0.f, 0.f, 1.f, true);
+                               vScreen[Z].Width, B, 0, 0, 0, 255, true);
             frmMain.renderRect(vScreen[Z].Left, vScreen[Z].Top+vScreen[Z].Height-B,
-                               vScreen[Z].Width, B, 0.f, 0.f, 0.f, 1.f, true);
+                               vScreen[Z].Width, B, 0, 0, 0, 255, true);
         }
-
-    printf("pretty much everything should have been drawn by now...");
 
         if(!LevelEditor) // Graphics for the main game.
         {
@@ -1657,22 +1649,22 @@ void UpdateGraphics(bool skipRepaint)
                 {
                     if(vScreen[Z].Top != 0.0)
                     {
-                        frmMain.renderRect(0, 0, vScreen[Z].Width, 1, 0.f, 0.f, 0.f);
+                        frmMain.renderRect(0, 0, vScreen[Z].Width, 1, 0, 0, 0);
                     }
                     else
                     {
-                        frmMain.renderRect(0, vScreen[Z].Height - 1, vScreen[Z].Width, 1, 0.f, 0.f, 0.f);
+                        frmMain.renderRect(0, vScreen[Z].Height - 1, vScreen[Z].Width, 1, 0, 0, 0);
                     }
                 }
                 else
                 {
                     if(vScreen[Z].Left != 0.0)
                     {
-                        frmMain.renderRect(0, 0, 1, vScreen[Z].Height, 0.f, 0.f, 0.f);
+                        frmMain.renderRect(0, 0, 1, vScreen[Z].Height, 0, 0, 0);
                     }
                     else
                     {
-                        frmMain.renderRect(vScreen[Z].Width - 1, 0, 1, vScreen[Z].Height, 0.f, 0.f, 0.f);
+                        frmMain.renderRect(vScreen[Z].Width - 1, 0, 1, vScreen[Z].Height, 0, 0, 0);
                     }
                 }
             }
@@ -1759,7 +1751,7 @@ void UpdateGraphics(bool skipRepaint)
                             X = -ScreenW/2;
                         else if((DScreenType == 6 && Z == 2) || (DScreenType == 4 && Z == 2) || (DScreenType == 3 && Z == 1))
                             Y = -ScreenH/2;
-                        frmMain.renderRect(ScreenW/2 - 190 + X, ScreenH/2 - 100 + Y, 380, 200, 0.f, 0.f, 0.f);
+                        frmMain.renderRect(ScreenW/2 - 190 + X, ScreenH/2 - 100 + Y, 380, 200, 0, 0, 0);
                         if(TestLevel)
                         {
                             SuperPrint("CONTINUE", 3, ScreenW/2 - 190 + 62 + X, ScreenH/2 - 100 + 37 + Y);
@@ -2115,8 +2107,6 @@ void UpdateGraphics(bool skipRepaint)
             }
         }
 
-    printf("sort of in the middle here...");
-
 //        If LevelEditor = True Or MagicHand = True Then
         if((LevelEditor || MagicHand) && !GamePaused)
         {
@@ -2405,8 +2395,8 @@ void UpdateGraphics(bool skipRepaint)
 
         if(GameOutro)
         {
-            frmMain.renderRect(0, 0, 800, Maths::iRound(CreditChop), 0.f, 0.f, 0.f);
-            frmMain.renderRect(0, 600 - Maths::iRound(CreditChop), 800, 600, 0.f, 0.f, 0.f);
+            frmMain.renderRect(0, 0, ScreenW, Maths::iRound(CreditChop), 0, 0, 0);
+            frmMain.renderRect(0, ScreenH - Maths::iRound(CreditChop), ScreenW, ScreenH, 0, 0, 0);
             DoCredits();
         }
 
@@ -2434,9 +2424,8 @@ void UpdateGraphics(bool skipRepaint)
 
     // if(!skipRepaint)
     //     frmMain.repaint();
-    printf("finalizing...");
     frmMain.finalizeDraw();
-    printf("finalized!");
+    // printf("finalized!\n");
 
     // Update Coin Frames
     CoinFrame2[1] = CoinFrame2[1] + 1;

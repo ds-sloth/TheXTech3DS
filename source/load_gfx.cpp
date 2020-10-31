@@ -30,6 +30,7 @@
 #include <Utils/dir_list_ci.h>
 #include <DirManager/dirman.h>
 #include <fmt_format_ne.h>
+#include "pge_delay.h"
 
 #include <set>
 
@@ -79,9 +80,9 @@ static void loadCGFX(const std::set<std::string> &files,
                      bool world = false,
                      bool skipMask = false)
 {
-    std::string imgPath = dEpisode + s_dirEpisode.resolveFileCase(fName + ".t3x");
+    std::string imgPath = dEpisode + s_dirEpisode.resolveFileCase(fName+".png");
 
-    std::string imgPathC = dEpisode + dData + "/" + s_dirEpisode.resolveFileCase(fName + ".t3x");
+    std::string imgPathC = dEpisode + dData + "/" + s_dirEpisode.resolveFileCase(fName+".png");
     std::string imgToUse;
     bool alreadyLoaded = false;
 
@@ -122,7 +123,7 @@ static void loadCGFX(const std::set<std::string> &files,
 
     if(success)
     {
-        printf("Loaded custom GFX: %s", loadedPath.c_str());
+        // printf("Loaded custom GFX: %s", loadedPath.c_str());
         isCustom = true;
         texture = newTexture;
         if(width)
@@ -238,7 +239,7 @@ void LoadGFX()
         {
             break;
         }
-        if(A % 20 == 0)
+        if(A % 10 == 0)
             UpdateLoad();
     }
     UpdateLoad();
@@ -248,10 +249,7 @@ void LoadGFX()
         p = GfxRoot + fmt::format_ne("background2/background2-{0}.png", A);
         if(Files::fileExists(p))
         {
-            if (A == 58)
-                GFXBackground2BMP[A] = frmMain.LoadPicture(p);
-            else
-                GFXBackground2BMP[A] = frmMain.lazyLoadPicture(p);
+            GFXBackground2BMP[A] = frmMain.lazyLoadPicture(p);
             GFXBackground2Width[A] = GFXBackground2BMP[A].w;
             GFXBackground2Height[A] = GFXBackground2BMP[A].h;
         }
@@ -259,9 +257,9 @@ void LoadGFX()
         {
             GFXBackground2Width[A] = 0;
             GFXBackground2Height[A] = 0;
-            break;
+            // break;
         }
-        if(A % 10 == 0) UpdateLoad();
+        if(A % 5 == 0) UpdateLoad();
     }
     UpdateLoad();
 
@@ -273,7 +271,7 @@ void LoadGFX()
             GFXNPCBMP[A] = frmMain.lazyLoadPicture(p);
             GFXNPCWidth[A] = GFXNPCBMP[A].w;
             GFXNPCHeight[A] = GFXNPCBMP[A].h;
-            if(A % 20 == 0)
+            if(A % 10 == 0)
                 UpdateLoad();
         }
         else
@@ -293,7 +291,7 @@ void LoadGFX()
             GFXEffectBMP[A] = frmMain.lazyLoadPicture(p);
             GFXEffectWidth[A] = GFXEffectBMP[A].w;
             GFXEffectHeight[A] = GFXEffectBMP[A].h;
-            if(A % 20 == 0)
+            if(A % 10 == 0)
                 UpdateLoad();
         }
         else
@@ -311,7 +309,7 @@ void LoadGFX()
         if(Files::fileExists(p))
         {
             GFXYoshiBBMP[A] = frmMain.lazyLoadPicture(p);
-            if(A % 20 == 0)
+            if(A % 10 == 0)
                 UpdateLoad();
         }
         else
@@ -327,7 +325,7 @@ void LoadGFX()
         if(Files::fileExists(p))
         {
             GFXYoshiTBMP[A] = frmMain.lazyLoadPicture(p);
-            if(A % 20 == 0)
+            if(A % 10 == 0)
                 UpdateLoad();
         }
         else
@@ -352,7 +350,7 @@ void LoadGFX()
         {
             break;
         }
-        if(A % 20 == 0)
+        if(A % 10 == 0)
             UpdateLoad();
     }
     UpdateLoad();
@@ -367,7 +365,7 @@ void LoadGFX()
             GFXTileBMP[A] = frmMain.lazyLoadPicture(p);
             GFXTileWidth[A] = GFXTileBMP[A].w;
             GFXTileHeight[A] = GFXTileBMP[A].h;
-            if(A % 20 == 0)
+            if(A % 10 == 0)
                 UpdateLoad();
         }
         else
@@ -385,7 +383,7 @@ void LoadGFX()
             GFXLevelBMP[A] = frmMain.lazyLoadPicture(p);
             GFXLevelWidth[A] = GFXLevelBMP[A].w;
             GFXLevelHeight[A] = GFXLevelBMP[A].h;
-            if(A % 20 == 0)
+            if(A % 10 == 0)
                 UpdateLoad();
         }
         else
@@ -403,7 +401,7 @@ void LoadGFX()
             GFXSceneBMP[A] = frmMain.lazyLoadPicture(p);
             GFXSceneWidth[A] = GFXSceneBMP[A].w;
             GFXSceneHeight[A] = GFXSceneBMP[A].h;
-            if(A % 20 == 0)
+            if(A % 10 == 0)
                 UpdateLoad();
         }
         else
@@ -421,7 +419,7 @@ void LoadGFX()
             GFXPlayerBMP[A] = frmMain.lazyLoadPicture(p);
             GFXPlayerWidth[A] = GFXPlayerBMP[A].w;
             GFXPlayerHeight[A] = GFXPlayerBMP[A].h;
-            if(A % 20 == 0)
+            if(A % 10 == 0)
                 UpdateLoad();
         }
         else
@@ -439,7 +437,7 @@ void LoadGFX()
             GFXPathBMP[A] = frmMain.lazyLoadPicture(p);
             GFXPathWidth[A] = GFXPathBMP[A].w;
             GFXPathHeight[A] = GFXPathBMP[A].h;
-            if(A % 20 == 0)
+            if(A % 10 == 0)
                 UpdateLoad();
         }
         else
@@ -448,6 +446,7 @@ void LoadGFX()
         }
     }
     UpdateLoad();
+    frmMain.deleteTexture(GFX.MenuGFX[4], true);
 }
 
 void UnloadGFX()
@@ -704,9 +703,10 @@ void UpdateLoad()
     std::string state;
     bool draw = false;
 
-    if(LoadCoinsT <= SDL_GetTicks())
+    uint ticks = SDL_GetTicks();
+    if(LoadCoinsT <= ticks)
     {
-        LoadCoinsT = SDL_GetTicks() + 100;
+        LoadCoinsT = ticks + 250;
         LoadCoins += 1;
         if(LoadCoins > 3)
             LoadCoins = 0;
@@ -715,23 +715,12 @@ void UpdateLoad()
 
     if(draw)
     {
-        frmMain.clearBuffer();
-        if(!gfxLoaderTestMode)
-            frmMain.renderTexture(0, 0, GFX.MenuGFX[4]);
-        else
-        {
-            if(!state.empty())
-                SuperPrint(state, 3, 10, 10);
-            else
-                SuperPrint("Loading data...", 3, 10, 10);
-        }
-        frmMain.renderTexture(632, 576, GFX.Loader);
-        frmMain.renderTexture(760, 560, GFX.LoadCoin.w, GFX.LoadCoin.h / 4, GFX.LoadCoin, 0, 32 * LoadCoins);
+        frmMain.initDraw();
+        frmMain.renderTexture(0, 0, GFX.MenuGFX[4]);
+        frmMain.renderTexture(632, 456, GFX.Loader);
+        frmMain.renderTexture(760, 440, GFX.LoadCoin.w, GFX.LoadCoin.h / 4, GFX.LoadCoin, 0, 32 * LoadCoins);
 
-        frmMain.repaint();
+        frmMain.finalizeDraw();
         DoEvents();
-#ifdef __EMSCRIPTEN__
-        emscripten_sleep(1); // To repaint screenn, it's required to send a sleep signal
-#endif
     }
 }

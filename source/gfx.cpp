@@ -33,13 +33,7 @@
 
 void GFX_t::loadImage(StdPicture &img, std::string path)
 {
-    printf("Loading texture %s...", path.c_str());
-    img = frmMain.LoadPicture(path);
-    if(!img.texture)
-    {
-        printf("Failed to load texture: %s...", path.c_str());
-        m_loadErrors++;
-    }
+    img = frmMain.lazyLoadPicture(path);
     m_loadedImages.push_back(&img);
 }
 

@@ -66,11 +66,13 @@ void MenuLoop()
 //    Dim blankPlayer As Player
     Player_t blankPlayer;
 //    UpdateControls
+    // printf("Doing the controls...\n");
     UpdateControls();
 //    SingleCoop = 0
     SingleCoop = 0;
 
 //    With Player(1).Controls
+    // printf("Menu logic...\n");
     {
         Controls_t &c = Player[1].Controls;
 
@@ -431,11 +433,7 @@ void MenuLoop()
                             WorldLevel[A].Active = true;
                     }
 
-                    printf("hmmm...\n");
-
                     SetupPlayers();
-
-                    printf("helloooo\n");
 
                     if(!StartLevel.empty())
                     {
@@ -443,20 +441,20 @@ void MenuLoop()
                         SoundPause[26] = 200;
                         LevelSelect = false;
 
-                        printf("worldddd...!\n");
+                        printf("THIS ONE");
                         GameThing();
+                        printf("AMIRIGHT?\n");
                         ClearLevel();
+                        printf("NOM????\n");
 
-                        PGE_Delay(1000);
-                        printf("nomnom...!\n");
+                        // PGE_Delay(1000);
                         std::string levelPath = SelectWorld[selWorld].WorldPath + StartLevel;
                         if(!OpenLevel(levelPath))
                         {
-                            MessageText = fmt::format_ne("ERROR: Can't open \"{0}\": file doesn't exist or corrupted.", StartLevel);
+                            MessageText = printf("ERROR: Can't open \"%s\": file doesn't exist or corrupted.\n", StartLevel.c_str());
                             PauseGame(1);
                             ErrorQuit = true;
                         }
-                        printf("nom!!...!\n");
                     }
                     return;
                 }
@@ -752,8 +750,6 @@ void MenuLoop()
 //        End If
         }
     }
-
-
 
 //    If CheckLiving = 0 Then
     if(CheckLiving() == 0)
@@ -1341,27 +1337,34 @@ void MenuLoop()
         }
     }
 
+    // printf("Updating macro...\n");
 //    If LevelMacro > 0 Then UpdateMacro
     if(LevelMacro > 0) UpdateMacro();
 //    UpdateLayers
+    // printf("Layer...\n");
     UpdateLayers();
 //    UpdateNPCs
+    // printf("NPCs...\n");
     UpdateNPCs();
 //    UpdateBlocks
+    // printf("Blokes...\n");
     UpdateBlocks();
 //    UpdateEffects
+    // printf("Effects...\n");
     UpdateEffects();
 //    UpdatePlayer
+    // printf("Player...\n");
     UpdatePlayer();
 //    UpdateGraphics
-    printf("updating graphics!\n");
+    // printf("Graphics!\n");
     UpdateGraphics();
 //    UpdateSound
+    // printf("Sound...\n");
     UpdateSound();
 //    UpdateEvents
+    // printf("Events...\n");
     UpdateEvents();
-
-
+    // printf("Exiting main...\n");
 }
 
 void FindWorlds()

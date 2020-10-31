@@ -1,5 +1,12 @@
 #include <ctime>
-uint SDL_GetTicks(void)
+#include <cstdio>
+#include <3ds.h>
+
+uint64_t originalTime = -1;
+
+uint32_t SDL_GetTicks(void)
 {
-    return clock() / 1000;
+    if (originalTime == -1u)
+        originalTime = osGetTime();
+    return (uint32_t)(osGetTime() - originalTime);
 }
