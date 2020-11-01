@@ -1,7 +1,13 @@
 #include "custom_draw_image.h"
 #include "SDL_supplement.h"
 
-bool C2D_DrawImage_Custom(C2D_Image img, float x, float y, float w, float h, float src_x, float src_y, float src_w, float src_h, float depth, uint flip, uint32_t tint)
+const C2D_ImageTint shadowTint =
+{C2D_Color32(0,0,0,255), 1.,
+C2D_Color32(0,0,0,255), 1.,
+C2D_Color32(0,0,0,255), 1.,
+C2D_Color32(0,0,0,255), 1.};
+
+bool C2D_DrawImage_Custom(C2D_Image img, float x, float y, float w, float h, float src_x, float src_y, float src_w, float src_h, float depth, uint flip, bool shadow)
 {
     const Tex3DS_SubTexture* old_subtex = img.subtex;
     // assuming not rotated (it isn't here)
@@ -17,13 +23,17 @@ bool C2D_DrawImage_Custom(C2D_Image img, float x, float y, float w, float h, flo
     };
     img.subtex = &new_subtex;
 
-    bool result = C2D_DrawImageAt(img, x, y, depth, nullptr, (flip & SDL_FLIP_HORIZONTAL) ? -1. : 1., (flip & SDL_FLIP_VERTICAL) ? -1. : 1.);
+    bool result;
+    if (shadow)
+        result = C2D_DrawImageAt(img, x, y, depth, &shadowTint, (flip & SDL_FLIP_HORIZONTAL) ? -1. : 1., (flip & SDL_FLIP_VERTICAL) ? -1. : 1.);
+    else
+        result = C2D_DrawImageAt(img, x, y, depth, nullptr, (flip & SDL_FLIP_HORIZONTAL) ? -1. : 1., (flip & SDL_FLIP_VERTICAL) ? -1. : 1.);
     img.subtex = old_subtex;
     return result;
 }
 
 
-bool C2D_DrawImage_Custom_Basic(C2D_Image img, float x, float y, float depth, uint32_t tint)
+bool C2D_DrawImage_Custom_Basic(C2D_Image img, float x, float y, float depth, bool shadow)
 {
     return C2D_DrawImageAt(img, x, y, depth);
     // C2Di_Context* ctx = C2Di_GetContext();

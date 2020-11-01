@@ -544,7 +544,7 @@ void PauseGame(int plr)
 
         if(qScreen)
             stopPause = false;
-        PGE_Delay(1);
+        // PGE_Delay(1);
         // printf("would have delayed 1...??");
         if(!GameIsActive)
             break;

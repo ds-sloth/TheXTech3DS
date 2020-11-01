@@ -104,20 +104,20 @@ public:
                         StdPicture &tx,
                         int xSrc, int ySrc,
                         double rotateAngle = 0.0, SDL_Point *center = nullptr, unsigned int flip = SDL_FLIP_NONE,
-                        float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, int depth = -10000);
+                        bool shadow = false, int depth = -10000);
     void renderTexture(double xDst, double yDst, double wDst, double hDst,
                        StdPicture &tx,
                        int xSrc, int ySrc,
-                       float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, int depth = -10000);
+                       bool shadow = false, int depth = -10000);
 
     void renderTextureFL(double xDst, double yDst, double wDst, double hDst,
                          StdPicture &tx,
                          int xSrc, int ySrc,
                          double rotateAngle = 0.0, SDL_Point *center = nullptr, unsigned int flip = SDL_FLIP_NONE,
-                         float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, int depth = -10000);
+                         bool shadow = false, int depth = -10000);
 
     void renderTexture(int xDst, int yDst, StdPicture &tx,
-                       float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, int depth = -10000);
+                       bool shadow = false, int depth = -10000);
 
     void setDefaultDepth(int depth);
 

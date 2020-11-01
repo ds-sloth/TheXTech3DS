@@ -6,7 +6,7 @@ import os
 import sys
 import shutil
 
-PREVIEW = True
+PREVIEW = False
 REDO = False
 datadir = sys.argv[1]
 graphicsdir = os.path.join(datadir, 'graphics')
@@ -42,11 +42,12 @@ for dirpath, _, files in os.walk(datadir, topdown=True):
         elif fn.endswith('.db'):
             continue
         else:
-            shutil.copy(rfn, destfn)
+            # shutil.copy(rfn, destfn)
             continue
         if PREVIEW:
             pvwfn = t3xfn+'.bmp'
             os.system(f'tex3ds "{bmpfn}" -f rgba8888 -o "{t3xfn}" -p "{pvwfn}"')
         else:
-            os.system(f'tex3ds "{bmpfn}" -f rgba8888 -o "{t3xfn}"')
+            if os.system(f'tex3ds "{bmpfn}" -f rgba8888 -o "{t3xfn}"'):
+                print(f"It didn't work and {t3xfn} is missing.")
             os.remove(bmpfn)

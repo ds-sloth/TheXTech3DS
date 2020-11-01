@@ -38,75 +38,41 @@
 //  Get the screen position
 void GetvScreen(int A)
 {
-    // Netplay code, disabled
-//    if(ScreenType == 8)
-//    {
-//        if(Player[nPlay.MySlot + 1].Mount == 2)
-//            Player[nPlay.MySlot + 1].Location.Height = 0;
-//        vScreenX[1] = -Player[nPlay.MySlot + 1].Location.X + (vScreen[1].Width * 0.5) - Player[nPlay.MySlot + 1].Location.Width / 2.0;
-//        vScreenY[1] = -Player[nPlay.MySlot + 1].Location.Y + (vScreen[1].Height * 0.5) - vScreenYOffset - Player[nPlay.MySlot + 1].Location.Height;
-//        vScreenX[1] = vScreenX[1] - vScreen[1].tempX;
-//        vScreenY[1] = vScreenY[1] - vScreen[1].TempY;
-//        if(-vScreenX[1] < level[Player[nPlay.MySlot + 1].Section].X)
-//            vScreenX[1] = -level[Player[nPlay.MySlot + 1].Section].X;
-//        if(-vScreenX[1] + vScreen[1].Width > level[Player[nPlay.MySlot + 1].Section].Width)
-//            vScreenX[1] = -(level[Player[nPlay.MySlot + 1].Section].Width - vScreen[1].Width);
-//        if(-vScreenY[1] < level[Player[nPlay.MySlot + 1].Section].Y)
-//            vScreenY[1] = -level[Player[nPlay.MySlot + 1].Section].Y;
-//        if(-vScreenY[1] + vScreen[1].Height > level[Player[nPlay.MySlot + 1].Section].Height)
-//            vScreenY[1] = -(level[Player[nPlay.MySlot + 1].Section].Height - vScreen[1].Height);
-//        if(vScreen[1].TempDelay > 0)
-//            vScreen[1].TempDelay = vScreen[1].TempDelay - 1;
-//        else
-//        {
-//            if(vScreen[1].tempX > 0)
-//                vScreen[1].tempX = vScreen[1].tempX - 1;
-//            if(vScreen[1].tempX < 0)
-//                vScreen[1].tempX = vScreen[1].tempX + 1;
-//            if(vScreen[1].TempY > 0)
-//                vScreen[1].TempY = vScreen[1].TempY - 1;
-//            if(vScreen[1].TempY < 0)
-//                vScreen[1].TempY = vScreen[1].TempY + 1;
-//        }
-//        if(Player[nPlay.MySlot + 1].Mount == 2)
-//            Player[nPlay.MySlot + 1].Location.Height = 128;
-//    }
-//    else
+    if(Player[A].Mount == 2)
+        Player[A].Location.Height = 0;
+    vScreenX[A] = -Player[A].Location.X + (vScreen[A].Width * 0.5) - Player[A].Location.Width / 2.0;
+    vScreenY[A] = -Player[A].Location.Y + (vScreen[A].Height * 0.5) - vScreenYOffset - Player[A].Location.Height;
+    vScreenX[A] = vScreenX[A] - vScreen[A].tempX;
+    vScreenY[A] = vScreenY[A] - vScreen[A].TempY;
+    if (vScreen[A].Width + level[Player[A].Section].X > level[Player[A].Section].Width)
+        vScreenX[A] = -level[Player[A].Section].X/2 + -(level[Player[A].Section].Width - vScreen[A].Width)/2;
+    else if(-vScreenX[A] < level[Player[A].Section].X)
+        vScreenX[A] = -level[Player[A].Section].X;
+    else if(-vScreenX[A] + vScreen[A].Width > level[Player[A].Section].Width)
+        vScreenX[A] = -(level[Player[A].Section].Width - vScreen[A].Width);
+    if (vScreen[A].Height + level[Player[A].Section].Y > level[Player[A].Section].Height)
+        vScreenY[A] = -level[Player[A].Section].Y/2 + -(level[Player[A].Section].Height - vScreen[A].Height)/2;
+    else if(-vScreenY[A] < level[Player[A].Section].Y)
+        vScreenY[A] = -level[Player[A].Section].Y;
+    else if(-vScreenY[A] + vScreen[A].Height > level[Player[A].Section].Height)
+        vScreenY[A] = -(level[Player[A].Section].Height - vScreen[A].Height);
+    if(vScreen[A].TempDelay > 0)
+        vScreen[A].TempDelay = vScreen[A].TempDelay - 1;
+    else
     {
-        if(Player[A].Mount == 2)
-            Player[A].Location.Height = 0;
-        vScreenX[A] = -Player[A].Location.X + (vScreen[A].Width * 0.5) - Player[A].Location.Width / 2.0;
-        vScreenY[A] = -Player[A].Location.Y + (vScreen[A].Height * 0.5) - vScreenYOffset - Player[A].Location.Height;
-        vScreenX[A] = vScreenX[A] - vScreen[A].tempX;
-        vScreenY[A] = vScreenY[A] - vScreen[A].TempY;
-        if (vScreen[A].Width + level[Player[A].Section].X > level[Player[A].Section].Width)
-            vScreenX[A] = -level[Player[A].Section].X/2 + -(level[Player[A].Section].Width - vScreen[A].Width)/2;
-        else if(-vScreenX[A] < level[Player[A].Section].X)
-            vScreenX[A] = -level[Player[A].Section].X;
-        else if(-vScreenX[A] + vScreen[A].Width > level[Player[A].Section].Width)
-            vScreenX[A] = -(level[Player[A].Section].Width - vScreen[A].Width);
-        if (vScreen[A].Height + level[Player[A].Section].Y > level[Player[A].Section].Height)
-            vScreenY[A] = -level[Player[A].Section].Y/2 + -(level[Player[A].Section].Height - vScreen[A].Height)/2;
-        else if(-vScreenY[A] < level[Player[A].Section].Y)
-            vScreenY[A] = -level[Player[A].Section].Y;
-        else if(-vScreenY[A] + vScreen[A].Height > level[Player[A].Section].Height)
-            vScreenY[A] = -(level[Player[A].Section].Height - vScreen[A].Height);
-        if(vScreen[A].TempDelay > 0)
-            vScreen[A].TempDelay = vScreen[A].TempDelay - 1;
-        else
-        {
-            if(vScreen[A].tempX > 0)
-                vScreen[A].tempX = vScreen[A].tempX - 1;
-            if(vScreen[A].tempX < 0)
-                vScreen[A].tempX = vScreen[A].tempX + 1;
-            if(vScreen[A].TempY > 0)
-                vScreen[A].TempY = vScreen[A].TempY - 1;
-            if(vScreen[A].TempY < 0)
-                vScreen[A].TempY = vScreen[A].TempY + 1;
-        }
-        if(Player[A].Mount == 2)
-            Player[A].Location.Height = 128;
+        if(vScreen[A].tempX > 0)
+            vScreen[A].tempX = vScreen[A].tempX - 1;
+        if(vScreen[A].tempX < 0)
+            vScreen[A].tempX = vScreen[A].tempX + 1;
+        if(vScreen[A].TempY > 0)
+            vScreen[A].TempY = vScreen[A].TempY - 1;
+        if(vScreen[A].TempY < 0)
+            vScreen[A].TempY = vScreen[A].TempY + 1;
     }
+    if(vScreenX[A] & 1) vScreenX[A] -= 1;
+    if(vScreenY[A] & 1) vScreenY[A] -= 1;
+    if(Player[A].Mount == 2)
+        Player[A].Location.Height = 128;
 }
 
 // Get the average screen position for all players
@@ -172,6 +138,9 @@ void GetvScreenAverage()
         else if(vScreenX[1] < OldX - 10)
             vScreenX[1] = OldX - 10;
     }
+
+    if(vScreenX[A] & 1) vScreenX[A] -= 1;
+    if(vScreenY[A] & 1) vScreenY[A] -= 1;
 }
 
 // Get the average screen position for all players with no level edge detection
@@ -198,6 +167,9 @@ void GetvScreenAverage2()
         return;
     vScreenX[1] = (vScreenX[1] / B) + (ScreenW * 0.5);
     vScreenY[1] = (vScreenY[1] / B) + (ScreenH * 0.5) - vScreenYOffset;
+
+    if(vScreenX[A] & 1) vScreenX[A] -= 1;
+    if(vScreenY[A] & 1) vScreenY[A] -= 1;
 }
 
 void SetupGraphics()
@@ -424,6 +396,9 @@ void GetvScreenCredits()
         vScreenY[A] = -level[Player[1].Section].Y + 100;
     if(-vScreenY[A] + ScreenH > level[Player[1].Section].Height - 100)
         vScreenY[A] = -(level[Player[1].Section].Height - ScreenH) - 100;
+
+    if(vScreenX[A] & 1) vScreenX[A] -= 1;
+    if(vScreenY[A] & 1) vScreenY[A] -= 1;
 }
 
 int pfrX(int plrFrame)
@@ -479,31 +454,29 @@ void DrawFrozenNPC(int Z, int A)
                             n.Location.Y, CDbl(NPCWidthGFX[n.Type]), CDbl(NPCHeight[n.Type])))) && !n.Hidden)
     {
 // draw npc
-        float c = n.Shadow ? 0.f : 1.f;
-
         frmMain.renderTexture(int(vScreenX[Z] + n.Location.X + 2),
                               int(vScreenY[Z] + n.Location.Y + 2),
                               int(n.Location.Width - 4),
                               int(n.Location.Height - 4),
                               GFXNPCBMP[int(n.Special)],
-                              2, 2 + int(n.Special2) * NPCHeight[int(n.Special)], c, c, c);
+                              2, 2 + int(n.Special2) * NPCHeight[int(n.Special)], n.Shadow);
 
         // draw ice
         frmMain.renderTexture(int(vScreenX[Z] + n.Location.X + NPCFrameOffsetX[n.Type]),
                               int(vScreenY[Z] + n.Location.Y + NPCFrameOffsetY[n.Type]),
                               int(n.Location.Width - 6), int(n.Location.Height - 6),
-                              GFXNPCBMP[n.Type], 0, 0, c, c, c);
+                              GFXNPCBMP[n.Type], 0, 0, n.Shadow);
         frmMain.renderTexture(int(vScreenX[Z] + n.Location.X + NPCFrameOffsetX[n.Type] + n.Location.Width - 6),
                               int(vScreenY[Z] + n.Location.Y + NPCFrameOffsetY[n.Type]),
                               6, int(n.Location.Height - 6),
-                              GFXNPCBMP[n.Type], 128 - 6, 0, c, c, c);
+                              GFXNPCBMP[n.Type], 128 - 6, 0, n.Shadow);
         frmMain.renderTexture(int(vScreenX[Z] + n.Location.X + NPCFrameOffsetX[n.Type]),
                               int(vScreenY[Z] + n.Location.Y + NPCFrameOffsetY[n.Type] + n.Location.Height - 6),
                               int(n.Location.Width - 6), 6,
-                              GFXNPCBMP[n.Type], 0, 128 - 6, c, c, c);
+                              GFXNPCBMP[n.Type], 0, 128 - 6, n.Shadow);
         frmMain.renderTexture(int(vScreenX[Z] + n.Location.X + NPCFrameOffsetX[n.Type] + n.Location.Width - 6),
                               int(vScreenY[Z] + n.Location.Y + NPCFrameOffsetY[n.Type] + n.Location.Height - 6),
                               6, 6, GFXNPCBMP[n.Type],
-                              128 - 6, 128 - 6, c, c, c);
+                              128 - 6, 128 - 6, n.Shadow);
     }
 }

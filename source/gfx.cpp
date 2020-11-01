@@ -57,8 +57,8 @@ bool GFX_t::load()
     For(i, 0, 2)
         loadImage(Container[i], uiPath + fmt::format_ne("Container{0}.png", i));
 
-    For(i, 1, 3)
-        loadImage(ECursor[i], uiPath + fmt::format_ne("ECursor{0}.png", i));
+    // For(i, 1, 3)
+    //     loadImage(ECursor[i], uiPath + fmt::format_ne("ECursor{0}.png", i));
 
     For(i, 0, 9)
         loadImage(Font1[i], uiPath + fmt::format_ne("Font1_{0}.png", i));
@@ -85,10 +85,10 @@ bool GFX_t::load()
 
     loadImage(Mount[2], uiPath + "Mount.png");
 
-    For(i, 0, 7)
-        loadImage(nCursor[i], uiPath + fmt::format_ne("nCursor{0}.png", i));
+    // For(i, 0, 7)
+    //     loadImage(nCursor[i], uiPath + fmt::format_ne("nCursor{0}.png", i));
 
-    loadImage(TextBox, uiPath + "TextBox.png");
+    // loadImage(TextBox, uiPath + "TextBox.png");
 
     For(i, 1, 2)
         loadImage(Tongue[i], uiPath + fmt::format_ne("Tongue{0}.png", i));

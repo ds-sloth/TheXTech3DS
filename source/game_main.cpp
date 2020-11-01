@@ -98,19 +98,6 @@ int GameMain(const CmdLineSetup_t &setup)
     InitControls(); // init player's controls
     DoEvents();
 
-#ifdef __EMSCRIPTEN__ // Workaround for a recent Chrome's policy to avoid sudden sound without user's interaction
-    frmMain.show(); // Don't show window until playing an initial sound
-
-    while(!MenuMouseDown)
-    {
-        frmMain.clearBuffer();
-        SuperPrint("Click to start a game", 3, 230, 280);
-        frmMain.repaint();
-        DoEvents();
-        PGE_Delay(10);
-    }
-#endif
-
     if(!noSound)
     {
         InitMixerX();
@@ -133,7 +120,7 @@ int GameMain(const CmdLineSetup_t &setup)
 
     LoadingInProcess = false;
 
-    ShowFPS = setup.testShowFPS;
+    ShowFPS = true;
     MaxFPS = setup.testMaxFPS;
 
     if(!setup.testLevel.empty() || setup.interprocess) // Start level testing immediately!
@@ -261,7 +248,7 @@ int GameMain(const CmdLineSetup_t &setup)
                 tempTime = SDL_GetTicks();
                 ScreenType = 0;
                 SetupScreens();
-                if(tempTime >= gameTime + frameRate || tempTime < gameTime)
+                if(tempTime >= gameTime + frameRate || tempTime < gameTime || true)
                 {
                     CheckActive();
                     OutroLoop();
@@ -306,7 +293,7 @@ int GameMain(const CmdLineSetup_t &setup)
                     }
                 }
 
-                PGE_Delay(1);
+                // PGE_Delay(1);
                 if(!GameIsActive) break;// Break on quit
             } while(GameOutro);
         }
@@ -437,7 +424,7 @@ int GameMain(const CmdLineSetup_t &setup)
 
             // printf("Merp??");
             // Update graphics before loop begin (to process inital lazy-unpacking of used sprites)
-            UpdateGraphics();
+            UpdateGraphics(true);
 
             // printf("Merp!!!");
             do
@@ -546,9 +533,9 @@ int GameMain(const CmdLineSetup_t &setup)
                 }
                 printf("ClearLevel\n");
                 ClearLevel();
-                printf("hellooo!");
+                printf("hellooo!\n");
                 PGE_Delay(1000);
-                printf("nextlo!");
+                printf("nextlo!\n");
 
                 std::string levelPath;
                 if(GoToLevel.empty())
@@ -582,7 +569,7 @@ int GameMain(const CmdLineSetup_t &setup)
 
                 // Update graphics before loop begin (to process inital lazy-unpacking of used sprites)
                 printf("First gfx2\n");
-                UpdateGraphics2();
+                UpdateGraphics2(true);
                 printf("done!\n");
 
                 do // 'level select loop
@@ -764,7 +751,7 @@ int GameMain(const CmdLineSetup_t &setup)
 
             // Update graphics before loop begin (to process inital lazy-unpacking of used sprites)
             printf("Graphics??\n");
-            UpdateGraphics();
+            UpdateGraphics(true);
             printf("entering main game!\n");
 
             do // MAIN GAME LOOP
@@ -817,7 +804,7 @@ int GameMain(const CmdLineSetup_t &setup)
                     }
                 }
 
-                PGE_Delay(1);
+                // PGE_Delay(1);
                 if(!GameIsActive) return 0;// Break on quit
             }
             while(!LevelSelect && !GameMenu);
@@ -836,7 +823,6 @@ int GameMain(const CmdLineSetup_t &setup)
 
                 GameThing();
                 PGE_Delay(500);
-                zTestLevel(setup.testMagicHand, setup.interprocess); // Restart level
 
 //                If nPlay.Online = False Then
 //                    OpenLevel FullFileName

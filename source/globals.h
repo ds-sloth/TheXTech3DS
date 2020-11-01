@@ -1477,14 +1477,14 @@ extern RangeArrI<int, 0, maxBlockType, 0> BlockSlope;
 //Public BlockSlope2(0 To maxBlockType) As Integer 'block is sloped on the bottom.
 extern RangeArrI<int, 0, maxBlockType, 0> BlockSlope2;
 //Public vScreenX(0 To maxPlayers) As Double  'vScreen offset
-extern RangeArr<double, 0, maxPlayers> vScreenX;
+extern RangeArr<int, 0, maxPlayers> vScreenX;
 //Public vScreenY(0 To maxPlayers) As Double 'vScreen offset
-extern RangeArr<double, 0, maxPlayers> vScreenY;
+extern RangeArr<int, 0, maxPlayers> vScreenY;
 
 //Public qScreenX(1 To maxPlayers) As Double  'vScreen offset adjust
-extern RangeArr<double, 0, maxPlayers> qScreenX;
+extern RangeArr<int, 0, maxPlayers> qScreenX;
 //Public qScreenY(1 To maxPlayers) As Double 'vScreen offset adjust
-extern RangeArr<double, 0, maxPlayers> qScreenY;
+extern RangeArr<int, 0, maxPlayers> qScreenY;
 //Public qScreen As Boolean 'Weather or not the screen needs adjusting
 extern bool qScreen;
 

@@ -189,11 +189,11 @@ NPCDefaults_t NPCDefaults;
 RangeArrI<bool, 0, maxBlockType, false> BlockIsSizable;
 RangeArrI<int, 0, maxBlockType, 0> BlockSlope;
 RangeArrI<int, 0, maxBlockType, 0> BlockSlope2;
-RangeArr<double, 0, maxPlayers> vScreenX;
-RangeArr<double, 0, maxPlayers> vScreenY;
+RangeArr<int, 0, maxPlayers> vScreenX;
+RangeArr<int, 0, maxPlayers> vScreenY;
 
-RangeArr<double, 0, maxPlayers> qScreenX;
-RangeArr<double, 0, maxPlayers> qScreenY;
+RangeArr<int, 0, maxPlayers> qScreenX;
+RangeArr<int, 0, maxPlayers> qScreenY;
 bool qScreen = false;
 
 RangeArrI<int, 0, maxBlockType, 0> BlockWidth;
@@ -540,10 +540,10 @@ void initAll()
     Background2.fill(0);
     SpecialFrameCount.fill(0.f);
     NPCSpeedvar.fill(0.f);
-    vScreenX.fill(0.0);
-    vScreenY.fill(0.0);
-    qScreenX.fill(0.0);
-    qScreenY.fill(0.0);
+    vScreenX.fill(0);
+    vScreenY.fill(0);
+    qScreenX.fill(0);
+    qScreenY.fill(0);
 
     Block.fill(Block_t());
     Background.fill(Background_t());

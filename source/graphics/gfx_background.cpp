@@ -380,7 +380,7 @@ void DrawBackground(int S, int Z)
     A = 15; // SMB3 Dungeon
     if(Background2[S] == 15)
     {
-
+        if (!GFXBackground2Width[A]) return;
         tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
         for(B = 0; B <= tempVar; B++)
         {
@@ -448,7 +448,7 @@ void DrawBackground(int S, int Z)
     A = 18; // SMW ghost house
     if(Background2[S] == 18)
     {
-
+        if (!GFXBackground2Width[A]) return;
         tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
         for(B = 0; B <= tempVar; B++)
         {
@@ -708,7 +708,7 @@ void DrawBackground(int S, int Z)
     A = 29; // SMW Night
     if(Background2[S] == 29)
     {
-
+        if (!GFXBackground2Width[A]) return;
         tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
         for(B = 0; B <= tempVar; B++)
         {
@@ -734,7 +734,7 @@ void DrawBackground(int S, int Z)
     A = 30; // SMW Cave
     if(Background2[S] == 30)
     {
-
+        if (!GFXBackground2Width[A]) return;
         tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
         for(B = 0; B <= tempVar; B++)
         {
@@ -959,7 +959,7 @@ void DrawBackground(int S, int Z)
     A = 39; // SMB3 Cave no Sky
     if(Background2[S] == 39)
     {
-
+        if (!GFXBackground2Width[A]) return;
         tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
         for(B = 0; B <= tempVar; B++)
         {
@@ -1190,7 +1190,7 @@ void DrawBackground(int S, int Z)
     A = 42; // SMW Castle
     if(Background2[S] == 42)
     {
-
+        if (!GFXBackground2Width[A]) return;
         tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
         for(B = 0; B <= tempVar; B++)
         {
@@ -1696,7 +1696,7 @@ void DrawBackground(int S, int Z)
     A = 55; // SMW Water
     if(Background2[S] == 55)
     {
-
+        if (!GFXBackground2Width[A]) return;
         tempVar = (int)(floor(((level[S].Width - level[S].X) / GFXBackground2Width[A] * 0.5))) + 1;
         for(B = 0; B <= tempVar; B++)
         {

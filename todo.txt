@@ -1,0 +1,15 @@
+- Crashes
+  - Entering pipes
+  - Maybe just backgrounds?
+- Fonts
+- Scroll offsets will be TRICKY.
+  - Lock camera to evens? (done)
+  - Grasses
+- Pixel cutoffs (related).
+  - Fire flower, toad, grasses
+- Load speeds
+- Big backgrounds
+  - Transparent way to let more than one texture back a picture
+- Sound
+- Menus (credits, settings)
+- Shrink player spritesheets

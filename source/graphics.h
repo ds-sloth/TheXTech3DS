@@ -31,7 +31,7 @@
 
 // Public Sub UpdateGraphics2() 'draws GFX to screen when on the world map/world map editor
 // draws GFX to screen when on the world map/world map editor
-void UpdateGraphics2();
+void UpdateGraphics2(bool skipRepaint = false);
 // Public Sub UpdateGraphics() 'This draws the graphic to the screen when in a level/game menu/outro/level editor
 // This draws the graphic to the screen when in a level/game menu/outro/level editor
 void UpdateGraphics(bool skipRepaint = false);
@@ -57,7 +57,7 @@ void SetupScreens();
 void DynamicScreen();
 // Public Sub SuperPrint(SuperWords As String, Font As Integer, X As Single, Y As Single) 'prints text to the screen
 // prints text to the screen
-void SuperPrint(std::string SuperWords, int Font, float X, float Y, float r = 1.f, float g = 1.f, float b = 1.f, float a = 1.f);
+void SuperPrint(std::string SuperWords, int Font, float X, float Y);
 // Public Function CheckKey(newStrizzle As String) As String
 //std::string CheckKey(std::string newStrizzle); // USELESS
 // Private Sub SpecialFrames() 'update frames for special things such as coins and kuribo's shoe
