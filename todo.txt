@@ -13,6 +13,7 @@
   - Extra undrawn space in some backgrounds, sometimes bad
   - Maybe I overzealously removed hardcoded limits?
 - Load speeds
+  - PGE_Delay??
 - Big backgrounds
   - Transparent way to let more than one texture back a picture
 - Sound

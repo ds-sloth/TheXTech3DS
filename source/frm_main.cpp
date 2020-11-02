@@ -59,12 +59,14 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
 {
     // 3ds libs
     gfxInitDefault();
+    gfxSet3D(true); // Enable stereoscopic 3D
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
     C2D_Prepare();
     consoleInit(GFX_BOTTOM, NULL);
 
     top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
+    right = C2D_CreateScreenTarget(GFX_TOP, GFX_RIGHT);
 
     bool res = false;
 
@@ -146,12 +148,22 @@ bool FrmMain::isSdlError()
     return false;
 }
 
-void FrmMain::initDraw()
+void FrmMain::initDraw(int eye)
 {
     // enter the draw context!
-    C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-    C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 1.0f, 1.0f));
-    C2D_SceneBegin(top);
+    if (eye == 0) {
+        C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+        C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+        C2D_SceneBegin(top);
+        if (numEyes == 2) currentEye = 0;
+        else currentEye = -1;
+    }
+    else {
+        C2D_TargetClear(right, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+        C2D_SceneBegin(right);
+        currentEye = 2;
+    }
+    setDefaultDepth(0);
 }
 
 void FrmMain::finalizeDraw()
@@ -165,115 +177,19 @@ void FrmMain::repaint()
 {
     int w, h, off_x, off_y, wDst, hDst;
     float scale_x, scale_y;
-/*
-    SDL_SetRenderTarget(m_gRenderer, nullptr);
-
-    // Get the size of surface where to draw the scene
-    SDL_GetRendererOutputSize(m_gRenderer, &w, &h);
-
-    // Calculate the size difference factor
-    scale_x = float(w) / ScaleWidth;
-    scale_y = float(h) / ScaleHeight;
-
-    wDst = w;
-    hDst = h;
-
-    // Keep aspect ratio
-    if(scale_x > scale_y) // Width more than height
-    {
-        wDst = int(scale_y * ScaleWidth);
-        hDst = int(scale_y * ScaleHeight);
-    }
-    else if(scale_x < scale_y) // Height more than width
-    {
-        hDst = int(scale_x * ScaleHeight);
-        wDst = int(scale_x * ScaleWidth);
-    }
-
-    // Align the rendering scene to the center of screen
-    off_x = (w - wDst) / 2;
-    off_y = (h - hDst) / 2;
-
-    SDL_SetRenderDrawColor(m_gRenderer, 0, 0, 0, 255);
-    SDL_RenderClear(m_gRenderer);
-
-    SDL_Rect destRect = {off_x, off_y, wDst, hDst};
-    SDL_Rect sourceRect = {0, 0, ScaleWidth, ScaleHeight};
-
-    SDL_SetTextureColorMod(m_tBuffer, 255, 255, 255);
-    SDL_SetTextureAlphaMod(m_tBuffer, 255);
-    SDL_RenderCopyEx(m_gRenderer, m_tBuffer, &sourceRect, &destRect, 0.0, nullptr, SDL_FLIP_NONE);
-
-    SDL_RenderPresent(m_gRenderer);
-    SDL_SetRenderTarget(m_gRenderer, m_tBuffer);
-*/
 }
 
 void FrmMain::updateViewport()
 {
-    /*
-    float w, w1, h, h1;
-    int   wi, hi;
-    wi = ScreenW;
-    hi = ScreenH;
-
-    SDL_GetWindowSize(m_window, &wi, &hi);
-    // ScaleWidth = wi;
-    // ScaleHeight = hi;
-    // if (ScaleWidth < 512) ScaleWidth = 512;
-    // if (ScaleHeight < 384) ScaleHeight = 384;
-    // if (ScaleWidth > 1280) ScaleWidth = 1280;
-    // if (ScaleHeight > 720) ScaleHeight = 720;
-    // Set_Screen(ScaleWidth, ScaleHeight);
-    // SDL_DestroyTexture(m_tBuffer);
-    // m_tBuffer = SDL_CreateTexture(m_gRenderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, ScreenW, ScreenH);
-    // SDL_SetRenderTarget(m_gRenderer, m_tBuffer);
-
-    w = wi;
-    h = hi;
-    w1 = w;
-    h1 = h;
-
-    scale_x = w / ScaleWidth;
-    scale_y = h / ScaleHeight;
-    viewport_scale_x = scale_x;
-    viewport_scale_y = scale_y;
-
-    viewport_offset_x = 0;
-    viewport_offset_y = 0;
-
-    if(scale_x > scale_y)
-    {
-        w1 = scale_y * ScaleWidth;
-        viewport_scale_x = w1 / ScaleWidth;
-    }
-    else if(scale_x < scale_y)
-    {
-        h1 = scale_x * ScaleHeight;
-        viewport_scale_y = h1 / ScaleHeight;
-    }
-
-    offset_x = (w - w1) / 2;
-    offset_y = (h - h1) / 2;
-
-    viewport_x = 0;
-    viewport_y = 0;
-    viewport_w = static_cast<int>(w1);
-    viewport_h = static_cast<int>(h1);
-    */
 }
 
 void FrmMain::resetViewport()
 {
     updateViewport();
-    // SDL_RenderSetViewport(m_gRenderer, nullptr);
 }
 
 void FrmMain::setViewport(int x, int y, int w, int h)
 {
-    // SDL_Rect topLeftViewport = {x, y, w, h};
-    // SDL_RenderSetViewport(m_gRenderer, &topLeftViewport);
-
     viewport_x = x;
     viewport_y = y;
     viewport_w = w;
@@ -534,12 +450,18 @@ void FrmMain::renderRect(int x, int y, int w, int h, uint8_t red, uint8_t green,
     uint32_t clr = C2D_Color32(red, green, blue, alpha);
 
     // Filled is always True in this game
-    C2D_DrawRectSolid((x+viewport_offset_x)/2,
-                      (y+viewport_offset_y)/2,
-                      depth,
-                      w/2,
-                      h/2,
-                      clr);
+    if (currentEye == -1)
+        C2D_DrawRectSolid((x+viewport_offset_x)/2,
+                          (y+viewport_offset_y)/2,
+                          0, w/2, h/2, clr);
+    else if (currentEye == 0)
+        C2D_DrawRectSolid((x+viewport_offset_x)/2 + (int)(depth * depthSlider),
+                          (y+viewport_offset_y)/2,
+                          0, w/2, h/2, clr);
+    else
+        C2D_DrawRectSolid((x+viewport_offset_x)/2 - (int)(depth * depthSlider),
+                          (y+viewport_offset_y)/2,
+                          0, w/2, h/2, clr);
 }
 
 void FrmMain::renderRectBR(int _left, int _top, int _right, int _bottom, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, int depth)
@@ -601,8 +523,15 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
     // SDL_SetTextureAlphaMod(tx.texture, static_cast<unsigned char>(255.f * alpha));
     // SDL_RenderCopyEx(m_gRenderer, tx.texture, &sourceRect, &destRect,
     //                  rotateAngle, center, static_cast<SDL_RendererFlip>(flip));
-    C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
-                         xSrc/2, ySrc/2, wDst/2, hDst/2, depth, flip, shadow);
+    if (currentEye == -1)
+        C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
+                             xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
+    else if (currentEye == 0)
+        C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
+                             xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
+    else
+        C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
+                             xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
 }
 
 void FrmMain::renderTexture(double xDst, double yDst, double wDst, double hDst,
@@ -654,5 +583,10 @@ void FrmMain::renderTexture(int xDst, int yDst, StdPicture &tx, bool shadow, int
 
     tx.lastDrawFrame = currentFrame;
 
-    C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, depth, shadow);
+    if (currentEye == -1)
+        C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, 0, shadow);
+    else if (currentEye == 0)
+        C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, 0, shadow);
+    else
+        C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, 0, shadow);
 }

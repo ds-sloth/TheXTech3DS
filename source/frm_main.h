@@ -52,11 +52,15 @@ class FrmMain
     uint32_t currentFrame = 0;
     int m_ri; // SDL_RendererInfo
     int defaultDepth = 0;
+    float depthSlider = 1.;
+    int currentEye = 0;
 public:
     int ScaleWidth = 800;
     int ScaleHeight = 600;
 
     int MousePointer = 0;
+
+    int numEyes = 2;
 
     FrmMain();
 
@@ -79,7 +83,7 @@ public:
     int setFullScreen(bool fs);
     bool isSdlError();
 
-    void initDraw();
+    void initDraw(int eye = 0);
     void finalizeDraw();
     void repaint();
     void updateViewport();
@@ -148,6 +152,7 @@ private:
     int viewport_h = 0;
 
     C3D_RenderTarget* top;
+    C3D_RenderTarget* right;
 
     SDL_Point MapToScr(int x, int y);
 };
