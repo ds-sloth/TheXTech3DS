@@ -23,67 +23,10 @@
 #define FMT_NOEXCEPT
 #include <fmt/fmt_format.h>
 
-#ifdef __APPLE__
-#include <CoreFoundation/CoreFoundation.h>
-#include <CoreServices/CoreServices.h>
-#include <PGE_File_Formats/pge_file_lib_private.h>//It's only exception for macOS here to get URL-Decode. Never include this!
-#include "app_path_macosx.h"
-#endif
-
 #ifdef __gnu_linux__
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
-#endif
-
-#ifdef _WIN32
-#include <windows.h>
-#include <winreg.h>
-#include <algorithm> // std::replace from \\ into /
-#endif
-
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-
-static bool loadingLocked = false;
-
-extern "C" void unlockLoadingCustomState()
-{
-    loadingLocked = false;
-}
-
-static void loadCustomState()
-{
-    loadingLocked = true;
-    EM_ASM(
-        FS.mkdir('/settings');
-        FS.mount(IDBFS, {}, '/settings');
-
-        // sync from persisted state into memory and then
-        // run the 'test' function
-        FS.syncfs(true, function (err) {
-            assert(!err);
-            ccall('unlockLoadingCustomState', 'v');
-        });
-    );
-
-    while(loadingLocked)
-        emscripten_sleep(10);
-}
-
-static void saveCustomState()
-{
-    loadingLocked = true;
-    EM_ASM(
-        FS.syncfs(function (err) {
-            assert(!err);
-            ccall('unlockLoadingCustomState', 'v');
-        });
-    );
-
-    while(loadingLocked)
-        emscripten_sleep(10);
-}
 #endif
 
 #include "app_path.h"
@@ -95,17 +38,9 @@ std::string  ApplicationPathSTD;
 
 std::string AppPathManager::m_settingsPath;
 std::string AppPathManager::m_userPath;
-#ifdef __APPLE__
-
-#   ifndef USERDATA_ROOT_NAME
-#       define USERDATA_ROOT_NAME "TheXTech Episodes"
-#   endif
-
-std::string AppPathManager::m_userDataRoot;
-#endif
 bool AppPathManager::m_isPortable = false;
 
-#define UserDirName "/smbx-data"
+#define UserDirName "/3ds/thextech"
 
 /**
  * @brief Retreive User Home directory with appending of the PGE user data directory
@@ -121,10 +56,7 @@ static std::string getPgeUserDirectory()
 
 void AppPathManager::initAppPath()
 {
-    ApplicationPathSTD = "/smbx/";
-
-    if(checkPortable())
-        return;
+    ApplicationPathSTD = "romfs:/";
 
     std::string userDirPath = getPgeUserDirectory();
     if(!userDirPath.empty())
@@ -139,7 +71,7 @@ void AppPathManager::initAppPath()
         }
     }
     m_userPath = ApplicationPathSTD;
-    initSettingsPath();
+    initSettingsPath(); // can't write ANYTHING
     std::printf("== App Path is %s\n", ApplicationPathSTD.c_str());
     std::printf("== User Path is %s\n", m_userPath.c_str());
     fflush(stdout);
@@ -157,7 +89,7 @@ std::string AppPathManager::userAppDirSTD()
 
 std::string AppPathManager::assetsRoot()
 {
-    return m_userPath;
+    return ApplicationPathSTD;
 }
 
 std::string AppPathManager::languagesDir()
@@ -209,26 +141,7 @@ bool AppPathManager::isPortable()
 
 bool AppPathManager::checkPortable()
 {
-    if(m_settingsPath.empty())
-        m_settingsPath = ApplicationPathSTD;
-
-    if(m_userPath.empty())
-        m_userPath = ApplicationPathSTD;
-
-    if(!Files::fileExists(settingsFileSTD()))
-        return false;
-
-    m_isPortable = false;
-
-    IniProcessing checkForPort(settingsFileSTD());
-    checkForPort.beginGroup("Main");
-    m_isPortable = checkForPort.value("force-portable", false).toBool();
-    checkForPort.endGroup();
-
-    if(m_isPortable)
-        initSettingsPath();
-
-    return m_isPortable;
+    return false;
 }
 
 bool AppPathManager::userDirIsAvailable()

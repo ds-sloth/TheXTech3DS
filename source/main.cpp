@@ -95,6 +95,7 @@ static void strToPlayerSetup(int player, const std::string &setupString)
 extern "C"
 int main(int argc, char**argv)
 {
+    romfsInit();
     CmdLineSetup_t setup;
 
     // CrashHandler::initSigs();

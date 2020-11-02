@@ -1996,8 +1996,8 @@ void UpdateGraphics(bool skipRepaint)
 
                 // frmMain.renderTexture(int(MenuMouseX), int(MenuMouseY), GFX.ECursor[2]);
             }
-            if(// printfPS > 0) {
-                SuperPrint(fmt::format_ne("{0}", int(// printfPS)), 1, 8, 8);
+            if(PrintFPS > 0) {
+                SuperPrint(fmt::format_ne("{0}", int(PrintFPS)), 1, 8, 8);
             }
         }
 
