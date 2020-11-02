@@ -1172,43 +1172,43 @@ void InitControls()
         {
             auto &j = conJoystick[A];
             j.Up.id = KEYCODE_PAD_UP;
-            j.Up.val = 1;
+            j.Up.val = KEYID_PAD_UP;
             j.Up.type = ConJoystick_t::JoyButton;
 
             j.Down.id = KEYCODE_PAD_DOWN;
-            j.Down.val = 1;
+            j.Down.val = KEYID_PAD_DOWN;
             j.Down.type = ConJoystick_t::JoyButton;
 
             j.Left.id = KEYCODE_PAD_LEFT;
-            j.Left.val = 1;
+            j.Left.val = KEYID_PAD_LEFT;
             j.Left.type = ConJoystick_t::JoyButton;
 
             j.Right.id = KEYCODE_PAD_RIGHT;
-            j.Right.val = 1;
+            j.Right.val = KEYID_PAD_RIGHT;
             j.Right.type = ConJoystick_t::JoyButton;
 
             j.Run.id = KEYCODE_B;
-            j.Run.val = 1;
+            j.Run.val = KEYID_B;
             j.Run.type = ConJoystick_t::JoyButton;
 
             j.AltRun.id = KEYCODE_Y;
-            j.AltRun.val = 1;
+            j.AltRun.val = KEYID_Y;
             j.AltRun.type = ConJoystick_t::JoyButton;
 
             j.Jump.id = KEYCODE_A;
-            j.Jump.val = 1;
+            j.Jump.val = KEYID_A;
             j.Jump.type = ConJoystick_t::JoyButton;
 
             j.AltJump.id = KEYCODE_X;
-            j.AltJump.val = 1;
+            j.AltJump.val = KEYID_X;
             j.AltJump.type = ConJoystick_t::JoyButton;
 
             j.Drop.id = KEYCODE_SELECT;
-            j.Drop.val = 1;
+            j.Drop.val = KEYID_SELECT;
             j.Drop.type = ConJoystick_t::JoyButton;
 
             j.Start.id = KEYCODE_START;
-            j.Start.val = 1;
+            j.Start.val = KEYID_START;
             j.Start.type = ConJoystick_t::JoyButton;
         }
     }

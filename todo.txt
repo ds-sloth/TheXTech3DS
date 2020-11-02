@@ -1,15 +1,20 @@
 - Crashes
-  - Entering pipes
-  - Maybe just backgrounds?
-- Fonts
+  - Use of key
+- Autogen .size files
+- Fonts!!!
 - Scroll offsets will be TRICKY.
   - Lock camera to evens? (done)
   - Grasses
+  - Judder when Mario is on a conveyer belt
 - Pixel cutoffs (related).
   - Fire flower, toad, grasses
+  - I really hope this doesn't become an assets job...
+- Background glitches
+  - Extra undrawn space in some backgrounds, sometimes bad
+  - Maybe I overzealously removed hardcoded limits?
 - Load speeds
 - Big backgrounds
   - Transparent way to let more than one texture back a picture
 - Sound
-- Menus (credits, settings)
+- Menus (credits)
 - Shrink player spritesheets

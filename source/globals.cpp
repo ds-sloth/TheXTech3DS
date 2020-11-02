@@ -506,7 +506,7 @@ std::string getJoyKeyName(const KM_Key &key)
 {
     if(key.type < 0)
         return "_";
-    return fmt::format_ne("K={0} ID={1} T={2}", key.val, key.id, key.type);
+    return KEYNAMES[key.val];
 }
 
 

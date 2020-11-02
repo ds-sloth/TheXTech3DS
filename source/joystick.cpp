@@ -43,8 +43,8 @@ static bool bindJoystickKey(uint32_t keys, KM_Key &k)
     for(int i = 0; i < 32; i++)
     {
         if ((1<<i) & keys) {
-            k.val = 1;
-            k.id = i;
+            k.val = i;
+            k.id = 1<<i;
             k.type = (int)ConJoystick_t::JoyButton;
             return true;
         }
@@ -90,7 +90,6 @@ void UpdateControls()
 
             if(c.Up && c.Down)
             {
-                printf("testing those controls!\n");
                 c.Up = false;
                 c.Down = false;
             }

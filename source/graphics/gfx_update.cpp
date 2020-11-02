@@ -1904,93 +1904,32 @@ void UpdateGraphics(bool skipRepaint)
                 // Options Menu
                 else if(MenuMode == 3)
                 {
-    //                    SuperPrint "PLAYER 1 CONTROLS", 3, MenuX, MenuY
                     SuperPrint("PLAYER 1 CONTROLS", 3, MenuX, MenuY);
-    //                    SuperPrint "PLAYER 2 CONTROLS", 3, MenuX, MenuY+30
                     SuperPrint("PLAYER 2 CONTROLS", 3, MenuX, MenuY+30);
-    //                    If resChanged = True Then
                     if(resChanged)
-    //                        SuperPrint "WINDOWED MODE", 3, MenuX, MenuY+60
                         SuperPrint("WINDOWED MODE", 3, MenuX, MenuY+60);
-    //                    Else
                     else
-    //                        SuperPrint "FULLSCREEN MODE", 3, MenuX, MenuY+60
                         SuperPrint("FULLSCREEN MODE", 3, MenuX, MenuY+60);
-    //                    End If
-    //                    SuperPrint "VIEW CREDITS", 3, MenuX, MenuY+90
                     SuperPrint("VIEW CREDITS", 3, MenuX, MenuY+90);
-    //                    BitBlt myBackBuffer, MenuX - 20, 350 + (MenuCursor * 30), 16, 16, GFX.MCursorMask(0).hdc, 0, 0, vbSrcAnd
-    //                    BitBlt myBackBuffer, MenuX - 20, 350 + (MenuCursor * 30), 16, 16, GFX.MCursor(0).hdc, 0, 0, vbSrcPaint
                     frmMain.renderTexture(MenuX - 20, MenuY + (MenuCursor * 30),
                                           GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
-    //                ElseIf MenuMode = 31 Or MenuMode = 32 Then
                 }
                 else if(MenuMode == 31 || MenuMode == 32)
                 {
-    //                    If useJoystick(MenuMode - 30) = 0 Then
-                    // if(useJoystick[MenuMode - 30] == 0)
-                    // {
-    //                        SuperPrint "INPUT......KEYBOARD", 3, MenuX, MenuY - 90 + menuFix
-                        // SuperPrint("INPUT......KEYBOARD", 3, MenuX, MenuY - 90 + menuFix);
-                        // SuperPrint(fmt::format_ne("UP.........{0}", getKeyName(conKeyboard[MenuMode - 30].Up)), 3, MenuX, MenuY - 60 + menuFix);
-                        // SuperPrint(fmt::format_ne("DOWN.......{0}", getKeyName(conKeyboard[MenuMode - 30].Down)), 3, MenuX, MenuY - 30 + menuFix);
-                        // SuperPrint(fmt::format_ne("LEFT.......{0}", getKeyName(conKeyboard[MenuMode - 30].Left)), 3, MenuX, MenuY + menuFix);
-                        // SuperPrint(fmt::format_ne("RIGHT......{0}", getKeyName(conKeyboard[MenuMode - 30].Right)), 3, MenuX, MenuY + 30 + menuFix);
-                        // SuperPrint(fmt::format_ne("RUN........{0}", getKeyName(conKeyboard[MenuMode - 30].Run)), 3, MenuX, MenuY + 60 + menuFix);
-                        // SuperPrint(fmt::format_ne("ALT RUN....{0}", getKeyName(conKeyboard[MenuMode - 30].AltRun)), 3, MenuX, MenuY + 90 + menuFix);
-                        // SuperPrint(fmt::format_ne("JUMP.......{0}", getKeyName(conKeyboard[MenuMode - 30].Jump)), 3, MenuX, MenuY + 120 + menuFix);
-                        // SuperPrint(fmt::format_ne("ALT JUMP...{0}", getKeyName(conKeyboard[MenuMode - 30].AltJump)), 3, MenuX, MenuY + 150 + menuFix);
-                        // SuperPrint(fmt::format_ne("DROP ITEM..{0}", getKeyName(conKeyboard[MenuMode - 30].Drop)), 3, MenuX, MenuY + 180 + menuFix);
-                        // SuperPrint(fmt::format_ne("PAUSE......{0}", getKeyName(conKeyboard[MenuMode - 30].Start)), 3, MenuX, MenuY + 210 + menuFix);
-    //                    Else
-                    // }
-                    // else
-                    // {
-                        SuperPrint("INPUT......JOYSTICK " + std::to_string(useJoystick[MenuMode - 30]), 3, MenuX, 260 + menuFix);
+                    SuperPrint("3DS INPUT..PLAYER " + std::to_string(MenuMode - 30), 3, MenuX, MenuY - 120 + menuFix);
 
-                        SuperPrint(fmt::format_ne("UP.........{0}", getJoyKeyName(conJoystick[MenuMode - 30].Up)), 3, MenuX, MenuY - 60 + menuFix);
-                        SuperPrint(fmt::format_ne("DOWN.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Down)), 3, MenuX, MenuY - 30 + menuFix);
-                        SuperPrint(fmt::format_ne("LEFT.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Left)), 3, MenuX, MenuY + menuFix);
-                        SuperPrint(fmt::format_ne("RIGHT......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Right)), 3, MenuX, MenuY + 30 + menuFix);
-                        SuperPrint(fmt::format_ne("RUN........{0}", getJoyKeyName(conJoystick[MenuMode - 30].Run)), 3, MenuX, MenuY + 60 + menuFix);
-                        SuperPrint(fmt::format_ne("ALT RUN....{0}", getJoyKeyName(conJoystick[MenuMode - 30].AltRun)), 3, MenuX, MenuY + 90 + menuFix);
-                        SuperPrint(fmt::format_ne("JUMP.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Jump)), 3, MenuX, MenuY + 120 + menuFix);
-                        SuperPrint(fmt::format_ne("ALT JUMP...{0}", getJoyKeyName(conJoystick[MenuMode - 30].AltJump)), 3, MenuX, MenuY + 150 + menuFix);
-                        SuperPrint(fmt::format_ne("DROP ITEM..{0}", getJoyKeyName(conJoystick[MenuMode - 30].Drop)), 3, MenuX, MenuY + 180 + menuFix);
-                        SuperPrint(fmt::format_ne("PAUSE......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Start)), 3, MenuX, MenuY + 210 + menuFix);
+                    SuperPrint(fmt::format_ne("UP.........{0}", getJoyKeyName(conJoystick[MenuMode - 30].Up)), 3, MenuX, MenuY - 90 + menuFix);
+                    SuperPrint(fmt::format_ne("DOWN.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Down)), 3, MenuX, MenuY - 60 + menuFix);
+                    SuperPrint(fmt::format_ne("LEFT.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Left)), 3, MenuX, MenuY - 30 + menuFix);
+                    SuperPrint(fmt::format_ne("RIGHT......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Right)), 3, MenuX, MenuY + menuFix);
+                    SuperPrint(fmt::format_ne("RUN........{0}", getJoyKeyName(conJoystick[MenuMode - 30].Run)), 3, MenuX, MenuY + 30 + menuFix);
+                    SuperPrint(fmt::format_ne("ALT RUN....{0}", getJoyKeyName(conJoystick[MenuMode - 30].AltRun)), 3, MenuX, MenuY + 60 + menuFix);
+                    SuperPrint(fmt::format_ne("JUMP.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Jump)), 3, MenuX, MenuY + 90 + menuFix);
+                    SuperPrint(fmt::format_ne("ALT JUMP...{0}", getJoyKeyName(conJoystick[MenuMode - 30].AltJump)), 3, MenuX, MenuY + 120 + menuFix);
+                    SuperPrint(fmt::format_ne("DROP ITEM..{0}", getJoyKeyName(conJoystick[MenuMode - 30].Drop)), 3, MenuX, MenuY + 150 + menuFix);
+                    SuperPrint(fmt::format_ne("PAUSE......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Start)), 3, MenuX, MenuY + 180 + menuFix);
 
-//                        if(conJoystick[MenuMode - 30].Run >= 0)
-//                            SuperPrint(fmt::format_ne("RUN........{0}", conJoystick[MenuMode - 30].Run), 3, MenuX, 290 + menuFix);
-//                        else
-//                            SuperPrint("RUN........_", 3, MenuX, 290 + menuFix);
-
-//                        if(conJoystick[MenuMode - 30].AltRun >= 0)
-//                            SuperPrint(fmt::format_ne("ALT RUN....{0}", conJoystick[MenuMode - 30].AltRun), 3, MenuX, 320 + menuFix);
-//                        else
-//                            SuperPrint("ALT RUN...._", 3, MenuX, 320 + menuFix);
-
-//                        if(conJoystick[MenuMode - 30].Jump >= 0)
-//                            SuperPrint(fmt::format_ne("JUMP.......{0}", conJoystick[MenuMode - 30].Jump), 3, MenuX, 350 + menuFix);
-//                        else
-//                            SuperPrint("JUMP......._", 3, MenuX, 350 + menuFix);
-
-//                        if(conJoystick[MenuMode - 30].AltJump >= 0)
-//                            SuperPrint(fmt::format_ne("ALT JUMP...{0}", conJoystick[MenuMode - 30].AltJump), 3, MenuX, 380 + menuFix);
-//                        else
-//                            SuperPrint("ALT JUMP..._", 3, MenuX, 380 + menuFix);
-
-//                        if(conJoystick[MenuMode - 30].Drop >= 0)
-//                            SuperPrint(fmt::format_ne("DROP ITEM..{0}", conJoystick[MenuMode - 30].Drop), 3, MenuX, 410 + menuFix);
-//                        else
-//                            SuperPrint("DROP ITEM.._", 3, MenuX, 410 + menuFix);
-
-//                        if(conJoystick[MenuMode - 30].Start >= 0)
-//                            SuperPrint(fmt::format_ne("PAUSE......{0}", conJoystick[MenuMode - 30].Start), 3, MenuX, 440 + menuFix);
-//                        else
-//                            SuperPrint("PAUSE......_", 3, MenuX, 440 + menuFix);
-                    // }
-
-                    frmMain.renderTexture(MenuX - 20, MenuY - 90 + (MenuCursor * 30) + menuFix,
+                    frmMain.renderTexture(MenuX - 20, MenuY - 120 + (MenuCursor * 30) + menuFix,
                                           GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
                 }
 
