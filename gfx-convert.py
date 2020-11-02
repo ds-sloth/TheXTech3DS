@@ -21,7 +21,7 @@ for dirpath, _, files in os.walk(datadir, topdown=True):
         destfn = os.path.join(outpath, fn)
         bmpfn = os.path.join(outpath, fn[:-3]+'bmp')
         t3xfn = os.path.join(outpath, fn[:-3]+'png')
-        if os.path.isfile(t3xfn) or os.path.isfile(destfn) and not REDO: continue
+        if (os.path.isfile(t3xfn) or os.path.isfile(destfn)) and not REDO: continue
         if fn.endswith('.png'):
             os.system(f'convert -sample 50% "{rfn}" "{bmpfn}"')
         elif fn.endswith('m.gif') and os.path.isfile(rfn[:-5]+'.gif'):
@@ -41,13 +41,16 @@ for dirpath, _, files in os.walk(datadir, topdown=True):
                 os.system(f'convert -sample 50% "{rfn}" "{bmpfn}"')
         elif fn.endswith('.db'):
             continue
+        elif fn.endswith('.ogg') or fn.endswith('.mp3'): continue
         else:
-            # shutil.copy(rfn, destfn)
+            shutil.copy(rfn, destfn)
             continue
+        w, h = os.popen(f'identify -format "%[fx:w*2],%[fx:h*2]" "{bmpfn}"').read().split(',')
+        open(t3xfn+'.size','w').write(f'{w:>4}\n{h:>4}\n')
         if PREVIEW:
             pvwfn = t3xfn+'.bmp'
             os.system(f'tex3ds "{bmpfn}" -f rgba8888 -o "{t3xfn}" -p "{pvwfn}"')
         else:
             if os.system(f'tex3ds "{bmpfn}" -f rgba8888 -o "{t3xfn}"'):
-                print(f"It didn't work and {t3xfn} is missing.")
+                print(f"It didn't work and {t3xfn} is missing. (Size: {w}x{h})")
             os.remove(bmpfn)

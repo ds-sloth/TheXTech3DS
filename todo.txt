@@ -1,7 +1,13 @@
+SMBX Port to 3DS!
+
 - Crashes
   - Use of key
-- Autogen .size files
+- Sound
 - Fonts!!!
+- 3D effect work
+  - Viewport -> 820px (?)
+  - Slider support
+- Debugging info on bottom screen
 - Scroll offsets will be TRICKY.
   - Lock camera to evens? (done)
   - Grasses
@@ -11,11 +17,12 @@
   - I really hope this doesn't become an assets job...
 - Background glitches
   - Extra undrawn space in some backgrounds, sometimes bad
-  - Maybe I overzealously removed hardcoded limits?
+  - Sometimes tiled backgrounds desync (force them to round same way)
+  - Maybe I overzealously removed hardcoded 800 and 600s?
 - Load speeds
   - PGE_Delay??
 - Big backgrounds
   - Transparent way to let more than one texture back a picture
-- Sound
+  - Most 2 tall, one 3 tall
 - Menus (credits)
 - Shrink player spritesheets
