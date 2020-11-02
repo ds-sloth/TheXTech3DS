@@ -140,7 +140,7 @@ private:
     float offset_x = 0.f;
     float offset_y = 0.f;
     //Offset to shake screen
-    int viewport_offset_x = 0.f;
+    int viewport_offset_x = -10.f;
     int viewport_offset_y = 0.f;
     //Need to calculate relative viewport position when screen was scaled
     float viewport_scale_x = 1.0f;

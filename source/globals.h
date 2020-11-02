@@ -2133,7 +2133,7 @@ const int curRelease = 64;
 // extern int ScreenW;
 // //Public Const ScreenH As Integer = 600  'Game Screen Height
 // extern int ScreenH;
-const int ScreenW = 800;
+const int ScreenW = 820;
 const int ScreenH = 480;
 
 extern void Set_Screen(int sw, int sh);

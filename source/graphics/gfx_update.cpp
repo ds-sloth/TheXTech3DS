@@ -384,11 +384,11 @@ void UpdateGraphics(bool skipRepaint)
 
             // printf("background... \n");
             // try instead doing this one twice with the camera in different places.......
-            frmMain.setDefaultDepth(10);
+            frmMain.setDefaultDepth(5);
             DrawBackground(S, Z);
 
             // printf("background tiles... \n");
-            frmMain.setDefaultDepth(4);
+            frmMain.setDefaultDepth(2);
             For(A, 1, MidBackground - 1)  // First backgrounds
             {
                 if(vScreenCollision(Z, Background[A].Location) && !Background[A].Hidden)
@@ -403,7 +403,6 @@ void UpdateGraphics(bool skipRepaint)
                 }
             }
 
-            frmMain.setDefaultDepth(2);
             tempLocation.Width = 32;
             tempLocation.Height = 32;
 

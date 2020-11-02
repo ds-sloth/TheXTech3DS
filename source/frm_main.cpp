@@ -200,7 +200,7 @@ void FrmMain::offsetViewport(int x, int y)
 {
     if(viewport_offset_x != x || viewport_offset_y != y)
     {
-        viewport_offset_x = x;
+        viewport_offset_x = x-10;
         viewport_offset_y = y;
     }
 }
@@ -455,11 +455,11 @@ void FrmMain::renderRect(int x, int y, int w, int h, uint8_t red, uint8_t green,
                           (y+viewport_offset_y)/2,
                           0, w/2, h/2, clr);
     else if (currentEye == 0)
-        C2D_DrawRectSolid((x+viewport_offset_x)/2 + (int)(depth * depthSlider),
+        C2D_DrawRectSolid((x+viewport_offset_x)/2 - (int)(depth * depthSlider),
                           (y+viewport_offset_y)/2,
                           0, w/2, h/2, clr);
     else
-        C2D_DrawRectSolid((x+viewport_offset_x)/2 - (int)(depth * depthSlider),
+        C2D_DrawRectSolid((x+viewport_offset_x)/2 + (int)(depth * depthSlider),
                           (y+viewport_offset_y)/2,
                           0, w/2, h/2, clr);
 }
@@ -527,10 +527,10 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
         C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
                              xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
     else if (currentEye == 0)
-        C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
+        C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
                              xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
     else
-        C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
+        C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
                              xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
 }
 
@@ -586,7 +586,7 @@ void FrmMain::renderTexture(int xDst, int yDst, StdPicture &tx, bool shadow, int
     if (currentEye == -1)
         C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, 0, shadow);
     else if (currentEye == 0)
-        C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, 0, shadow);
-    else
         C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, 0, shadow);
+    else
+        C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, 0, shadow);
 }
