@@ -274,7 +274,8 @@ void UpdateGraphics2(bool skipRedraw)
             {
                 UnDuck(A);
             }
-            PlayerFrame(A);
+            if (eye == 0)
+                PlayerFrame(A);
             if(Player[A].Mount == 3)
             {
                 if(Player[A].MountType == 0)

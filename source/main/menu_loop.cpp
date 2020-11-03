@@ -443,7 +443,7 @@ void MenuLoop()
                         GameThing();
                         ClearLevel();
 
-                        // PGE_Delay(1000);
+                        PGE_Delay(1000);
                         std::string levelPath = SelectWorld[selWorld].WorldPath + StartLevel;
                         if(!OpenLevel(levelPath))
                         {

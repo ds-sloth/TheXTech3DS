@@ -6,6 +6,9 @@ SMBX Port to 3DS!
 - Test screenshake...
 - Sound
 - Debugging info on bottom screen
+- That castle grounds background fails to load...
+- Background glitches
+  - Sometimes tiled backgrounds desync (force them to round same way)
 - Scroll offsets will be TRICKY.
   - Lock camera to evens? (done)
   - Grasses
@@ -13,9 +16,9 @@ SMBX Port to 3DS!
 - Pixel cutoffs (related).
   - Fire flower, toad, grasses
   - I really hope this doesn't become an assets job...
-- Background glitches
-  - Sometimes tiled backgrounds desync (force them to round same way)
 - Load speeds
   - PGE_Delay??
+- Separate pieces of interface drawing...
 - Shrink player spritesheets
 - Alternative multiplayer controls
+- Update credits
