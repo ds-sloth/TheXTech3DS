@@ -3,8 +3,6 @@ SMBX Port to 3DS!
 - Fonts!!!
 - Crashes
   - Use of key (FIXED?)
-- Re-enable 2-player mode (done)
-  - Drawing
 - Test screenshake...
 - Sound
 - Debugging info on bottom screen
@@ -19,5 +17,5 @@ SMBX Port to 3DS!
   - Sometimes tiled backgrounds desync (force them to round same way)
 - Load speeds
   - PGE_Delay??
-- Menus (credits)
 - Shrink player spritesheets
+- Alternative multiplayer controls

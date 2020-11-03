@@ -36,76 +36,20 @@ void DoCredits()
     if(GameMenu == true)
         return;
 
+    int CC = (int)CreditChop;
+    if (CC & 1) CC -= 1;
+
+    frmMain.renderRect(0, 0, ScreenW, CC, 0, 0, 0);
+    frmMain.renderRect(0, ScreenH - CC, ScreenW, CC, 0, 0, 0);
+
     for(A = 1; A <= numCredits; A++)
     {
-        Credit[A].Location.Y -= 0.8;
-
         // Printing lines of credits
         if(Credit[A].Location.Y <= 600 && Credit[A].Location.Y + Credit[A].Location.Height >= 0)
         {
-            SuperPrint(Credit[A].Text, 4, static_cast<float>(Credit[A].Location.X), static_cast<float>(Credit[A].Location.Y));
-        }
-
-        // Closing screen
-        else if(A == numCredits && Credit[A].Location.Y + Credit[A].Location.Height < -100)
-        {
-            if(musicPlaying)
-            {
-                FadeOutMusic(11000);
-                musicPlaying = false;
-            }
-
-            CreditChop += 0.4f;
-            if(CreditChop >= 300)
-            {
-                CreditChop = 300;
-                EndCredits = EndCredits + 1;
-                if(EndCredits == 300)
-                {
-                    SetupCredits();
-                    GameOutro = false;
-                    GameMenu = true;
-                }
-            }
-            else
-                EndCredits = 0;
-        }
-
-        // Opening screen
-        else if(CreditChop > 100 && Credit[numCredits].Location.Y + Credit[numCredits].Location.Height > 0)
-        {
-            CreditChop -= 0.02f;
-            if(CreditChop < 100)
-                CreditChop = 100;
-
-            if(CreditChop < 250 && !musicPlaying)
-            {
-                if(bgMusic[0] <= 0) // Play default music if no music set in outro level
-                {
-                    musicName = "tmusic";
-                    PlayMusic("tmusic", 2000);
-                    musicPlaying = true;
-                }
-                else // Otherwise, play the music that set by level
-                    StartMusic(0, 2000);
-
-            }
-        }
-    }
-
-    if(CreditChop <= 100 || EndCredits > 0)
-    {
-        for(A = 1; A <= 2; A++)
-        {
-            // TODO
-            // if(((getKeyState(vbKeyEscape) == KEY_PRESSED) | (getKeyState(vbKeySpace) == KEY_PRESSED) | (getKeyState(vbKeyReturn) == KEY_PRESSED)) != 0)
-            // {
-            //     CreditChop = 300;
-            //     EndCredits = 0;
-            //     SetupCredits();
-            //     GameMenu = true;
-            //     GameOutro = false;
-            // }
+            int loc = (int)(Credit[A].Location.Y);
+            if (loc & 1) loc -= 1;
+            SuperPrint(Credit[A].Text, 4, (float)(Credit[A].Location.X), loc);
         }
     }
 }

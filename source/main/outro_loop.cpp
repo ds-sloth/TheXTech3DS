@@ -87,6 +87,55 @@ void OutroLoop()
         if(jumpBool == true || Player[A].Jump > 0)
             Player[A].Controls.Jump = true;
     }
+    // most of the credits code, which was misplaced in the draw script
+    for(A = 1; A <= numCredits; A++)
+    {
+        Credit[A].Location.Y -= 0.8;
+    }
+    // Closing screen
+    if(Credit[numCredits].Location.Y + Credit[numCredits].Location.Height < -100)
+    {
+        if(musicPlaying)
+        {
+            FadeOutMusic(11000);
+            musicPlaying = false;
+        }
+
+        CreditChop += 0.4f;
+        if(CreditChop >= ScreenH/2)
+        {
+            CreditChop = ScreenH/2;
+            EndCredits = EndCredits + 1;
+            if(EndCredits == 300)
+            {
+                SetupCredits();
+                GameOutro = false;
+                GameMenu = true;
+            }
+        }
+        else
+            EndCredits = 0;
+    }
+    // Opening screen
+    else if(CreditChop > 100 && Credit[numCredits].Location.Y + Credit[numCredits].Location.Height > 0)
+    {
+        CreditChop -= 0.4f;
+        if(CreditChop > ScreenH/2) CreditChop = ScreenH/2;
+        if(CreditChop < 100)
+            CreditChop = 100;
+
+        if(CreditChop+50 < ScreenH/2 && !musicPlaying)
+        {
+            if(bgMusic[0] <= 0) // Play default music if no music set in outro level
+            {
+                musicName = "tmusic";
+                PlayMusic("tmusic", 2000);
+                musicPlaying = true;
+            }
+            else // Otherwise, play the music that set by level
+                StartMusic(0, 2000);
+        }
+    }
     UpdateNPCs();
     UpdateBlocks();
     UpdateEffects();
@@ -100,38 +149,34 @@ void SetupCredits()
 {
     int A = 0;
     numCredits = 0;
-#ifdef CUSTOM_CREDITS_TITLE
-    AddCredit(CUSTOM_CREDITS_TITLE);
-#else
-#   ifdef ENABLE_OLD_CREDITS
     AddCredit("Super Mario Bros. X");
-#   else
     AddCredit("TheXTech");
-#   endif
-#endif
     AddCredit("");
     AddCredit("");
     AddCredit("");
     AddCredit("");
     AddCredit("");
-#ifdef ENABLE_OLD_CREDITS
+    AddCredit("The Greatest Fan-Game of All Time");
+    AddCredit("");
+    AddCredit("");
     AddCredit("Created By:");
-#else
-    AddCredit("Original VB6 code By:");
-#endif
     AddCredit("");
     AddCredit("Andrew Spinks");
     AddCredit("'Redigit'");
     AddCredit("");
     AddCredit("");
-#ifndef ENABLE_OLD_CREDITS
     AddCredit("C++ port By:");
     AddCredit("");
     AddCredit("Vitaly Novichkov");
     AddCredit("'Wohlstand'");
     AddCredit("");
     AddCredit("");
-#endif
+    AddCredit("Ported to 3DS By:");
+    AddCredit("");
+    AddCredit("Abe Leite");
+    AddCredit("'ds-sloth'");
+    AddCredit("");
+    AddCredit("");
 
     if(!WorldCredits[1].empty())
     {
@@ -163,14 +208,22 @@ void SetupCredits()
     AddCredit("");
     AddCredit("");
     AddCredit("Special Thanks:");
-#ifndef ENABLE_OLD_CREDITS
+    AddCredit("");
+    AddCredit("3DS Port");
+    AddCredit("");
+    // ANYONE I got sound from, resources from, devkitPro in general, etc
+    // citro2d, you know...
+    AddCredit("...");
+    AddCredit("");
+    AddCredit("C++ Port");
     AddCredit("");
     AddCredit("Kevsoft");
     AddCredit("Rednaxela");
     AddCredit("Aero");
     AddCredit("Kley");
     AddCredit("ShadowYoshi (Joey)");
-#endif
+    AddCredit("");
+    AddCredit("Original Game");
     AddCredit("");
     AddCredit("4matsy");
     AddCredit("AndyDark");
@@ -237,15 +290,9 @@ void SetupCredits()
     AddCredit("");
     AddCredit("");
     AddCredit("");
-#ifdef CUSTOM_CREDITS_URL
-    AddCredit(CUSTOM_CREDITS_URL);
-#else
-#   ifdef ENABLE_OLD_CREDITS
     AddCredit("www.SuperMarioBrothers.org");
-#   else
     AddCredit("wohlsoft.ru");
-#   endif
-#endif
+    AddCredit("github.com/ds-sloth/TheXTech3DS");
 
     for(A = 1; A <= numCredits; A++)
     {

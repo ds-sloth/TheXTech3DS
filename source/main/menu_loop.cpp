@@ -81,14 +81,7 @@ void MenuLoop()
 
 //    If .Up = False And .Down = False And .Jump = False And .Run = False And .Start = False Then
         if(!c.Up && !c.Down && !c.Jump && !c.Run && !c.Start)
-        {
-            bool k = false;
-            k |= menuDoPress;
-            k |= menuBackPress;
-
-            if(!k)
-                MenuCursorCanMove = true;
-        }
+            MenuCursorCanMove = true;
         if(MenuCursorCanMove && !getNewJoystick)
         {
             if(c.Up)
@@ -447,11 +440,8 @@ void MenuLoop()
                         SoundPause[26] = 200;
                         LevelSelect = false;
 
-                        printf("THIS ONE");
                         GameThing();
-                        printf("AMIRIGHT?\n");
                         ClearLevel();
-                        printf("NOM????\n");
 
                         // PGE_Delay(1000);
                         std::string levelPath = SelectWorld[selWorld].WorldPath + StartLevel;

@@ -1581,11 +1581,7 @@ void UpdateGraphics(bool skipRepaint)
         // There was code for magic hand mode here.
 
         if(GameOutro)
-        {
-            frmMain.renderRect(0, 0, ScreenW, Maths::iRound(CreditChop), 0, 0, 0);
-            frmMain.renderRect(0, ScreenH - Maths::iRound(CreditChop), ScreenW, ScreenH, 0, 0, 0);
             DoCredits();
-        }
     }
 
     // if(!skipRepaint)
