@@ -1276,7 +1276,6 @@ void UpdateGraphics(bool skipRepaint)
                     }
                 }
 
-                frmMain.setDefaultDepth(-5);
                 if(GamePaused)
                 {
                     if(MessageText.empty())

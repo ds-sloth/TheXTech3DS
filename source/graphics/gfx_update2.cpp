@@ -157,7 +157,7 @@ void UpdateGraphics2(bool skipRedraw)
         frmMain.initDraw(eye);
 
         // Draw the map!!
-        frmMain.setDefaultDepth(2);
+        frmMain.setDefaultDepth(4);
         for(A = 1; A <= numTiles; A++)
         {
             if(vScreenCollision2(1, Tile[A].Location) == true)
@@ -169,7 +169,7 @@ void UpdateGraphics2(bool skipRedraw)
                                       GFXTileBMP[Tile[A].Type], 0, TileHeight[Tile[A].Type] * TileFrame[Tile[A].Type]);
             }
         }
-        frmMain.setDefaultDepth(0);
+        frmMain.setDefaultDepth(2);
         for(A = 1; A <= numScenes; A++)
         {
             if(vScreenCollision2(1, Scene[A].Location) == true && Scene[A].Active == true)
@@ -180,6 +180,7 @@ void UpdateGraphics2(bool skipRedraw)
                                       GFXSceneBMP[Scene[A].Type], 0, SceneHeight[Scene[A].Type] * SceneFrame[Scene[A].Type]);
             }
         }
+        frmMain.setDefaultDepth(0);
         for(A = 1; A <= numWorldPaths; A++)
         {
             if(vScreenCollision2(1, WorldPath[A].Location) == true && WorldPath[A].Active == true)
@@ -226,7 +227,6 @@ void UpdateGraphics2(bool skipRedraw)
             }
         }
 
-        frmMain.setDefaultDepth(-2);
         if(WorldPlayer[1].Type == 0)
             WorldPlayer[1].Type = 1;
         if(Player[1].Character == 1)
@@ -251,7 +251,7 @@ void UpdateGraphics2(bool skipRedraw)
                           GFXPlayerBMP[WorldPlayer[1].Type], 0, WPHeight * WorldPlayer[1].Frame);
 
         // render background...
-        frmMain.setDefaultDepth(5);
+        frmMain.setDefaultDepth(4);
         // top...
         frmMain.renderTexture(0, 0, ScreenW-66, 130, GFX.Interface[4], 0, 0);
         // left
@@ -454,7 +454,7 @@ void UpdateGraphics2(bool skipRedraw)
             SuperPrint(WorldPlayer[1].LevelName, 2, 32 + (48 * A) + 116, 109);
         }
 
-        frmMain.setDefaultDepth(-5);
+        frmMain.setDefaultDepth(-2);
         if(GamePaused == true)
         {
             frmMain.renderRect(ScreenW/2 - 190, ScreenH/2 - 100, 380, 200, 0, 0, 0);
