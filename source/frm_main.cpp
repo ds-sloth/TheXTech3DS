@@ -109,7 +109,8 @@ void FrmMain::hide()
 void FrmMain::doEvents()
 {
     depthSlider = osGet3DSliderState();
-    if (depthSlider < 0.05) numEyes = 1;
+    if (depthSlider > 0.05) numEyes = 2;
+    else numEyes = 1;
     if (!aptMainLoop()) KillIt(); // could add panic save of some sort here...
 }
 
@@ -415,38 +416,46 @@ SDL_Point FrmMain::MapToScr(int x, int y)
 void FrmMain::deleteTexture(StdPicture &tx, bool lazyUnload)
 {
     // printf("Clearing %s from %lu", tx.path.c_str(), linearSpaceFree());
-    if(!tx.inited || !tx.texture)
-    {
-        if(!lazyUnload)
-            tx.inited = false;
+    if(!tx.inited)
         return;
-    }
 
-    if (m_bigPictures.find(&tx) != m_bigPictures.end()) m_bigPictures.erase(&tx);
+    if(m_bigPictures.find(&tx) != m_bigPictures.end()) m_bigPictures.erase(&tx);
 
-    auto corpseIt = m_textureBank.find(tx.texture);
-    if(corpseIt == m_textureBank.end())
+    if(tx.texture)
     {
-        if(tx.texture)
-            C2D_SpriteSheetFree(tx.texture);
+        if(m_textureBank.find(tx.texture) != m_textureBank.end())
+            m_textureBank.erase(tx.texture);
+        C2D_SpriteSheetFree(tx.texture);
         tx.texture = nullptr;
-        if(!lazyUnload)
-            tx.inited = false;
-        // printf(" to %lu\n", linearSpaceFree());
-        return;
     }
 
-    C2D_SpriteSheet corpse = *corpseIt;
-    if(corpse)
-        C2D_SpriteSheetFree(corpse);
-    m_textureBank.erase(corpse);
+    if(tx.texture)
+    {
+        if(m_textureBank.find(tx.texture) != m_textureBank.end())
+            m_textureBank.erase(tx.texture);
+        C2D_SpriteSheetFree(tx.texture);
+        tx.texture = nullptr;
+    }
 
-    tx.texture = nullptr;
-    if(!lazyUnload)
-        tx.inited = false;
+    if(tx.texture2)
+    {
+        if(m_textureBank.find(tx.texture2) != m_textureBank.end())
+            m_textureBank.erase(tx.texture2);
+        C2D_SpriteSheetFree(tx.texture2);
+        tx.texture2 = nullptr;
+    }
+
+    if(tx.texture3)
+    {
+        if(m_textureBank.find(tx.texture3) != m_textureBank.end())
+            m_textureBank.erase(tx.texture3);
+        C2D_SpriteSheetFree(tx.texture3);
+        tx.texture3 = nullptr;
+    }
 
     if(!lazyUnload)
     {
+        tx.inited = false;
         tx.lazyLoaded = false;
         tx.w = 0;
         tx.h = 0;
@@ -537,28 +546,53 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
             hDst = 0;
     }
 
-    // SDL_Rect destRect = {xDst + viewport_offset_x, yDst + viewport_offset_y, wDst, hDst};
-    // SDL_Rect sourceRect;
-    // if(tx.w_orig == 0 && tx.h_orig == 0)
-    //     sourceRect = {xSrc, ySrc, wDst, hDst};
-    // else
-    //     sourceRect = {int(tx.w_scale * xSrc), int(tx.h_scale * ySrc), int(tx.w_scale * wDst), int(tx.h_scale * hDst)};
+    C2D_Image* to_draw;
+    C2D_Image* to_draw_2;
+    if(ySrc + hDst > 2048)
+    {
+        if(ySrc + hDst > 4096)
+        {
+            to_draw = &tx.image3;
+            if(ySrc < 4096)
+                to_draw_2 = &tx.image2;
+            ySrc -= 2048;
+        }
+        else
+        {
+            to_draw = &tx.image2;
+            if(ySrc < 2048)
+                to_draw_2 = &tx.image;
+        }
+        // draw the top pic
+        if(to_draw_2)
+        {
+            if (currentEye == -1)
+                C2D_DrawImage_Custom(*to_draw_2, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, (2048-ySrc)/2,
+                                     xSrc/2, ySrc/2, wDst/2, (2048-ySrc)/2, 0, flip, shadow);
+            else if (currentEye == 0)
+                C2D_DrawImage_Custom(*to_draw_2, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, (2048-ySrc)/2,
+                                     xSrc/2, ySrc/2, wDst/2, (2048-ySrc)/2, 0, flip, shadow);
+            else
+                C2D_DrawImage_Custom(*to_draw_2, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, (2048-ySrc)/2,
+                                     xSrc/2, ySrc/2, wDst/2, (2048-ySrc)/2, 0, flip, shadow);
+            yDst += (2048 - ySrc);
+            hDst -= (2048 - ySrc);
+            ySrc = 0;
+        }
+        else
+            ySrc -= 2048;
+    }
+    else to_draw = &tx.image;
 
-    // SDL_SetTextureColorMod(tx.texture,
-    //                        static_cast<unsigned char>(255.f * red),
-    //                        static_cast<unsigned char>(255.f * green),
-    //                        static_cast<unsigned char>(255.f * blue));
-    // SDL_SetTextureAlphaMod(tx.texture, static_cast<unsigned char>(255.f * alpha));
-    // SDL_RenderCopyEx(m_gRenderer, tx.texture, &sourceRect, &destRect,
-    //                  rotateAngle, center, static_cast<SDL_RendererFlip>(flip));
+    // add viewport positioning code...
     if (currentEye == -1)
-        C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
+        C2D_DrawImage_Custom(*to_draw, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
                              xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
     else if (currentEye == 0)
-        C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
+        C2D_DrawImage_Custom(*to_draw, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
                              xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
     else
-        C2D_DrawImage_Custom(tx.image, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
+        C2D_DrawImage_Custom(*to_draw, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
                              xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
 }
 

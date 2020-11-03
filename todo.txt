@@ -8,9 +8,6 @@ SMBX Port to 3DS!
 - Fonts!!!
 - Crashes
   - Use of key (FIXED?)
-- Big backgrounds
-  - Transparent way to let more than one texture back a picture
-  - Most 2 tall, one 3 tall
 - Re-enable 2-player mode (done)
 - Sound
 - Debugging info on bottom screen
@@ -22,9 +19,7 @@ SMBX Port to 3DS!
   - Fire flower, toad, grasses
   - I really hope this doesn't become an assets job...
 - Background glitches
-  - Extra undrawn space in some backgrounds, sometimes bad
   - Sometimes tiled backgrounds desync (force them to round same way)
-  - Maybe I overzealously removed hardcoded 800 and 600s?
 - Load speeds
   - PGE_Delay??
 - Menus (credits)
