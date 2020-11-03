@@ -649,7 +649,7 @@ void PathWait()
     {
         DoEvents();
         tempTime = SDL_GetTicks();
-        if(tempTime >= gameTime + frameRate || tempTime < gameTime || MaxFPS)
+        if(tempTime >= gameTime + frameRate || tempTime < gameTime || MaxFPS || true)
         {
             UpdateGraphics2();
             UpdateSound();
@@ -685,7 +685,7 @@ void PathWait()
                 fpsCount = 0;
             }
         }
-        PGE_Delay(1);
+        // PGE_Delay(1);
     } while(!(C >= 24));
 
     overTime = 0;

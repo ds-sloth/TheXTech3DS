@@ -31,9 +31,6 @@
 
 struct StdPicture
 {
-#ifdef DEBUG_BUILD
-    std::string origPath;
-#endif
     bool inited = false;
     // Width and height
     int w = 0;
@@ -47,6 +44,10 @@ struct StdPicture
     bool lazyLoaded = false;
     C2D_SpriteSheet texture = nullptr;
     C2D_Image image;
+    C2D_SpriteSheet texture2 = nullptr;
+    C2D_Image image2;
+    C2D_SpriteSheet texture3 = nullptr;
+    C2D_Image image3;
 };
 
 #endif // STD_PICTURE_H

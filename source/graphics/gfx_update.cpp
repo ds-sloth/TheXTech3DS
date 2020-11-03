@@ -1276,7 +1276,7 @@ void UpdateGraphics(bool skipRepaint)
                     }
                 }
 
-
+                frmMain.setDefaultDepth(-5);
                 if(GamePaused)
                 {
                     if(MessageText.empty())
@@ -1400,7 +1400,8 @@ void UpdateGraphics(bool skipRepaint)
                 frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[2].w / 2, 50,
                         GFX.MenuGFX[2].w, GFX.MenuGFX[2].h, GFX.MenuGFX[2], 0, 0);
 
-                frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[3].w / 2, ScreenH - 34,
+                if (MenuMode != 31 && MenuMode != 32)
+                    frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[3].w / 2, ScreenH - 34,
                         GFX.MenuGFX[3].w, GFX.MenuGFX[3].h, GFX.MenuGFX[3], 0, 0);
 
                 int MenuX = ScreenW / 2 - 100;

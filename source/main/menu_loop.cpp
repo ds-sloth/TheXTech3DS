@@ -152,10 +152,24 @@ void MenuLoop()
                 else if(MenuCursor == 1)
                 {
                     PlaySound(29);
-                    MenuMode = 3;
+                    MenuMode = 2;
+                    FindWorlds();
                     MenuCursor = 0;
                 }
                 else if(MenuCursor == 2)
+                {
+                    PlaySound(29);
+                    MenuMode = 4;
+                    FindLevels();
+                    MenuCursor = 0;
+                }
+                else if(MenuCursor == 3)
+                {
+                    PlaySound(29);
+                    MenuMode = 3;
+                    MenuCursor = 0;
+                }
+                else if(MenuCursor == 4)
                 {
                     PlaySound(29);
                     frmMain.clearBuffer();
@@ -166,8 +180,8 @@ void MenuLoop()
                     KillIt();
                 }
             }
-            if(MenuCursor > 2) MenuCursor = 0;
-            if(MenuCursor < 0) MenuCursor = 2;
+            if(MenuCursor > 4) MenuCursor = 0;
+            if(MenuCursor < 0) MenuCursor = 4;
         }
 
         // Character Select

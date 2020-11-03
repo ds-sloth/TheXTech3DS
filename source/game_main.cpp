@@ -1001,7 +1001,7 @@ void UpdateMacro()
             frmMain.clearBuffer();
         }
     }
-    else if(LevelMacro == 3)
+    else if(LevelMacro == 3) // KEY?
     {
         float tempTime = 0;
         float gameTime = 0;
@@ -1010,7 +1010,7 @@ void UpdateMacro()
         {
             // tempTime = Timer - Int(Timer)
             tempTime = (float(SDL_GetTicks()) / 1000.0f) - std::floor(float(SDL_GetTicks()) / 1000.0f);
-            if(tempTime > (float)(gameTime + 0.01f) || tempTime < gameTime)
+            if(tempTime > (float)(gameTime + 0.01f) || tempTime < gameTime || true)
             {
                 gameTime = tempTime;
                 DoEvents();
@@ -1025,7 +1025,6 @@ void UpdateMacro()
             if(!GameIsActive)
                 return;
 
-            PGE_Delay(1);
         } while(true);
 
         LevelBeatCode = 4;

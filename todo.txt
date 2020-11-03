@@ -1,12 +1,18 @@
 SMBX Port to 3DS!
 
-- Crashes
-  - Use of key
-- Sound
-- Fonts!!!
 - 3D effect work
-  - Viewport -> 820px (?)
-  - Slider support
+  - Viewport -> 820px (done)
+  - Fix interface graphics (done)
+  - Slider support (done)
+  - Add world map support (done)
+- Fonts!!!
+- Crashes
+  - Use of key (FIXED?)
+- Big backgrounds
+  - Transparent way to let more than one texture back a picture
+  - Most 2 tall, one 3 tall
+- Re-enable 2-player mode (done)
+- Sound
 - Debugging info on bottom screen
 - Scroll offsets will be TRICKY.
   - Lock camera to evens? (done)
@@ -21,8 +27,5 @@ SMBX Port to 3DS!
   - Maybe I overzealously removed hardcoded 800 and 600s?
 - Load speeds
   - PGE_Delay??
-- Big backgrounds
-  - Transparent way to let more than one texture back a picture
-  - Most 2 tall, one 3 tall
 - Menus (credits)
 - Shrink player spritesheets

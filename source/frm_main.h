@@ -129,6 +129,8 @@ private:
 
     void processEvent();
     void loadTexture(StdPicture &target, C2D_SpriteSheet &sheet);
+    void loadTexture2(StdPicture &target, C2D_SpriteSheet &sheet);
+    void loadTexture3(StdPicture &target, C2D_SpriteSheet &sheet);
 
     void lazyLoad(StdPicture &target);
     void lazyUnLoad(StdPicture &target);

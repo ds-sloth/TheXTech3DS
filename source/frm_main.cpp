@@ -58,6 +58,7 @@ uint8_t FrmMain::getKeyState(int key)
 bool FrmMain::initSDL(const CmdLineSetup_t &setup)
 {
     // 3ds libs
+    aptInit();
     gfxInitDefault();
     gfxSet3D(true); // Enable stereoscopic 3D
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
@@ -91,6 +92,7 @@ void FrmMain::freeSDL()
     C2D_Fini();
     C3D_Fini();
     gfxExit();
+    aptExit();
 
     printf("<Application closed>");
     // CloseLog();
@@ -106,10 +108,9 @@ void FrmMain::hide()
 
 void FrmMain::doEvents()
 {
-    while(false)
-    {
-        processEvent();
-    }
+    depthSlider = osGet3DSliderState();
+    if (depthSlider < 0.05) numEyes = 1;
+    if (!aptMainLoop()) KillIt(); // could add panic save of some sort here...
 }
 
 void FrmMain::processEvent()
@@ -263,15 +264,7 @@ StdPicture FrmMain::lazyLoadPicture(std::string path)
     else {
         lazyLoad(target);
         lazyUnLoad(target);
-        snprintf(&contents[0], 10, "%4d\n%4d", target.w, target.h);
-        contents[9] = '\n';
-        fs = fopen(sizePath.c_str(), "w");
-        if (fs != nullptr)
-        {
-            fwrite(&contents[0], 1, 10, fs);
-            if (fclose(fs)) printf("lazyLoadPicture: Couldn't close file.\n");
-        }
-        else printf("lazyLoadPicture: Couldn't open file.\n");
+        printf("lazyLoadPicture: Couldn't open size file.\n");
     }
 
     return target;
@@ -283,12 +276,34 @@ void FrmMain::loadTexture(StdPicture &target, C2D_SpriteSheet &sheet)
 
     target.texture = sheet;
     target.image = im;
-    target.w = im.subtex->width*2;
-    target.h = im.subtex->height*2;
+    if (!target.w)
+    {
+        target.w = im.subtex->width*2;
+        target.h = im.subtex->height*2;
+    }
 
     m_textureBank.insert(sheet);
 }
 
+void FrmMain::loadTexture2(StdPicture &target, C2D_SpriteSheet &sheet)
+{
+    C2D_Image im = C2D_SpriteSheetGetImage(sheet, 0);
+
+    target.texture2 = sheet;
+    target.image2 = im;
+
+    m_textureBank.insert(sheet);
+}
+
+void FrmMain::loadTexture3(StdPicture &target, C2D_SpriteSheet &sheet)
+{
+    C2D_Image im = C2D_SpriteSheetGetImage(sheet, 0);
+
+    target.texture3 = sheet;
+    target.image3 = im;
+
+    m_textureBank.insert(sheet);
+}
 
 void FrmMain::lazyLoad(StdPicture &target)
 {
@@ -296,6 +311,7 @@ void FrmMain::lazyLoad(StdPicture &target)
         return;
 
     C2D_SpriteSheet sourceImage;
+    std::string suppPath;
 
     sourceImage = C2D_SpriteSheetLoad(target.path.c_str()); // some other source image
 
@@ -330,6 +346,18 @@ void FrmMain::lazyLoad(StdPicture &target)
     }
 
     loadTexture(target, sourceImage);
+
+    if (target.h > 2048) {
+        suppPath = target.path + '1';
+        sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
+        if (sourceImage) loadTexture2(target, sourceImage);
+    }
+    if (target.h > 4096) {
+        suppPath = target.path + '2';
+        sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
+        if (sourceImage) loadTexture3(target, sourceImage);
+    }
+
     if (target.w >= 256 || target.h >= 256)
         m_bigPictures.insert(&target);
 
