@@ -169,7 +169,7 @@ void UpdateGraphics2(bool skipRedraw)
                                       GFXTileBMP[Tile[A].Type], 0, TileHeight[Tile[A].Type] * TileFrame[Tile[A].Type]);
             }
         }
-        frmMain.setDefaultDepth(2);
+        frmMain.setDefaultDepth(4);
         for(A = 1; A <= numScenes; A++)
         {
             if(vScreenCollision2(1, Scene[A].Location) == true && Scene[A].Active == true)

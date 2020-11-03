@@ -368,6 +368,21 @@ void UpdateGraphics(bool skipRepaint)
 
     if (Do_FrameSkip) return;
 
+    if(ScreenShake > 0) // need to test...
+    {
+        ScreenShake--;
+        if(ScreenShake == 0)
+        {
+            frmMain.offsetViewport(0, 0);
+        }
+        else
+        {
+            A = (iRand() % ScreenShake * 3)*2 - ScreenShake * 3;
+            B = (iRand() % ScreenShake * 3)*2 - ScreenShake * 3;
+            frmMain.offsetViewport(A, B);
+        }
+    }
+
     // printf("drawing... \n");
     for (int eye = 0; eye < frmMain.numEyes; eye++)
     {
@@ -1169,7 +1184,7 @@ void UpdateGraphics(bool skipRepaint)
                 }
             }
 
-    // effects on top
+            // effects on top
             For(A, 1, numEffects)
             {
                 auto &e = Effect[A];
@@ -1186,37 +1201,8 @@ void UpdateGraphics(bool skipRepaint)
                 }
             }
 
-
-            if(vScreen[2].Visible)
-            {
-                if(int(vScreen[Z].Width) == ScreenW)
-                {
-                    if(vScreen[Z].Top != 0.0)
-                    {
-                        frmMain.renderRect(0, 0, vScreen[Z].Width, 1, 0, 0, 0);
-                    }
-                    else
-                    {
-                        frmMain.renderRect(0, vScreen[Z].Height - 1, vScreen[Z].Width, 1, 0, 0, 0);
-                    }
-                }
-                else
-                {
-                    if(vScreen[Z].Left != 0.0)
-                    {
-                        frmMain.renderRect(0, 0, 1, vScreen[Z].Height, 0, 0, 0);
-                    }
-                    else
-                    {
-                        frmMain.renderRect(vScreen[Z].Width - 1, 0, 1, vScreen[Z].Height, 0, 0, 0);
-                    }
-                }
-            }
-
-
-
             frmMain.setDefaultDepth(-2);
-    //    'Interface
+            // per-screen interface
             B = 0;
             C = 0;
             if(!GameMenu && !GameOutro)
@@ -1260,373 +1246,345 @@ void UpdateGraphics(bool skipRepaint)
                                         frmMain.renderTexture(vScreenX[Z] + NPC[A].Location.X + NPCFrameOffsetX[NPC[A].Type] - NPCWidthGFX[NPC[A].Type] / 2.0 + NPC[A].Location.Width / 2.0, vScreenY[Z] + NPC[A].Location.Y + NPCFrameOffsetY[NPC[A].Type] - NPCHeightGFX[NPC[A].Type] + NPC[A].Location.Height, NPCWidthGFX[NPC[A].Type], NPCHeightGFX[NPC[A].Type], GFXNPC[NPC[A].Type], 0, NPC[A].Frame * NPCHeightGFX[NPC[A].Type]);
                                     }
                                 }
-                                if(NPC[A].Reset[Z] || NPC[A].Active)
-                                {
-                                    NPC[A].TimeLeft = Physics.NPCTimeOffScreen;
-//                                    if(nPlay.Online == true && nPlay.NPCWaitCount >= 10 && nPlay.Mode == 0)
-//                                        timeStr = timeStr + "2b" + std::to_string(A) + LB;
-                                    NPC[A].Active = true;
-                                }
-                                NPC[A].Reset[1] = false;
-                                NPC[A].Reset[2] = false;
                             }
-                            else
-                                NPC[A].Reset[Z] = true;
                         }
                     }
                 }
-
-                if(GamePaused)
+            }
+            if(numScreens > 1) // for multiple screens
+                frmMain.resetViewport();
+        }
+        // other interface
+        if(vScreen[2].Visible)
+        {
+            if(int(vScreen[2].Width) == ScreenW)
+                frmMain.renderRect(0, ScreenH/2-2, vScreen[2].Width, 4, 0, 0, 0);
+            else
+                frmMain.renderRect(ScreenW/2-2, 0, 4, vScreen[2].Height, 0, 0, 0);
+        }
+        if(!GameMenu && !GameOutro)
+        {
+            if(GamePaused)
+            {
+                if(MessageText.empty())
                 {
-                    if(MessageText.empty())
+                    frmMain.renderRect(ScreenW/2 - 190, ScreenH/2 - 100, 380, 200, 0, 0, 0);
+                    if(TestLevel)
                     {
-                        X = 0;
-                        Y = 0;
-                        if((DScreenType == 1 && Z == 2) || (DScreenType == 2 && Z == 1))
-                            X = -ScreenW/2;
-                        else if((DScreenType == 6 && Z == 2) || (DScreenType == 4 && Z == 2) || (DScreenType == 3 && Z == 1))
-                            Y = -ScreenH/2;
-                        frmMain.renderRect(ScreenW/2 - 190 + X, ScreenH/2 - 100 + Y, 380, 200, 0, 0, 0);
-                        if(TestLevel)
-                        {
-                            SuperPrint("CONTINUE", 3, ScreenW/2 - 190 + 62 + X, ScreenH/2 - 100 + 37 + Y);
-                            SuperPrint("RESTART LEVEL", 3, ScreenW/2 - 190 + 62 + X, ScreenH/2 - 100 + 72 + Y);
-                            SuperPrint("RESET CHECKPOINTS", 3, ScreenW/2 - 190 + 62 + X, ScreenH/2 - 100 + 107 + Y);
-                            SuperPrint("QUIT TESTING", 3, ScreenW/2 - 190 + 62 + X, ScreenH/2 - 100 + 142 + Y);
-                            frmMain.renderTexture(ScreenW/2 - 190 + 42 + X, ScreenH/2 - 100 + 37 + (MenuCursor * 35) + Y, 16, 16, GFX.MCursor[0], 0, 0);
-                        }
-                        else if(!Cheater && (LevelSelect || (/*StartLevel == FileName*/IsEpisodeIntro && NoMap)))
-                        {
-                            SuperPrint("CONTINUE", 3, ScreenW/2 - 190 + 62 + X, ScreenH/2 - 100 + 57 + Y);
-                            SuperPrint("SAVE & CONTINUE", 3, ScreenW/2 - 190 + 62 + X, ScreenH/2 - 100 + 92 + Y);
-                            SuperPrint("SAVE & QUIT", 3, ScreenW/2 - 190 + 62 + X, ScreenH/2 - 100 + 127 + Y);
-                            frmMain.renderTexture(ScreenW/2 - 190 + 42 + X, ScreenH/2 - 100 + 57 + (MenuCursor * 35) + Y, 16, 16, GFX.MCursor[0], 0, 0);
-                        }
-                        else
-                        {
-                            SuperPrint("CONTINUE", 3, ScreenW/2 - 190 + 62 + X, ScreenH/2 - 100 + 75 + Y);
-                            SuperPrint("QUIT", 3, ScreenW/2 - 190 + 62 + X, ScreenH/2 - 100 + 110 + Y);
-                            frmMain.renderTexture(ScreenW/2 - 190 + 42 + X, ScreenH/2 - 100 + 75 + (MenuCursor * 35) + Y, 16, 16, GFX.MCursor[0], 0, 0);
-                        }
+                        SuperPrint("CONTINUE", 3, ScreenW/2 - 190 + 62, ScreenH/2 - 100 + 37);
+                        SuperPrint("RESTART LEVEL", 3, ScreenW/2 - 190 + 62, ScreenH/2 - 100 + 72);
+                        SuperPrint("RESET CHECKPOINTS", 3, ScreenW/2 - 190 + 62, ScreenH/2 - 100 + 107);
+                        SuperPrint("QUIT TESTING", 3, ScreenW/2 - 190 + 62, ScreenH/2 - 100 + 142);
+                        frmMain.renderTexture(ScreenW/2 - 190 + 42, ScreenH/2 - 100 + 37 + (MenuCursor * 35), 16, 16, GFX.MCursor[0], 0, 0);
+                    }
+                    else if(!Cheater && (LevelSelect || (/*StartLevel == FileName*/IsEpisodeIntro && NoMap)))
+                    {
+                        SuperPrint("CONTINUE", 3, ScreenW/2 - 190 + 62, ScreenH/2 - 100 + 57);
+                        SuperPrint("SAVE & CONTINUE", 3, ScreenW/2 - 190 + 62, ScreenH/2 - 100 + 92);
+                        SuperPrint("SAVE & QUIT", 3, ScreenW/2 - 190 + 62, ScreenH/2 - 100 + 127);
+                        frmMain.renderTexture(ScreenW/2 - 190 + 42, ScreenH/2 - 100 + 57 + (MenuCursor * 35), 16, 16, GFX.MCursor[0], 0, 0);
                     }
                     else
                     {
-                        X = 0;
-                        Y = 0;
-                        if((DScreenType == 1 && Z == 2) || (DScreenType == 2 && Z == 1))
-                            X = -ScreenW/2;
-                        else if((DScreenType == 6 && Z == 2) || (DScreenType == 4 && Z == 2) || (DScreenType == 3 && Z == 1))
-                            Y = -ScreenH/2;
-
-                        SuperText = MessageText;
-                        const int BoxY_Start = ScreenH/2 - 150;
-                        const int TextBoxW = 500;
-                        // Draw background all at once:
-                        // how many lines are there?
-                        // A is the proposed start of the next line
-                        B = 0; // start of current line
-                        C = 0; // planned start of next line
-                        D = 1; // n lines
+                        SuperPrint("CONTINUE", 3, ScreenW/2 - 190 + 62, ScreenH/2 - 100 + 75);
+                        SuperPrint("QUIT", 3, ScreenW/2 - 190 + 62, ScreenH/2 - 100 + 110);
+                        frmMain.renderTexture(ScreenW/2 - 190 + 42, ScreenH/2 - 100 + 75 + (MenuCursor * 35), 16, 16, GFX.MCursor[0], 0, 0);
+                    }
+                }
+                else
+                {
+                    SuperText = MessageText;
+                    const int BoxY_Start = ScreenH/2 - 150;
+                    const int TextBoxW = 500;
+                    // Draw background all at once:
+                    // how many lines are there?
+                    // A is the proposed start of the next line
+                    B = 0; // start of current line
+                    C = 0; // planned start of next line
+                    D = 1; // n lines
+                    for(A = 1; A <= int(SuperText.size()); A++)
+                    {
+                        if(SuperText[size_t(A) - 1] == ' ' || A == int(SuperText.size()))
+                        {
+                            if(A-B < 28)
+                                C = A;
+                            else {
+                                B = C;
+                                D ++;
+                            }
+                        }
+                    }
+                    frmMain.renderRect(ScreenW/2 - TextBoxW / 2 ,
+                                          BoxY_Start,
+                                          TextBoxW, D*16 + 20, 0, 0, 0, 255);
+                    frmMain.renderRect(ScreenW/2 - TextBoxW / 2 + 2,
+                                          BoxY_Start + 2,
+                                          TextBoxW - 4, D*16 + 20 - 4, 255, 255, 255, 255);
+                    frmMain.renderRect(ScreenW/2 - TextBoxW / 2 + 4,
+                                          BoxY_Start + 4,
+                                          TextBoxW - 8, D*16 + 20 - 8, 8, 96, 168, 255);
+                    tempBool = false; // multi-line
+                    BoxY = BoxY_Start + 10;
+                    do
+                    {
+                        // find last word break
+                        B = 0;
                         for(A = 1; A <= int(SuperText.size()); A++)
                         {
                             if(SuperText[size_t(A) - 1] == ' ' || A == int(SuperText.size()))
                             {
-                                if(A-B < 28)
-                                    C = A;
-                                else {
-                                    B = C;
-                                    D ++;
-                                }
+                                if(A < 28)
+                                    B = A;
+                                else
+                                    break;
                             }
                         }
-                        frmMain.renderRect(ScreenW/2 - TextBoxW / 2 + X,
-                                              BoxY_Start + Y + Y, // not certain about this...
-                                              TextBoxW, D*16 + 20, 0, 0, 0, 255);
-                        frmMain.renderRect(ScreenW/2 - TextBoxW / 2 + X + 2,
-                                              BoxY_Start + Y + Y + 2, // not certain about this...
-                                              TextBoxW - 4, D*16 + 20 - 4, 255, 255, 255, 255);
-                        frmMain.renderRect(ScreenW/2 - TextBoxW / 2 + X + 4,
-                                              BoxY_Start + Y + Y + 4, // not certain about this...
-                                              TextBoxW - 8, D*16 + 20 - 8, 8, 96, 168, 255);
-                        tempBool = false; // multi-line
-                        BoxY = BoxY_Start + 10;
-                        do
+
+                        if(B == 0)
+                            B = A;
+
+                        tempText = SuperText.substr(0, size_t(B));
+                        SuperText = SuperText.substr(size_t(B), SuperText.length());
+                        if(SuperText.length() == 0 && !tempBool)
                         {
-                            // find last word break
-                            B = 0;
-                            for(A = 1; A <= int(SuperText.size()); A++)
-                            {
-                                if(SuperText[size_t(A) - 1] == ' ' || A == int(SuperText.size()))
-                                {
-                                    if(A < 28)
-                                        B = A;
-                                    else
-                                        break;
-                                }
-                            }
-
-                            if(B == 0)
-                                B = A;
-
-                            tempText = SuperText.substr(0, size_t(B));
-                            SuperText = SuperText.substr(size_t(B), SuperText.length());
-                            if(SuperText.length() == 0 && !tempBool)
-                            {
-                                SuperPrint(tempText,
-                                           4,
-                                           ScreenW/2 - TextBoxW / 2 + X + 12 + (27 * 9) - (tempText.length() * 9),
-                                           Y + BoxY);
-                            }
-                            else
-                            {
-                                SuperPrint(tempText, 4, ScreenW/2 - TextBoxW / 2 + 12 + X, Y + BoxY);
-                            }
-                            BoxY += 16;
-                            tempBool = true;
-                        } while(!SuperText.empty());
-                    }
-                }
-            }
-
-            else if(!GameOutro)
-            {
-                if(MenuMode != 1 && MenuMode != 2 && MenuMode != 4)
-                    worldCurs = 0;
-
-                int menuFix = -44; // for Input Settings
-
-                frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[1].w / 2, 0, GFX.MenuGFX[1].w, GFX.MenuGFX[1].h, GFX.MenuGFX[1], 0, 0);
-                frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[2].w / 2, 50,
-                        GFX.MenuGFX[2].w, GFX.MenuGFX[2].h, GFX.MenuGFX[2], 0, 0);
-
-                if (MenuMode != 31 && MenuMode != 32)
-                    frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[3].w / 2, ScreenH - 34,
-                        GFX.MenuGFX[3].w, GFX.MenuGFX[3].h, GFX.MenuGFX[3], 0, 0);
-
-                int MenuX = ScreenW / 2 - 100;
-                int MenuY = ScreenH - 175;
-                if(MenuMode == 0)
-                {
-                    SuperPrint("START GAME", 3, MenuX, MenuY);
-                    SuperPrint("OPTIONS", 3, MenuX, MenuY + 30);
-                    SuperPrint("EXIT", 3, MenuX, MenuY + 60);
-                    frmMain.renderTexture(MenuX - 20, MenuY + (MenuCursor * 30), 16, 16, GFX.MCursor[0], 0, 0);
-                }
-                // Character select
-                else if(MenuMode == 100 || MenuMode == 200 || MenuMode == 300 || MenuMode == 400 || MenuMode == 500)
-                {
-                    A = 0;
-                    B = 0;
-                    C = 0;
-
-                    // TODO: Make a custom playable character names print here
-                    if(!blockCharacter[1])
-                        SuperPrint("MARIO GAME", 3, MenuX, MenuY);
-                    else
-                    {
-                        A = A - 30;
-                        if(MenuCursor + 1 >= 1)
-                            B = B - 30;
-                        if(PlayerCharacter >= 1)
-                            C = C - 30;
-                    }
-
-                    if(!blockCharacter[2])
-                        SuperPrint("LUIGI GAME", 3, MenuX, MenuY + 30 + A);
-                    else
-                    {
-                        A = A - 30;
-                        if(MenuCursor + 1 >= 2)
-                            B = B - 30;
-                        if(PlayerCharacter >= 2)
-                            C = C - 30;
-                    }
-
-                    if(!blockCharacter[3])
-                        SuperPrint("PEACH GAME", 3, MenuX, MenuY + 60 + A);
-                    else
-                    {
-                        A = A - 30;
-                        if(MenuCursor + 1 >= 3)
-                            B = B - 30;
-                        if(PlayerCharacter >= 3)
-                            C = C - 30;
-                    }
-
-                    if(!blockCharacter[4])
-                        SuperPrint("TOAD GAME", 3, MenuX, MenuY + 90 + A);
-                    else
-                    {
-                        A = A - 30;
-                        if(MenuCursor + 1 >= 4)
-                            B = B - 30;
-                        if(PlayerCharacter >= 4)
-                            C = C - 30;
-                    }
-
-                    if(!blockCharacter[5])
-                        SuperPrint("LINK GAME", 3, MenuX, MenuY + 120 + A);
-                    else
-                    {
-                        A = A - 30;
-                        if(MenuCursor + 1 >= 5)
-                            B = B - 30;
-                        if(PlayerCharacter >= 5)
-                            C = C - 30;
-                    }
-
-                    if(MenuMode == 300 || MenuMode == 500)
-                    {
-                        frmMain.renderTexture(MenuX - 20, B + MenuY + (MenuCursor * 30), GFX.MCursor[3]);
-                        frmMain.renderTexture(MenuX - 20, C + MenuY + ((PlayerCharacter - 1) * 30), GFX.MCursor[0]);
-                    }
-                    else
-                    {
-                        frmMain.renderTexture(MenuX - 20, B + MenuY + (MenuCursor * 30), GFX.MCursor[0]);
-                    }
-
-                }
-                else if(MenuMode == 1 || MenuMode == 2 || MenuMode == 4)
-                {
-                    std::string tempStr = "";
-                    minShow = 1;
-                    maxShow = NumSelectWorld;
-                    if(NumSelectWorld > 5)
-                    {
-                        minShow = worldCurs;
-                        maxShow = minShow + 4;
-
-                        if(MenuCursor <= minShow - 1)
-                            worldCurs = worldCurs - 1;
-                        if(MenuCursor >= maxShow - 1)
-                            worldCurs = worldCurs + 1;
-
-                        if(worldCurs < 1)
-                            worldCurs = 1;
-                        if(worldCurs > NumSelectWorld - 4)
-                            worldCurs = NumSelectWorld - 4;
-
-                        if(maxShow >= NumSelectWorld)
-                        {
-                            maxShow = NumSelectWorld;
-                            minShow = NumSelectWorld - 4;
-                        }
-
-                        minShow = worldCurs;
-                        maxShow = minShow + 4;
-                    }
-
-                    for(auto A = minShow; A <= maxShow; A++)
-                    {
-                        B = A - minShow + 1;
-                        tempStr = SelectWorld[A].WorldName;
-                        SuperPrint(tempStr, 3, MenuX, MenuY - 30 + (B * 30));
-                    }
-
-                    if(minShow > 1)
-                    {
-                        frmMain.renderTexture(ScreenW/2 - 8, MenuY - 20, GFX.MCursor[1]);
-                    }
-                    if(maxShow < NumSelectWorld)
-                    {
-                        frmMain.renderTexture(ScreenW/2 - 8, MenuY + 140, GFX.MCursor[2]);
-                    }
-
-                    B = MenuCursor - minShow + 1;
-                    if(B >= 0 && B < 5)
-                    {
-                        frmMain.renderTexture(MenuX - 20, MenuY + (B * 30), GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
-                    }
-                }
-
-                else if(MenuMode == 10 || MenuMode == 20) // Save Select
-                {
-                    for(auto A = 1; A <= maxSaveSlots; A++)
-                    {
-                        if(SaveSlot[A] >= 0)
-                        {
-                            SuperPrint(fmt::format_ne("SLOT {0} ... {1}", A, SaveSlot[A]), 3, MenuX, MenuY - 30 + (A * 30));
-                            if(SaveStars[A] > 0)
-                            {
-                                frmMain.renderTexture(MenuX + 260, MenuY - 30 + (A * 30) + 1,
-                                                      GFX.Interface[5].w, GFX.Interface[5].h,
-                                                      GFX.Interface[5], 0, 0);
-                                frmMain.renderTexture(MenuX + 260 + 24, MenuY - 30 + (A * 30) + 2,
-                                                      GFX.Interface[1].w, GFX.Interface[1].h,
-                                                      GFX.Interface[1], 0, 0);
-                                SuperPrint(fmt::format_ne(" {0}", SaveStars[A]), 3, MenuX + 288, MenuY - 30 + (A * 30));
-                            }
+                            SuperPrint(tempText,
+                                       4,
+                                       ScreenW/2 - TextBoxW / 2 + 12 + (27 * 9) - (tempText.length() * 9),
+                                       BoxY);
                         }
                         else
                         {
-                            SuperPrint(fmt::format_ne("SLOT {0} ... EMPTY", A), 3, MenuX, MenuY - 30 + (A * 30));
+                            SuperPrint(tempText, 4, ScreenW/2 - TextBoxW / 2 + 12, BoxY);
                         }
-                    }
-                    frmMain.renderTexture(MenuX - 20, MenuY + (MenuCursor * 30), GFX.MCursor[0]);
-                }
-
-                // Options Menu
-                else if(MenuMode == 3)
-                {
-                    SuperPrint("PLAYER 1 CONTROLS", 3, MenuX, MenuY);
-                    SuperPrint("PLAYER 2 CONTROLS", 3, MenuX, MenuY+30);
-                    if(resChanged)
-                        SuperPrint("WINDOWED MODE", 3, MenuX, MenuY+60);
-                    else
-                        SuperPrint("FULLSCREEN MODE", 3, MenuX, MenuY+60);
-                    SuperPrint("VIEW CREDITS", 3, MenuX, MenuY+90);
-                    frmMain.renderTexture(MenuX - 20, MenuY + (MenuCursor * 30),
-                                          GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
-                }
-                else if(MenuMode == 31 || MenuMode == 32)
-                {
-                    SuperPrint("3DS INPUT..PLAYER " + std::to_string(MenuMode - 30), 3, MenuX, MenuY - 120 + menuFix);
-
-                    SuperPrint(fmt::format_ne("UP.........{0}", getJoyKeyName(conJoystick[MenuMode - 30].Up)), 3, MenuX, MenuY - 90 + menuFix);
-                    SuperPrint(fmt::format_ne("DOWN.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Down)), 3, MenuX, MenuY - 60 + menuFix);
-                    SuperPrint(fmt::format_ne("LEFT.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Left)), 3, MenuX, MenuY - 30 + menuFix);
-                    SuperPrint(fmt::format_ne("RIGHT......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Right)), 3, MenuX, MenuY + menuFix);
-                    SuperPrint(fmt::format_ne("RUN........{0}", getJoyKeyName(conJoystick[MenuMode - 30].Run)), 3, MenuX, MenuY + 30 + menuFix);
-                    SuperPrint(fmt::format_ne("ALT RUN....{0}", getJoyKeyName(conJoystick[MenuMode - 30].AltRun)), 3, MenuX, MenuY + 60 + menuFix);
-                    SuperPrint(fmt::format_ne("JUMP.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Jump)), 3, MenuX, MenuY + 90 + menuFix);
-                    SuperPrint(fmt::format_ne("ALT JUMP...{0}", getJoyKeyName(conJoystick[MenuMode - 30].AltJump)), 3, MenuX, MenuY + 120 + menuFix);
-                    SuperPrint(fmt::format_ne("DROP ITEM..{0}", getJoyKeyName(conJoystick[MenuMode - 30].Drop)), 3, MenuX, MenuY + 150 + menuFix);
-                    SuperPrint(fmt::format_ne("PAUSE......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Start)), 3, MenuX, MenuY + 180 + menuFix);
-
-                    frmMain.renderTexture(MenuX - 20, MenuY - 120 + (MenuCursor * 30) + menuFix,
-                                          GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
+                        BoxY += 16;
+                        tempBool = true;
+                    } while(!SuperText.empty());
                 }
             }
-            if(PrintFPS > 0) {
-                SuperPrint(fmt::format_ne("{0}", int(PrintFPS)), 1, 8, 8);
-            }
+        }
 
-            // There was code for magic hand mode here.
+        else if(!GameOutro)
+        {
+            if(MenuMode != 1 && MenuMode != 2 && MenuMode != 4)
+                worldCurs = 0;
 
-            if(numScreens > 1) // for multiple screens
-                frmMain.resetViewport();
+            int menuFix = -44; // for Input Settings
 
-            if(GameOutro)
+            frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[1].w / 2, 0, GFX.MenuGFX[1].w, GFX.MenuGFX[1].h, GFX.MenuGFX[1], 0, 0);
+            frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[2].w / 2, 50,
+                    GFX.MenuGFX[2].w, GFX.MenuGFX[2].h, GFX.MenuGFX[2], 0, 0);
+
+            if (MenuMode != 31 && MenuMode != 32)
+                frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[3].w / 2, ScreenH - 34,
+                    GFX.MenuGFX[3].w, GFX.MenuGFX[3].h, GFX.MenuGFX[3], 0, 0);
+
+            int MenuX = ScreenW / 2 - 100;
+            int MenuY = ScreenH - 175;
+            if(MenuMode == 0)
             {
-                frmMain.renderRect(0, 0, ScreenW, Maths::iRound(CreditChop), 0, 0, 0);
-                frmMain.renderRect(0, ScreenH - Maths::iRound(CreditChop), ScreenW, ScreenH, 0, 0, 0);
-                DoCredits();
+                SuperPrint("START GAME", 3, MenuX, MenuY);
+                SuperPrint("2 PLAYER GAME", 3, MenuX, MenuY + 30);
+                SuperPrint("BATTLE GAME", 3, MenuX, MenuY + 60);
+                SuperPrint("OPTIONS", 3, MenuX, MenuY + 90);
+                SuperPrint("EXIT", 3, MenuX, MenuY + 120);
+                frmMain.renderTexture(MenuX - 20, MenuY + (MenuCursor * 30), 16, 16, GFX.MCursor[0], 0, 0);
             }
-
-            if(ScreenShake > 0)
+            // Character select
+            else if(MenuMode == 100 || MenuMode == 200 || MenuMode == 300 || MenuMode == 400 || MenuMode == 500)
             {
-                ScreenShake--;
-                if(ScreenShake == 0)
+                A = 0;
+                B = 0;
+                C = 0;
+
+                // TODO: Make a custom playable character names print here
+                if(!blockCharacter[1])
+                    SuperPrint("MARIO GAME", 3, MenuX, MenuY);
+                else
                 {
-                    frmMain.offsetViewport(0, 0);
+                    A = A - 30;
+                    if(MenuCursor + 1 >= 1)
+                        B = B - 30;
+                    if(PlayerCharacter >= 1)
+                        C = C - 30;
+                }
+
+                if(!blockCharacter[2])
+                    SuperPrint("LUIGI GAME", 3, MenuX, MenuY + 30 + A);
+                else
+                {
+                    A = A - 30;
+                    if(MenuCursor + 1 >= 2)
+                        B = B - 30;
+                    if(PlayerCharacter >= 2)
+                        C = C - 30;
+                }
+
+                if(!blockCharacter[3])
+                    SuperPrint("PEACH GAME", 3, MenuX, MenuY + 60 + A);
+                else
+                {
+                    A = A - 30;
+                    if(MenuCursor + 1 >= 3)
+                        B = B - 30;
+                    if(PlayerCharacter >= 3)
+                        C = C - 30;
+                }
+
+                if(!blockCharacter[4])
+                    SuperPrint("TOAD GAME", 3, MenuX, MenuY + 90 + A);
+                else
+                {
+                    A = A - 30;
+                    if(MenuCursor + 1 >= 4)
+                        B = B - 30;
+                    if(PlayerCharacter >= 4)
+                        C = C - 30;
+                }
+
+                if(!blockCharacter[5])
+                    SuperPrint("LINK GAME", 3, MenuX, MenuY + 120 + A);
+                else
+                {
+                    A = A - 30;
+                    if(MenuCursor + 1 >= 5)
+                        B = B - 30;
+                    if(PlayerCharacter >= 5)
+                        C = C - 30;
+                }
+
+                if(MenuMode == 300 || MenuMode == 500)
+                {
+                    frmMain.renderTexture(MenuX - 20, B + MenuY + (MenuCursor * 30), GFX.MCursor[3]);
+                    frmMain.renderTexture(MenuX - 20, C + MenuY + ((PlayerCharacter - 1) * 30), GFX.MCursor[0]);
                 }
                 else
                 {
-                    A = (iRand() % ScreenShake * 4) - ScreenShake * 2;
-                    B = (iRand() % ScreenShake * 4) - ScreenShake * 2;
-                    frmMain.offsetViewport(A, B);
+                    frmMain.renderTexture(MenuX - 20, B + MenuY + (MenuCursor * 30), GFX.MCursor[0]);
+                }
+
+            }
+            else if(MenuMode == 1 || MenuMode == 2 || MenuMode == 4)
+            {
+                std::string tempStr = "";
+                minShow = 1;
+                maxShow = NumSelectWorld;
+                if(NumSelectWorld > 5)
+                {
+                    minShow = worldCurs;
+                    maxShow = minShow + 4;
+
+                    if(MenuCursor <= minShow - 1)
+                        worldCurs = worldCurs - 1;
+                    if(MenuCursor >= maxShow - 1)
+                        worldCurs = worldCurs + 1;
+
+                    if(worldCurs < 1)
+                        worldCurs = 1;
+                    if(worldCurs > NumSelectWorld - 4)
+                        worldCurs = NumSelectWorld - 4;
+
+                    if(maxShow >= NumSelectWorld)
+                    {
+                        maxShow = NumSelectWorld;
+                        minShow = NumSelectWorld - 4;
+                    }
+
+                    minShow = worldCurs;
+                    maxShow = minShow + 4;
+                }
+
+                for(auto A = minShow; A <= maxShow; A++)
+                {
+                    B = A - minShow + 1;
+                    tempStr = SelectWorld[A].WorldName;
+                    SuperPrint(tempStr, 3, MenuX, MenuY - 30 + (B * 30));
+                }
+
+                if(minShow > 1)
+                {
+                    frmMain.renderTexture(ScreenW/2 - 8, MenuY - 20, GFX.MCursor[1]);
+                }
+                if(maxShow < NumSelectWorld)
+                {
+                    frmMain.renderTexture(ScreenW/2 - 8, MenuY + 140, GFX.MCursor[2]);
+                }
+
+                B = MenuCursor - minShow + 1;
+                if(B >= 0 && B < 5)
+                {
+                    frmMain.renderTexture(MenuX - 20, MenuY + (B * 30), GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
                 }
             }
+
+            else if(MenuMode == 10 || MenuMode == 20) // Save Select
+            {
+                for(auto A = 1; A <= maxSaveSlots; A++)
+                {
+                    if(SaveSlot[A] >= 0)
+                    {
+                        SuperPrint(fmt::format_ne("SLOT {0} ... {1}", A, SaveSlot[A]), 3, MenuX, MenuY - 30 + (A * 30));
+                        if(SaveStars[A] > 0)
+                        {
+                            frmMain.renderTexture(MenuX + 260, MenuY - 30 + (A * 30) + 1,
+                                                  GFX.Interface[5].w, GFX.Interface[5].h,
+                                                  GFX.Interface[5], 0, 0);
+                            frmMain.renderTexture(MenuX + 260 + 24, MenuY - 30 + (A * 30) + 2,
+                                                  GFX.Interface[1].w, GFX.Interface[1].h,
+                                                  GFX.Interface[1], 0, 0);
+                            SuperPrint(fmt::format_ne(" {0}", SaveStars[A]), 3, MenuX + 288, MenuY - 30 + (A * 30));
+                        }
+                    }
+                    else
+                    {
+                        SuperPrint(fmt::format_ne("SLOT {0} ... EMPTY", A), 3, MenuX, MenuY - 30 + (A * 30));
+                    }
+                }
+                frmMain.renderTexture(MenuX - 20, MenuY + (MenuCursor * 30), GFX.MCursor[0]);
+            }
+
+            // Options Menu
+            else if(MenuMode == 3)
+            {
+                SuperPrint("PLAYER 1 CONTROLS", 3, MenuX, MenuY);
+                SuperPrint("PLAYER 2 CONTROLS", 3, MenuX, MenuY+30);
+                if(resChanged)
+                    SuperPrint("WINDOWED MODE", 3, MenuX, MenuY+60);
+                else
+                    SuperPrint("FULLSCREEN MODE", 3, MenuX, MenuY+60);
+                SuperPrint("VIEW CREDITS", 3, MenuX, MenuY+90);
+                frmMain.renderTexture(MenuX - 20, MenuY + (MenuCursor * 30),
+                                      GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
+            }
+            else if(MenuMode == 31 || MenuMode == 32)
+            {
+                SuperPrint("3DS INPUT..PLAYER " + std::to_string(MenuMode - 30), 3, MenuX, MenuY - 120 + menuFix);
+
+                SuperPrint(fmt::format_ne("UP.........{0}", getJoyKeyName(conJoystick[MenuMode - 30].Up)), 3, MenuX, MenuY - 90 + menuFix);
+                SuperPrint(fmt::format_ne("DOWN.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Down)), 3, MenuX, MenuY - 60 + menuFix);
+                SuperPrint(fmt::format_ne("LEFT.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Left)), 3, MenuX, MenuY - 30 + menuFix);
+                SuperPrint(fmt::format_ne("RIGHT......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Right)), 3, MenuX, MenuY + menuFix);
+                SuperPrint(fmt::format_ne("RUN........{0}", getJoyKeyName(conJoystick[MenuMode - 30].Run)), 3, MenuX, MenuY + 30 + menuFix);
+                SuperPrint(fmt::format_ne("ALT RUN....{0}", getJoyKeyName(conJoystick[MenuMode - 30].AltRun)), 3, MenuX, MenuY + 60 + menuFix);
+                SuperPrint(fmt::format_ne("JUMP.......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Jump)), 3, MenuX, MenuY + 90 + menuFix);
+                SuperPrint(fmt::format_ne("ALT JUMP...{0}", getJoyKeyName(conJoystick[MenuMode - 30].AltJump)), 3, MenuX, MenuY + 120 + menuFix);
+                SuperPrint(fmt::format_ne("DROP ITEM..{0}", getJoyKeyName(conJoystick[MenuMode - 30].Drop)), 3, MenuX, MenuY + 150 + menuFix);
+                SuperPrint(fmt::format_ne("PAUSE......{0}", getJoyKeyName(conJoystick[MenuMode - 30].Start)), 3, MenuX, MenuY + 180 + menuFix);
+
+                frmMain.renderTexture(MenuX - 20, MenuY - 120 + (MenuCursor * 30) + menuFix,
+                                      GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
+            }
+        }
+        if(PrintFPS > 0) {
+            SuperPrint(fmt::format_ne("{0}", int(PrintFPS)), 1, 8, 8);
+        }
+
+        // There was code for magic hand mode here.
+
+        if(GameOutro)
+        {
+            frmMain.renderRect(0, 0, ScreenW, Maths::iRound(CreditChop), 0, 0, 0);
+            frmMain.renderRect(0, ScreenH - Maths::iRound(CreditChop), ScreenW, ScreenH, 0, 0, 0);
+            DoCredits();
         }
     }
 

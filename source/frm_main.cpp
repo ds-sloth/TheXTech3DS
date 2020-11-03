@@ -183,28 +183,31 @@ void FrmMain::repaint()
 
 void FrmMain::updateViewport()
 {
+    resetViewport();
+    offsetViewport(0, 0);
 }
 
 void FrmMain::resetViewport()
 {
-    updateViewport();
+    setViewport(0, 0, ScreenW, ScreenH);
 }
 
 void FrmMain::setViewport(int x, int y, int w, int h)
 {
+    int offset_x = viewport_offset_x - viewport_x;
+    int offset_y = viewport_offset_y - viewport_y;
     viewport_x = x;
     viewport_y = y;
     viewport_w = w;
     viewport_h = h;
+    viewport_offset_x = viewport_x + offset_x;
+    viewport_offset_y = viewport_y + offset_y;
 }
 
 void FrmMain::offsetViewport(int x, int y)
 {
-    if(viewport_offset_x != x || viewport_offset_y != y)
-    {
-        viewport_offset_x = x-10;
-        viewport_offset_y = y;
-    }
+    viewport_offset_x = viewport_x+x-10;
+    viewport_offset_y = viewport_y+y;
 }
 
 StdPicture FrmMain::LoadPicture(std::string path)
@@ -530,6 +533,30 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
     if(!tx.texture)
         return;
 
+    if(xDst < 0)
+    {
+        xSrc -= xDst;
+        wDst += xDst;
+        xDst = 0;
+    }
+    if(xDst + wDst > viewport_w)
+    {
+        if(xDst > viewport_w) return;
+        wDst = (viewport_w - xDst);
+    }
+    if(yDst < 0)
+    {
+        ySrc -= yDst;
+        hDst += yDst;
+        yDst = 0;
+    }
+    if(yDst + hDst > viewport_h)
+    {
+        if(yDst > viewport_h) return;
+        hDst = (viewport_h - yDst);
+    }
+
+    // texture boundaries
     if((xSrc < 0) || (ySrc < 0)) return;
 
     // Don't go more than size of texture
@@ -632,23 +659,14 @@ void FrmMain::renderTextureFL(double xDst, double yDst, double wDst, double hDst
 
 void FrmMain::renderTexture(int xDst, int yDst, StdPicture &tx, bool shadow, int depth)
 {
-    if (depth == -10000) depth = defaultDepth;
-
-    if(!tx.inited)
-        return;
-
-    if(!tx.texture && tx.lazyLoaded)
-        lazyLoad(tx);
-
-    if(!tx.texture)
-        return;
-
-    tx.lastDrawFrame = currentFrame;
-
-    if (currentEye == -1)
-        C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, 0, shadow);
-    else if (currentEye == 0)
-        C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, 0, shadow);
-    else
-        C2D_DrawImage_Custom_Basic(tx.image, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, 0, shadow);
+    const unsigned int flip = SDL_FLIP_NONE;
+    renderTextureI(xDst,
+                   yDst,
+                   tx.w,
+                   tx.h,
+                   tx,
+                   0,
+                   0,
+                   0.0, nullptr, flip,
+                   shadow, depth);
 }
