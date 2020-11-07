@@ -319,10 +319,11 @@ void FrmMain::lazyLoad(StdPicture &target)
 
     sourceImage = C2D_SpriteSheetLoad(target.path.c_str()); // some other source image
 
+    int i;
+
     if (!sourceImage) {
         // wish I knew the largest contiguous portion of memory
         // max tex should be 4194304
-        int i;
         for (i = 0; i < 10; i ++)
         {
             if (linearSpaceFree() < 4000000) break;
@@ -361,11 +362,27 @@ void FrmMain::lazyLoad(StdPicture &target)
     if (target.h > 2048) {
         suppPath = target.path + '1';
         sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
+        if (!sourceImage) {
+            for (i = 0; i < 10; i ++)
+            {
+                if (linearSpaceFree() < 6000000) break;
+                if (!freeTextureMem()) break;
+            }
+            sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
+        }
         if (sourceImage) loadTexture2(target, sourceImage);
     }
     if (target.h > 4096) {
         suppPath = target.path + '2';
         sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
+        if (!sourceImage) {
+            for (i = 0; i < 10; i ++)
+            {
+                if (linearSpaceFree() < 6000000) break;
+                if (!freeTextureMem()) break;
+            }
+            sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
+        }
         if (sourceImage) loadTexture3(target, sourceImage);
     }
 
@@ -431,14 +448,6 @@ void FrmMain::deleteTexture(StdPicture &tx, bool lazyUnload)
         return;
 
     if(m_bigPictures.find(&tx) != m_bigPictures.end()) m_bigPictures.erase(&tx);
-
-    if(tx.texture)
-    {
-        if(m_textureBank.find(tx.texture) != m_textureBank.end())
-            m_textureBank.erase(tx.texture);
-        C2D_SpriteSheetFree(tx.texture);
-        tx.texture = nullptr;
-    }
 
     if(tx.texture)
     {
