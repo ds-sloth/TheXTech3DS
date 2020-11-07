@@ -411,7 +411,7 @@ void UpdateNPCs()
                NPC[A].Type != 57 && NPC[A].Type != 46 &&
                NPC[A].Type != 212 && !NPCIsACoin[NPC[A].Type]) // And .Type <> 47
             {
-                if(NPC[A].TriggerActivate != "")
+                if(!NPC[A].TriggerActivate.empty())
                     ProcEvent(NPC[A].TriggerActivate);
                 tempLocation = NPC[A].Location;
                 tempLocation.Y = tempLocation.Y - 32;
@@ -433,7 +433,7 @@ void UpdateNPCs()
                             NPC[B].Section = NPC[A].Section;
                             if(B < A)
                             {
-                                if(NPC[B].TriggerActivate != "")
+                                if(!NPC[B].TriggerActivate.empty())
                                     ProcEvent(NPC[B].TriggerActivate);
                             }
                         }

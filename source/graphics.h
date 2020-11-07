@@ -38,9 +38,13 @@ void UpdateGraphics(bool skipRepaint = false);
 // Public Sub GetvScreen(A As Integer) ' Get the screen position
 //  Get the screen position
 void GetvScreen(int A);
+//  Get the screen position as though the game is 800x600
+void GetvScreenCanonical(int A, int *left, int *top);
 // Public Sub GetvScreenAverage() ' Get the average screen position for all players
 //  Get the average screen position for all players
 void GetvScreenAverage();
+// As if the screen is 800x600
+void GetvScreenAverageCanonical(int *left, int *top);
 // Public Sub GetvScreenAverage2() ' Get the average screen position for all players with no level edge detection
 //  Get the average screen position for all players with no level edge detection
 void GetvScreenAverage2();

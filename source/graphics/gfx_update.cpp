@@ -241,6 +241,18 @@ void UpdateGraphics(bool skipRepaint)
         else
             GetvScreen(Z);
 
+        if(ForcedControls || qScreen)
+        {
+            if(ScreenType == 2 || ScreenType == 3)
+                GetvScreenAverageCanonical(&X, &Y);
+            else if(ScreenType == 5 && !vScreen[2].Visible)
+                GetvScreenAverageCanonical(&X, &Y);
+            else if(ScreenType == 7)
+                GetvScreenAverageCanonical(&X, &Y);
+            else
+                GetvScreenCanonical(Z, &X, &Y);
+        }
+
         if(!Do_FrameSkip && qScreen)
         {
             if(vScreenX[1] < qScreenX[1] - 2)
@@ -332,7 +344,12 @@ void UpdateGraphics(bool skipRepaint)
         }
         for(A = 1; A <= numNPCs; A++)
         {
-            if(vScreenCollision(Z, NPC[A].Location) && !NPC[A].Hidden)
+            bool onscreen;
+            if(ForcedControls || qScreen)
+                onscreen = vScreenCollisionCanonical(X, Y, NPC[A].Location);
+            else
+                onscreen = vScreenCollision(Z, NPC[A].Location);
+            if(onscreen && !NPC[A].Hidden)
             {
                 if(NPC[A].Type == 0) // figure this out
                 {

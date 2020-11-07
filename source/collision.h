@@ -67,6 +67,9 @@ bool vScreenCollision(int A, const Location_t &Loc2);
 // Public Function vScreenCollision2(A As Integer, Loc2 As Location) As Boolean  'vScreen collisions 2
 // vScreen collisions 2
 bool vScreenCollision2(int A, const Location_t &Loc2);
+// Public Function vScreenCollision2(A As Integer, Loc2 As Location) As Boolean  'vScreen collisions 2
+// vScreen collisions assuming 800x600
+bool vScreenCollisionCanonical(int left, int top, const Location_t &Loc2);
 // Public Function WalkingCollision(Loc1 As Location, Loc2 As Location) As Boolean 'Collision detection for blocks. Prevents walking on walls.
 // Collision detection for blocks. Prevents walking on walls.
 bool WalkingCollision(const Location_t &Loc1, const Location_t &Loc2);

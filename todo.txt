@@ -1,20 +1,22 @@
 SMBX Port to 3DS!
 
+- Appearance glitches
+  - Scroll offsets will be TRICKY.
+    - Lock camera to evens? (done)
+    - Grasses
+    - Judder when Mario is on a conveyer belt
+  - Pixel cutoffs (related).
+    - Fire flower, toad, grasses
+    - I really hope this doesn't become an assets job...
+  - Background glitches
+    - Sometimes tiled backgrounds desync (force them to round same way)
+    - Secret exit of pipehammer maze has this...
+
 - Sound
   - Music fadeins/fadeouts
   - Sound cutoff self
   - Bug when two sounds are played precisely at the same time
   - Load WAVs into memory...
-- Scroll offsets will be TRICKY.
-  - Lock camera to evens? (done)
-  - Grasses
-  - Judder when Mario is on a conveyer belt
-- Pixel cutoffs (related).
-  - Fire flower, toad, grasses
-  - I really hope this doesn't become an assets job...
-- Background glitches
-  - Sometimes tiled backgrounds desync (force them to round same way)
-  - Secret exit of pipehammer maze has this...
 
 - Crashes
 - Test screenshake...
