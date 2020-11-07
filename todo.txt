@@ -1,9 +1,9 @@
 SMBX Port to 3DS!
 
 - Sound
-  - Some compressed format (OGG) (done)
-  - Music (fadeouts)
+  - Music fadeins/fadeouts
   - Sound cutoff self
+  - Bug when two sounds are played precisely at the same time
   - Load WAVs into memory...
 - Scroll offsets will be TRICKY.
   - Lock camera to evens? (done)
@@ -14,8 +14,6 @@ SMBX Port to 3DS!
   - I really hope this doesn't become an assets job...
 
 - Crashes
-  - clearing null in battle select menu
-    - There is a null pointer in the queue at some points
   - Strange crash, maybe linked to this???
 - Test screenshake...
 
@@ -38,4 +36,3 @@ SMBX Port to 3DS!
 
 - Bugs
   - Skeleton death anim (Hyrule temple)
-  - Bouncy mushroom code (Battleshrooms)

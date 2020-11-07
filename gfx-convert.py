@@ -21,7 +21,7 @@ for dirpath, _, files in os.walk(datadir, topdown=True):
         destfn = os.path.join(outpath, fn)
         bmpfn = os.path.join(outpath, fn[:-3]+'bmp')
         t3xfn = os.path.join(outpath, fn[:-3]+'png')
-        if (os.path.isfile(t3xfn) or os.path.isfile(destfn)) and not REDO: continue
+        if not REDO and (os.path.isfile(destfn) or ((fn.endswith('.gif') or fn.endswith('.png')) and os.path.isfile(t3xfn))): continue
         if fn.endswith('.png'):
             os.system(f'convert -sample 50% "{rfn}" "{bmpfn}"')
         elif fn.endswith('m.gif') and os.path.isfile(rfn[:-5]+'.gif'):
@@ -53,6 +53,7 @@ for dirpath, _, files in os.walk(datadir, topdown=True):
             shutil.move(destfn+'.ogg', destfn)
             continue
         else:
+            if rfn.endswith('npc-26.txt'): print('!!')
             shutil.copy(rfn, destfn)
             continue
         w, h = os.popen(f'identify -format "%[fx:w*2],%[fx:h*2]" "{bmpfn}"').read().split(',')
