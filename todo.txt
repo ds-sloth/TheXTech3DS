@@ -12,27 +12,32 @@ SMBX Port to 3DS!
 - Pixel cutoffs (related).
   - Fire flower, toad, grasses
   - I really hope this doesn't become an assets job...
+- Background glitches
+  - Sometimes tiled backgrounds desync (force them to round same way)
+  - Secret exit of pipehammer maze has this...
 
 - Crashes
-  - Strange crash, maybe linked to this???
 - Test screenshake...
 
 - Debugging info on bottom screen
-- Background glitches
-  - Sometimes tiled backgrounds desync (force them to round same way)
-  - Mario's adventure: water level bg doesn't work...?
 
 - Performance
-  - Load speeds
+  - Load speeds (loading level)
+  - Lockup at beginning of world map??
   - PGE_Delay??
   - 30fps lock??
+  - New 3DS RAM...?
+  - Allow user to disable sound?
+- That castle grounds background fails to load sometimes...
+  - Memory issues?
+
 - Separate the background of world map from the world map
 - Shrink player spritesheets
 
 - Alternative multiplayer controls
 - Update credits
-- That castle grounds background fails to load sometimes...
-  - Memory issues?
+  - Person with 3DS OS thread
+  - People who made opus tutorial
 
 - Bugs
   - Skeleton death anim (Hyrule temple)

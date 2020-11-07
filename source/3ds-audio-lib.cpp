@@ -276,7 +276,6 @@ bool audioInit() {
 
         ndspChnReset(ci);
         ndspChnSetInterp(ci, NDSP_INTERP_POLYPHASE);
-        ndspChnSetRate(ci, SAMPLE_RATE); // should be able to make this more flexible...
 
         memset((void*) &channels[ci].wavebufs, 0, sizeof(channels[ci].wavebufs));
         for (size_t wi = 0; wi < NUM_BUFFERS; wi++)
@@ -289,6 +288,11 @@ bool audioInit() {
     // begin setting up threading structure...
     ndspSetCallback(myAudioCallback, NULL);
 
+    // Thanks to @mkst from sm64 3ds port
+    int cpu = 0; // application core
+    if (R_SUCCEEDED(APT_SetAppCpuTimeLimit(30)))
+        cpu = 1; // system core
+
     // Set the thread priority to the main thread's priority ...
     int32_t priority = 0x30;
     svcGetThreadPriority(&priority, CUR_THREAD_HANDLE);
@@ -300,10 +304,14 @@ bool audioInit() {
 
     sound_thread = threadCreate(audioThread, NULL,
                                  THREAD_STACK_SZ, priority,
-                                 THREAD_AFFINITY, false);
-    printf("Created audio thread %p\n", sound_thread);
+                                 cpu, false);
 
-    return true;
+    if (sound_thread)
+        printf("Created audio thread at %p on %s core\n", sound_thread, cpu ? "os" : "application");
+    else
+        printf("Failed to create audio thread\n");
+
+    return (bool)sound_thread;
 }
 
 // Audio de-initialisation code

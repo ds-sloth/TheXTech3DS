@@ -44,6 +44,7 @@
 #include "level_file.h"
 
 #include "../pseudo_vb.h"
+#include "../n3ds-clock.h"
 
 //Dim ScrollDelay As Integer
 static int ScrollDelay = 0;
@@ -124,9 +125,9 @@ void MenuLoop()
         {
             if(menuBackPress && MenuCursorCanMove)
             {
-                if(MenuCursor != 2)
+                if(MenuCursor != 4)
                 {
-                    MenuCursor = 2;
+                    MenuCursor = 4;
                     PlaySound(26);
                 }
             }
@@ -487,7 +488,7 @@ void MenuLoop()
                         PlaySound(26);
                     } else if(MenuCursor == 2) {
                         PlaySound(29);
-                        ChangeScreen(); // currently useless
+                        SwapClockSpeed();
                     } else if(MenuCursor == 3) {
                         PlaySound(29);
                         GameMenu = false;

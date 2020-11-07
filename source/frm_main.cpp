@@ -30,6 +30,7 @@
 #include "sound.h"
 #include "editor.h"
 #include "custom_draw_image.h"
+#include "n3ds-clock.h"
 
 #include <AppPath/app_path.h>
 // #include <Logger/logger.h>
@@ -59,6 +60,7 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
 {
     // 3ds libs
     aptInit();
+    InitClockSpeed();
     gfxInitDefault();
     gfxSet3D(true); // Enable stereoscopic 3D
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);

@@ -327,18 +327,15 @@ void StartMusic(int A, int fadeInMs)
     if(noSound)
         return;
 
+    StopMusic();
     if(LevelSelect && !GameMenu && !GameOutro) // music on the world map
     {
-        StopMusic();
         curWorldMusic = A;
         std::string mus = fmt::format_ne("wmusic{0}", A);
         if(curWorldMusic == g_customWldMusicId)
         {
             printf("Starting custom music [%s]", curWorldMusicFile.c_str());
-            // if(g_curMusic)
-            //     Mix_FreeMusic(g_curMusic);
-            // g_curMusic = Mix_LoadMUS((FileNamePath + "/" + curWorldMusicFile).c_str());
-            // Mix_VolumeMusicStream(g_curMusic, 64);
+            g_curMusic = playSoundOGG((FileNamePath + curWorldMusicFile).c_str(), -1);
             // if(fadeInMs > 0)
             //     Mix_FadeInMusic(g_curMusic, -1, fadeInMs);
             // else
@@ -353,7 +350,6 @@ void StartMusic(int A, int fadeInMs)
     }
     else if(A == -1) // P switch music
     {
-        StopMusic();
         if(FreezeNPCs) {
             printf("Starting special music [stmusic]");
             PlayMusic("stmusic", fadeInMs);
@@ -367,7 +363,6 @@ void StartMusic(int A, int fadeInMs)
     }
     else if(PSwitchTime == 0 && PSwitchStop == 0) // level music
     {
-        StopMusic();
         curMusic = bgMusic[A];
         std::string mus = fmt::format_ne("music{0}", curMusic);
         if(curMusic == g_customLvlMusicId)
@@ -382,7 +377,7 @@ void StartMusic(int A, int fadeInMs)
         musicName = mus;
     }
 
-    musicPlaying = true;
+    if (g_curMusic) musicPlaying = true;
 }
 
 void StopMusic()
@@ -392,7 +387,8 @@ void StopMusic()
 
     printf("Stopping music\n");
 
-    g_curMusic->kill = true;
+    if (g_curMusic)
+        g_curMusic->kill = true;
     g_curMusic = nullptr;
     musicPlaying = false;
 }

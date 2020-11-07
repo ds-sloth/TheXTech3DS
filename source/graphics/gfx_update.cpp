@@ -29,6 +29,7 @@
 #include "../editor.h"
 #include "../npc.h"
 #include "../location.h"
+#include "../n3ds-clock.h"
 
 #include <fmt_format_ne.h>
 #include <Utils/maths.h>
@@ -1547,10 +1548,12 @@ void UpdateGraphics(bool skipRepaint)
             {
                 SuperPrint("PLAYER 1 CONTROLS", 3, MenuX, MenuY);
                 SuperPrint("PLAYER 2 CONTROLS", 3, MenuX, MenuY+30);
-                if(resChanged)
-                    SuperPrint("WINDOWED MODE", 3, MenuX, MenuY+60);
+                if(n3ds_clocked == -1)
+                    SuperPrint("---", 3, MenuX, MenuY+60);
+                else if (n3ds_clocked)
+                    SuperPrint("USE O3DS CLOCK SPEED", 3, MenuX, MenuY+60);
                 else
-                    SuperPrint("FULLSCREEN MODE", 3, MenuX, MenuY+60);
+                    SuperPrint("USE N3DS CLOCK SPEED", 3, MenuX, MenuY+60);
                 SuperPrint("VIEW CREDITS", 3, MenuX, MenuY+90);
                 frmMain.renderTexture(MenuX - 20, MenuY + (MenuCursor * 30),
                                       GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);

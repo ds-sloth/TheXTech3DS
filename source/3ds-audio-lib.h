@@ -4,9 +4,7 @@
 #define NUM_CHANNELS 20
 #define NUM_BUFFERS 3
 #define BUFFER_SIZE (256 * (44100 / 1000))
-#define SAMPLE_RATE 44100
 
-#define THREAD_AFFINITY -1
 #define THREAD_STACK_SZ 32 * 1024
 
 #endif
