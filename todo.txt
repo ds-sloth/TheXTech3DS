@@ -1,14 +1,10 @@
 SMBX Port to 3DS!
 
-- Fonts!!!
-- Crashes
-  - Use of key (FIXED?)
-- Test screenshake...
 - Sound
-- Debugging info on bottom screen
-- That castle grounds background fails to load...
-- Background glitches
-  - Sometimes tiled backgrounds desync (force them to round same way)
+  - Some compressed format (OGG) (done)
+  - Music (fadeouts)
+  - Sound cutoff self
+  - Load WAVs into memory...
 - Scroll offsets will be TRICKY.
   - Lock camera to evens? (done)
   - Grasses
@@ -16,9 +12,30 @@ SMBX Port to 3DS!
 - Pixel cutoffs (related).
   - Fire flower, toad, grasses
   - I really hope this doesn't become an assets job...
-- Load speeds
+
+- Crashes
+  - clearing null in battle select menu
+    - There is a null pointer in the queue at some points
+  - Strange crash, maybe linked to this???
+- Test screenshake...
+
+- Debugging info on bottom screen
+- Background glitches
+  - Sometimes tiled backgrounds desync (force them to round same way)
+  - Mario's adventure: water level bg doesn't work...?
+
+- Performance
+  - Load speeds
   - PGE_Delay??
-- Separate pieces of interface drawing...
+  - 30fps lock??
+- Separate the background of world map from the world map
 - Shrink player spritesheets
+
 - Alternative multiplayer controls
 - Update credits
+- That castle grounds background fails to load sometimes...
+  - Memory issues?
+
+- Bugs
+  - Skeleton death anim (Hyrule temple)
+  - Bouncy mushroom code (Battleshrooms)

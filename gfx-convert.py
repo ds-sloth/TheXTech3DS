@@ -47,7 +47,11 @@ for dirpath, _, files in os.walk(datadir, topdown=True):
                 os.system(f'convert -sample 50% "{rfn}" "{bmpfn}"')
         elif fn.endswith('.db'):
             continue
-        elif fn.endswith('.ogg') or fn.endswith('.mp3'): continue
+        elif fn.endswith('.ogg'): continue
+        elif fn.endswith('.mp3'):
+            os.system(f'ffmpeg -i "{rfn}" -aq 1 "{destfn}.ogg"')
+            shutil.move(destfn+'.ogg', destfn)
+            continue
         else:
             shutil.copy(rfn, destfn)
             continue

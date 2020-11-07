@@ -320,28 +320,35 @@ void FrmMain::lazyLoad(StdPicture &target)
     sourceImage = C2D_SpriteSheetLoad(target.path.c_str()); // some other source image
 
     if (!sourceImage) {
-        while (linearSpaceFree() < 4000000) // max tex should be 4194304
+        // wish I knew the largest contiguous portion of memory
+        // max tex should be 4194304
+        int i;
+        for (i = 0; i < 10; i ++)
         {
+            if (linearSpaceFree() < 4000000) break;
             if (!freeTextureMem()) break;
         }
         sourceImage = C2D_SpriteSheetLoad(target.path.c_str());
 
         if (!sourceImage) {
-            while (linearSpaceFree() < 8000000) // max tex should be 4194304
+            for (i = 0; i < 10; i ++)
             {
+                if (linearSpaceFree() < 8000000) break;
                 if (!freeTextureMem()) break;
             }
             sourceImage = C2D_SpriteSheetLoad(target.path.c_str());
 
             if (!sourceImage) {
-                while (linearSpaceFree() < 16000000) // max tex should be 4194304
+                for (i = 0; i < 25; i ++)
                 {
+                    if (linearSpaceFree() < 20000000) break;
                     if (!freeTextureMem()) break;
                 }
                 sourceImage = C2D_SpriteSheetLoad(target.path.c_str());
 
                 if (!sourceImage) {
                     printf("Permanently failed to load %s, %lu free\n", target.path.c_str(), linearSpaceFree());
+                    printf("Error: %d (%s)\n", errno, strerror(errno));
                     target.inited = false;
                     return;
                 }
@@ -365,10 +372,10 @@ void FrmMain::lazyLoad(StdPicture &target)
     if (target.w >= 256 || target.h >= 256)
         m_bigPictures.insert(&target);
 
-    if (linearSpaceFree() < 4000000) freeTextureMem();
+    if (linearSpaceFree() < 4194304) freeTextureMem();
 }
 
-bool FrmMain::freeTextureMem()
+bool FrmMain::freeTextureMem() // make it take an amount of memory, someday.....
 {
     printf("Freeing texture memory...\n");
     StdPicture* oldest = nullptr;
@@ -377,7 +384,7 @@ bool FrmMain::freeTextureMem()
     uint32_t second_earliestDraw = 0;
     for (StdPicture* poss : m_bigPictures)
     {
-        if (poss->texture && poss->lazyLoaded && (poss->lastDrawFrame+1 < currentFrame))
+        if (poss->texture && poss->lazyLoaded && (poss->lastDrawFrame+30 < currentFrame))
         {
             if ((oldest == nullptr) || (poss->lastDrawFrame < earliestDraw))
             {
@@ -393,8 +400,9 @@ bool FrmMain::freeTextureMem()
             }
         }
     }
+    if (oldest == nullptr) return false;
     printf("Clearing %s, %s\n", oldest->path.c_str(), second_oldest->path.c_str());
-    if (!oldest) return false;
+    printf("Clearing %p, %p\n", oldest, second_oldest);
     lazyUnLoad(*oldest);
     if (second_oldest) lazyUnLoad(*second_oldest);
     return true;
@@ -573,8 +581,8 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
             hDst = 0;
     }
 
-    C2D_Image* to_draw;
-    C2D_Image* to_draw_2;
+    C2D_Image* to_draw = nullptr;
+    C2D_Image* to_draw_2 = nullptr;
     if(ySrc + hDst > 2048)
     {
         if(ySrc + hDst > 4096)
@@ -591,7 +599,7 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
                 to_draw_2 = &tx.image;
         }
         // draw the top pic
-        if(to_draw_2)
+        if(to_draw_2 != nullptr)
         {
             if (currentEye == -1)
                 C2D_DrawImage_Custom(*to_draw_2, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, (2048-ySrc)/2,

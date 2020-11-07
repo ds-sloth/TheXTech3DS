@@ -86,56 +86,32 @@ void SuperPrint(std::string SuperWords, int Font, float X, float Y)
     {
         std::string Words = SuperWords;
         std::transform(Words.begin(), Words.end(), Words.begin(), [](unsigned char c){ return std::toupper(c); });
-//        Do While Len(Words) > 0
         for(auto c : Words)
         {
-//            If Asc(Left(Words, 1)) >= 33 And Asc(Left(Words, 1)) <= 126 Then
             if(c >= 33 && c <= 126)
             {
-//                C = (Asc(Left(Words, 1)) - 33) * 32
                 C = (c - 33) * 32;
-//                BitBlt myBackBuffer, X + B, Y, 18, 16, GFX.Font2Mask(2).hdc, 2, C, vbSrcAnd
-//                BitBlt myBackBuffer, X + B, Y, 18, 16, GFX.Font2(2).hdc, 2, C, vbSrcPaint
                 frmMain.renderTexture(int(X + B), int(Y), 18, 16, GFX.Font2[2], 2, C);
-//                B = B + 18
                 B += 18;
-//                If Left(Words, 1) = "M" Then B = B + 2
                 if(c == 'M')
                     B += 2;
-//            Else
             } else {
-//                B = B + 16
                 B += 16;
             }
-//            End If
-//            Words = Right(Words, Len(Words) - 1)
-//        Loop
         }
-//    ElseIf Font = 4 Then
     }
     else if(Font == 4)
     {
-//        Do While Len(Words) > 0
         for(auto c : SuperWords)
         {
-//            If Asc(Left(Words, 1)) >= 33 And Asc(Left(Words, 1)) <= 126 Then
             if(c >= 33 && c <= 126)
             {
-//                C = (Asc(Left(Words, 1)) - 33) * 16
                 C = (c - 33) * 16;
-//                BitBlt myBackBuffer, X + B, Y, 18, 16, GFX.Font2(3).hdc, 2, C, vbSrcPaint
                 frmMain.renderTexture(int(X + B), int(Y), 18, 16, GFX.Font2[3], 2, C);
-//                B = B + 18
                 B += 18;
-//            Else
             } else {
-//                B = B + 18
                 B += 18;
-//            End If
             }
-//            Words = Right(Words, Len(Words) - 1)
-//        Loop
         }
-//    End If
     }
 }
