@@ -367,7 +367,7 @@ void FrmMain::lazyLoad(StdPicture &target)
         if (!sourceImage) {
             for (i = 0; i < 10; i ++)
             {
-                if (linearSpaceFree() < 6000000) break;
+                if (linearSpaceFree() < 10000000) break;
                 if (!freeTextureMem()) break;
             }
             sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
@@ -380,7 +380,7 @@ void FrmMain::lazyLoad(StdPicture &target)
         if (!sourceImage) {
             for (i = 0; i < 10; i ++)
             {
-                if (linearSpaceFree() < 6000000) break;
+                if (linearSpaceFree() < 10000000) break;
                 if (!freeTextureMem()) break;
             }
             sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
@@ -598,14 +598,16 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
     {
         if(ySrc + hDst > 4096)
         {
-            to_draw = &tx.image3;
-            if(ySrc < 4096)
+            if(tx.texture3)
+                to_draw = &tx.image3;
+            if(ySrc < 4096 && tx.texture2)
                 to_draw_2 = &tx.image2;
             ySrc -= 2048;
         }
         else
         {
-            to_draw = &tx.image2;
+            if(tx.texture2)
+                to_draw = &tx.image2;
             if(ySrc < 2048)
                 to_draw_2 = &tx.image;
         }
@@ -629,6 +631,8 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
             ySrc -= 2048;
     }
     else to_draw = &tx.image;
+
+    if (to_draw == nullptr) return;
 
     // add viewport positioning code...
     if (currentEye == -1)

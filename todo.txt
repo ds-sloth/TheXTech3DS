@@ -1,5 +1,8 @@
 SMBX Port to 3DS!
 
+- Crashes
+  - Check on crash (null ptr for image)
+
 - Appearance glitches
   - Scroll offsets will be TRICKY.
     - Lock camera to evens? (done)
@@ -11,15 +14,21 @@ SMBX Port to 3DS!
   - Background glitches
     - Sometimes tiled backgrounds desync (force them to round same way)
     - Secret exit of pipehammer maze has this...
+  - Bugs
+    - Skeleton death anim (Hyrule temple)
 
 - Sound
   - Music fadeins/fadeouts
-  - Sound cutoff self
   - Bug when two sounds are played precisely at the same time
   - Load WAVs into memory...
+  - Sound cutoff self
+    - Make a bank of sound id -> channel ptrs
+    - Make channels keep track of the currently playing sound id
+  - Don't load OGGs on the main thread??? (if possible!)
 
-- Crashes
 - Test screenshake...
+  - Seems pretty good!
+  - POW blocks
 
 - Debugging info on bottom screen
 
@@ -30,16 +39,11 @@ SMBX Port to 3DS!
   - 30fps lock??
   - New 3DS RAM...?
   - Allow user to disable sound?
-- That castle grounds background fails to load sometimes...
-  - Memory issues?
 
 - Separate the background of world map from the world map
 - Shrink player spritesheets
 
 - Alternative multiplayer controls
 - Update credits
-  - Person with 3DS OS thread
+  - Person with 3DS OS thread (see sound file for credit)
   - People who made opus tutorial
-
-- Bugs
-  - Skeleton death anim (Hyrule temple)
