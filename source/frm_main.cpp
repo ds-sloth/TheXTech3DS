@@ -328,7 +328,7 @@ void FrmMain::lazyLoad(StdPicture &target)
         // max tex should be 4194304
         for (i = 0; i < 10; i ++)
         {
-            if (linearSpaceFree() < 4000000) break;
+            if (linearSpaceFree() > 4000000) break;
             if (!freeTextureMem()) break;
         }
         sourceImage = C2D_SpriteSheetLoad(target.path.c_str());
@@ -336,7 +336,7 @@ void FrmMain::lazyLoad(StdPicture &target)
         if (!sourceImage) {
             for (i = 0; i < 10; i ++)
             {
-                if (linearSpaceFree() < 8000000) break;
+                if (linearSpaceFree() > 8000000) break;
                 if (!freeTextureMem()) break;
             }
             sourceImage = C2D_SpriteSheetLoad(target.path.c_str());
@@ -344,7 +344,7 @@ void FrmMain::lazyLoad(StdPicture &target)
             if (!sourceImage) {
                 for (i = 0; i < 25; i ++)
                 {
-                    if (linearSpaceFree() < 20000000) break;
+                    if (linearSpaceFree() > 20000000) break;
                     if (!freeTextureMem()) break;
                 }
                 sourceImage = C2D_SpriteSheetLoad(target.path.c_str());
@@ -367,7 +367,7 @@ void FrmMain::lazyLoad(StdPicture &target)
         if (!sourceImage) {
             for (i = 0; i < 10; i ++)
             {
-                if (linearSpaceFree() < 10000000) break;
+                if (linearSpaceFree() > 10000000) break;
                 if (!freeTextureMem()) break;
             }
             sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
@@ -380,7 +380,7 @@ void FrmMain::lazyLoad(StdPicture &target)
         if (!sourceImage) {
             for (i = 0; i < 10; i ++)
             {
-                if (linearSpaceFree() < 10000000) break;
+                if (linearSpaceFree() > 10000000) break;
                 if (!freeTextureMem()) break;
             }
             sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
