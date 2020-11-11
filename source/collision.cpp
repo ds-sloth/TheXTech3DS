@@ -422,13 +422,13 @@ bool vScreenCollision(int A, const Location_t &Loc2)
 bool vScreenCollision2(int A, const Location_t &Loc2)
 {
     bool tempvScreenCollision2 = false;
-    if(-vScreenX[A] + 64 <= Loc2.X + Loc2.Width)
+    if(-vScreenX[A] + 54 <= Loc2.X + Loc2.Width)
     {
         if(-vScreenX[A] + vScreen[A].Width - 64 >= Loc2.X)
         {
             if(-vScreenY[A] + 96 <= Loc2.Y + Loc2.Height)
             {
-                if(-vScreenY[A] + vScreen[A].Height - 64 >= Loc2.Y)
+                if(-vScreenY[A] + vScreen[A].Height - 54 >= Loc2.Y)
                 {
                     tempvScreenCollision2 = true;
                 }

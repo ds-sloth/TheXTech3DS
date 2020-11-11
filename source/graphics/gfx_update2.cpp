@@ -157,7 +157,7 @@ void UpdateGraphics2(bool skipRedraw)
         frmMain.initDraw(eye);
 
         // Draw the map!!
-        frmMain.setDefaultDepth(4);
+        frmMain.setDefaultDepth(5);
         for(A = 1; A <= numTiles; A++)
         {
             if(vScreenCollision2(1, Tile[A].Location) == true)
@@ -169,7 +169,7 @@ void UpdateGraphics2(bool skipRedraw)
                                       GFXTileBMP[Tile[A].Type], 0, TileHeight[Tile[A].Type] * TileFrame[Tile[A].Type]);
             }
         }
-        frmMain.setDefaultDepth(4);
+        frmMain.setDefaultDepth(3);
         for(A = 1; A <= numScenes; A++)
         {
             if(vScreenCollision2(1, Scene[A].Location) == true && Scene[A].Active == true)
@@ -180,7 +180,7 @@ void UpdateGraphics2(bool skipRedraw)
                                       GFXSceneBMP[Scene[A].Type], 0, SceneHeight[Scene[A].Type] * SceneFrame[Scene[A].Type]);
             }
         }
-        frmMain.setDefaultDepth(0);
+        frmMain.setDefaultDepth(1);
         for(A = 1; A <= numWorldPaths; A++)
         {
             if(vScreenCollision2(1, WorldPath[A].Location) == true && WorldPath[A].Active == true)
@@ -227,6 +227,7 @@ void UpdateGraphics2(bool skipRedraw)
             }
         }
 
+        frmMain.setDefaultDepth(0);
         if(WorldPlayer[1].Type == 0)
             WorldPlayer[1].Type = 1;
         if(Player[1].Character == 1)
@@ -251,7 +252,7 @@ void UpdateGraphics2(bool skipRedraw)
                           GFXPlayerBMP[WorldPlayer[1].Type], 0, WPHeight * WorldPlayer[1].Frame);
 
         // render background...
-        frmMain.setDefaultDepth(4);
+        frmMain.setDefaultDepth(0);
         // top...
         frmMain.renderTexture(0, 0, ScreenW-66, 130, GFX.Interface[4], 0, 0);
         // left
@@ -262,7 +263,7 @@ void UpdateGraphics2(bool skipRedraw)
         frmMain.renderTexture(0, ScreenH-66, ScreenW-66, 66, GFX.Interface[4], 0, GFX.Interface[4].h-66);
         // bottom-right
         frmMain.renderTexture(ScreenW-66, ScreenH-66, 66, 66, GFX.Interface[4], GFX.Interface[4].w-66, GFX.Interface[4].h-66);
-        frmMain.setDefaultDepth(0);
+        frmMain.setDefaultDepth(-2);
         for(A = 1; A <= numPlayers; A++)
         {
             Player[A].Direction = -1;
