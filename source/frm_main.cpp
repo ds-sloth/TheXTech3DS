@@ -31,6 +31,7 @@
 #include "editor.h"
 #include "custom_draw_image.h"
 #include "n3ds-clock.h"
+#include "second_screen.h"
 
 #include <AppPath/app_path.h>
 // #include <Logger/logger.h>
@@ -66,10 +67,11 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
     C3D_Init(C3D_DEFAULT_CMDBUF_SIZE);
     C2D_Init(C2D_DEFAULT_MAX_OBJECTS);
     C2D_Prepare();
-    consoleInit(GFX_BOTTOM, NULL);
+    // consoleInit(GFX_BOTTOM, NULL);
 
     top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     right = C2D_CreateScreenTarget(GFX_TOP, GFX_RIGHT);
+    bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 
     bool res = false;
 
@@ -162,10 +164,15 @@ void FrmMain::initDraw(int eye)
         if (numEyes == 2) currentEye = 0;
         else currentEye = -1;
     }
-    else {
+    else if (eye == 1) {
         C2D_TargetClear(right, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(right);
-        currentEye = 2;
+        currentEye = 1;
+    }
+    else if (eye == 2) {
+        C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 1.0f, 1.0f));
+        C2D_SceneBegin(bottom);
+        currentEye = -1;
     }
     setDefaultDepth(0);
 }
@@ -420,8 +427,8 @@ bool FrmMain::freeTextureMem() // make it take an amount of memory, someday.....
         }
     }
     if (oldest == nullptr) return false;
-    printf("Clearing %s, %s\n", oldest->path.c_str(), second_oldest->path.c_str());
     printf("Clearing %p, %p\n", oldest, second_oldest);
+    printf("Clearing %s, %s\n", oldest->path.c_str(), (second_oldest) ? second_oldest->path.c_str() : "");
     lazyUnLoad(*oldest);
     if (second_oldest) lazyUnLoad(*second_oldest);
     return true;

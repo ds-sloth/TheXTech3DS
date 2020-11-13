@@ -30,6 +30,7 @@
 #include "../npc.h"
 #include "../location.h"
 #include "../n3ds-clock.h"
+#include "../second_screen.h"
 
 #include <fmt_format_ne.h>
 #include <Utils/maths.h>
@@ -43,6 +44,7 @@ void UpdateGraphics(bool skipRepaint)
     std::string timeStr;
     int Z = 0;
     int numScreens = 0;
+    graphics_times[0] = svcGetSystemTick();
 
     if(!GameIsActive)
         return;
@@ -404,6 +406,7 @@ void UpdateGraphics(bool skipRepaint)
     // printf("drawing... \n");
     for (int eye = 0; eye < frmMain.numEyes; eye++)
     {
+        if (!eye) graphics_times[1] = svcGetSystemTick();
         frmMain.initDraw(eye);
         For(Z, 1, numScreens)
         {
@@ -419,6 +422,7 @@ void UpdateGraphics(bool skipRepaint)
             // try instead doing this one twice with the camera in different places.......
             frmMain.setDefaultDepth(5);
             DrawBackground(S, Z);
+            if (!eye) graphics_times[2] = svcGetSystemTick();
 
             // printf("background tiles... \n");
             frmMain.setDefaultDepth(2);
@@ -513,6 +517,7 @@ void UpdateGraphics(bool skipRepaint)
                 }
             }
 
+            if (!eye) graphics_times[3] = svcGetSystemTick();
             frmMain.setDefaultDepth(0);
             // printf("some NPCs... \n");
             For(A, 1, numNPCs) // Display NPCs that should be behind blocks
@@ -836,6 +841,7 @@ void UpdateGraphics(bool skipRepaint)
             lBlock = LastBlock[int((-vScreenX[Z] + vScreen[Z].Width) / 32) + 1];
 
 
+            if (!eye) graphics_times[4] = svcGetSystemTick();
             // printf("more blocks... \n");
             For(A, fBlock, lBlock)
             {
@@ -899,6 +905,7 @@ void UpdateGraphics(bool skipRepaint)
                 }
             }
 
+            if (!eye) graphics_times[5] = svcGetSystemTick();
 
             For(A, 1, numNPCs) // Display NPCs that should be in front of blocks
             {
@@ -1148,11 +1155,13 @@ void UpdateGraphics(bool skipRepaint)
             }
 
 
+            if (!eye) graphics_times[6] = svcGetSystemTick();
             for(int A = numPlayers; A >= 1; A--)// Players in front of blocks
             {
                 DrawPlayer(A, Z);
             }
 
+            if (!eye) graphics_times[7] = svcGetSystemTick();
             for(A = LastBackground + 1; A <= numBackground; A++) // Foreground objects
             {
                 if(vScreenCollision(Z, Background[A].Location) && !Background[A].Hidden)
@@ -1202,6 +1211,7 @@ void UpdateGraphics(bool skipRepaint)
                 }
             }
 
+            if (!eye) graphics_times[8] = svcGetSystemTick();
             // effects on top
             For(A, 1, numEffects)
             {
@@ -1219,6 +1229,7 @@ void UpdateGraphics(bool skipRepaint)
                 }
             }
 
+            if (!eye) graphics_times[9] = svcGetSystemTick();
             frmMain.setDefaultDepth(-2);
             // per-screen interface
             B = 0;
@@ -1280,6 +1291,7 @@ void UpdateGraphics(bool skipRepaint)
             else
                 frmMain.renderRect(ScreenW/2-2, 0, 4, vScreen[2].Height, 0, 0, 0);
         }
+        if (!eye) graphics_times[10] = svcGetSystemTick();
         if(!GameMenu && !GameOutro)
         {
             if(GamePaused)
@@ -1602,13 +1614,19 @@ void UpdateGraphics(bool skipRepaint)
 
         if(GameOutro)
             DoCredits();
+        if (!eye) graphics_times[11] = svcGetSystemTick();
     }
 
     // if(!skipRepaint)
     //     frmMain.repaint();
+    graphics_times[12] = svcGetSystemTick();
+    drawSecondScreen();
+    graphics_times[13] = graphics_times[12]; // so we can report this frame's time to draw second screen next frame
+    graphics_times[14] = svcGetSystemTick();
+
     if (!skipRepaint)
         frmMain.finalizeDraw();
-    // printf("finalized!\n");
+    graphics_times[15] = svcGetSystemTick();
 
     // Update Coin Frames
     CoinFrame2[1] = CoinFrame2[1] + 1;

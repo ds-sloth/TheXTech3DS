@@ -1,7 +1,7 @@
 SMBX Port to 3DS!
 
 - Crashes
-  - Check on crash (null ptr for image)
+  - Think through exceptions in standard library / PGE stuff
 
 - Appearance glitches
   - Scroll offsets will be TRICKY.
@@ -16,6 +16,19 @@ SMBX Port to 3DS!
     - Secret exit of pipehammer maze has this...
   - Bugs
     - Skeleton death anim (Hyrule temple)
+    - Hammer bro death anim
+
+- Performance
+  - Load speeds (loading level)
+  - Try switching to layer render targets??
+  - Slow draw speed with many tiles
+  - Lockup at beginning of world map??
+    - Happens after all of the "newpaths" have finished
+    - Seems to be saving
+  - PGE_Delay??
+  - 30fps lock??
+  - New 3DS RAM...?
+  - Allow user to disable sound?
 
 - Sound
   - Music fadeins/fadeouts
@@ -25,6 +38,8 @@ SMBX Port to 3DS!
     - Make a bank of sound id -> channel ptrs
     - Make channels keep track of the currently playing sound id
   - Don't load OGGs on the main thread??? (if possible!)
+    - Is there any way to speed up OGG loading?
+  - Don't loop the P-button music
 
 - Test screenshake...
   - Seems pretty good!
@@ -32,18 +47,9 @@ SMBX Port to 3DS!
 
 - Debugging info on bottom screen
 
-- Performance
-  - Load speeds (loading level)
-  - Lockup at beginning of world map??
-  - PGE_Delay??
-  - 30fps lock??
-  - New 3DS RAM...?
-  - Allow user to disable sound?
-
-- Separate the background of world map from the world map
 - Shrink player spritesheets
 
 - Alternative multiplayer controls
 - Update credits
-  - Person with 3DS OS thread (see sound file for credit)
+  - Person with 3DS OS thread (Mario 64) (see sound file for credit)
   - People who made opus tutorial

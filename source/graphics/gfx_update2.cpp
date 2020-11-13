@@ -27,7 +27,7 @@
 #include "../graphics.h"
 #include "../collision.h"
 #include "../player.h"
-
+#include "../second_screen.h"
 
 // draws GFX to screen when on the world map/world map editor
 void UpdateGraphics2(bool skipRedraw)
@@ -42,6 +42,7 @@ void UpdateGraphics2(bool skipRedraw)
             return;
     }
     fpsCount = fpsCount + 1;
+    graphics_times[0] = svcGetSystemTick();
     int A = 0;
     int B = 0;
     int Z = 0;
@@ -154,6 +155,7 @@ void UpdateGraphics2(bool skipRedraw)
 
     for (int eye = 0; eye < frmMain.numEyes; eye++)
     {
+        graphics_times[1+5*eye] = svcGetSystemTick();
         frmMain.initDraw(eye);
 
         // Draw the map!!
@@ -169,6 +171,7 @@ void UpdateGraphics2(bool skipRedraw)
                                       GFXTileBMP[Tile[A].Type], 0, TileHeight[Tile[A].Type] * TileFrame[Tile[A].Type]);
             }
         }
+        graphics_times[2+5*eye] = svcGetSystemTick();
         frmMain.setDefaultDepth(3);
         for(A = 1; A <= numScenes; A++)
         {
@@ -180,6 +183,7 @@ void UpdateGraphics2(bool skipRedraw)
                                       GFXSceneBMP[Scene[A].Type], 0, SceneHeight[Scene[A].Type] * SceneFrame[Scene[A].Type]);
             }
         }
+        graphics_times[3+5*eye] = svcGetSystemTick();
         frmMain.setDefaultDepth(1);
         for(A = 1; A <= numWorldPaths; A++)
         {
@@ -227,6 +231,7 @@ void UpdateGraphics2(bool skipRedraw)
             }
         }
 
+        graphics_times[4+5*eye] = svcGetSystemTick();
         frmMain.setDefaultDepth(0);
         if(WorldPlayer[1].Type == 0)
             WorldPlayer[1].Type = 1;
@@ -251,6 +256,7 @@ void UpdateGraphics2(bool skipRedraw)
                           WorldPlayer[1].Location.Width, WPHeight,
                           GFXPlayerBMP[WorldPlayer[1].Type], 0, WPHeight * WorldPlayer[1].Frame);
 
+        graphics_times[5+5*eye] = svcGetSystemTick();
         // render background...
         frmMain.setDefaultDepth(0);
         // top...
@@ -478,8 +484,15 @@ void UpdateGraphics2(bool skipRedraw)
         {
             SuperPrint(std::to_string(int(PrintFPS)), 1, 8, 8);
         }
+        graphics_times[11] = svcGetSystemTick();
     }
+
+    graphics_times[12] = svcGetSystemTick();
+    drawSecondScreen2();
+    graphics_times[13] = graphics_times[12]; // so we can report this frame's time to draw second screen next frame
+    graphics_times[14] = svcGetSystemTick();
 
     if (!skipRedraw)
         frmMain.finalizeDraw();
+    graphics_times[15] = svcGetSystemTick();
 }

@@ -62,6 +62,8 @@ void DynamicScreen();
 // Public Sub SuperPrint(SuperWords As String, Font As Integer, X As Single, Y As Single) 'prints text to the screen
 // prints text to the screen
 void SuperPrint(std::string SuperWords, int Font, float X, float Y);
+// for certain utility functions
+void SuperPrint(const char* SuperWords, int Font, float X, float Y);
 // Public Function CheckKey(newStrizzle As String) As String
 //std::string CheckKey(std::string newStrizzle); // USELESS
 // Private Sub SpecialFrames() 'update frames for special things such as coins and kuribo's shoe

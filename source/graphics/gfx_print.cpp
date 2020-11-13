@@ -115,3 +115,91 @@ void SuperPrint(std::string SuperWords, int Font, float X, float Y)
         }
     }
 }
+
+void SuperPrint(const char* SuperWords, int Font, float X, float Y)
+{
+//    int A = 0;
+    int B = 0;
+    int C = 0;
+    int i;
+    char c;
+
+    if(Font == 1)
+    {
+        for(i = 0; (c = SuperWords[i]) != '\0'; i++)
+        {
+            if(c >= '0' && c <= '9')
+                frmMain.renderTexture(int(X + B), int(Y), 16, 14, GFX.Font1[c - '0'], 0, 0);
+            B += 18;
+        }
+    }
+    else if(Font == 2)
+    {
+        for(i = 0; (c = SuperWords[i]) != '\0'; i++)
+        {
+            if(c >= 48 && c <= 57) {
+                C = (c - 48) * 16;
+                frmMain.renderTexture(int(X + B), int(Y), 15, 17, GFX.Font2[1], C, 0);
+                B += 16;
+            } else if(c >= 65 && c <= 90) {
+                C = (c - 55) * 16;
+                frmMain.renderTexture(int(X + B), int(Y), 15, 17, GFX.Font2[1], C, 0);
+                B += 16;
+            } else if(c >= 97 && c <= 122) {
+                C = (c - 61) * 16;
+                frmMain.renderTexture(int(X + B), int(Y), 15, 17, GFX.Font2[1], C, 0);
+                B += 16;
+            } else if(c >= 33 && c <= 47) {
+                C = (c - 33) * 16;
+                frmMain.renderTexture(int(X + B), int(Y), 15, 17, GFX.Font2S, C, 0);
+                B += 16;
+            } else if(c >= 58 && c <= 64) {
+                C = (c - 58 + 15) * 16;
+                frmMain.renderTexture(int(X + B), int(Y), 15, 17, GFX.Font2S, C, 0);
+                B += 16;
+            } else if(c >= 91 && c <= 96) {
+                C = (c - 91 + 22) * 16;
+                frmMain.renderTexture(int(X + B), int(Y), 15, 17, GFX.Font2S, C, 0);
+                B += 16;
+            } else if(c >= 123 && c <= 125) {
+                C = (c - 123 + 28) * 16;
+                frmMain.renderTexture(int(X + B), int(Y), 15, 17, GFX.Font2S, C, 0);
+                B += 16;
+            } else {
+                B += 16;
+            }
+        }
+
+    }
+    else if (Font == 3)
+    {
+        for(i = 0; (c = SuperWords[i]) != '\0'; i++)
+        {
+            c = std::toupper(c);
+            if(c >= 33 && c <= 126)
+            {
+                C = (c - 33) * 32;
+                frmMain.renderTexture(int(X + B), int(Y), 18, 16, GFX.Font2[2], 2, C);
+                B += 18;
+                if(c == 'M')
+                    B += 2;
+            } else {
+                B += 16;
+            }
+        }
+    }
+    else if(Font == 4)
+    {
+        for(i = 0; (c = SuperWords[i]) != '\0'; i++)
+        {
+            if(c >= 33 && c <= 126)
+            {
+                C = (c - 33) * 16;
+                frmMain.renderTexture(int(X + B), int(Y), 18, 16, GFX.Font2[3], 2, C);
+                B += 18;
+            } else {
+                B += 18;
+            }
+        }
+    }
+}

@@ -102,40 +102,29 @@ void GameLoop()
     }
     else
     {
-        clock_t times[9];
-
-        times[0] = clock();
+        perf_times[0] = svcGetSystemTick();
         UpdateLayers(); // layers before/after npcs
-        times[1] = clock();
+        perf_times[1] = svcGetSystemTick();
         UpdateNPCs();
 
+        perf_times[2] = svcGetSystemTick();
         if(LevelMacro == 3)
             return; // stop on key exit
 
-        times[2] = clock();
         UpdateBlocks();
-        times[3] = clock();
+        perf_times[3] = svcGetSystemTick();
         UpdateEffects();
-        times[4] = clock();
+        perf_times[4] = svcGetSystemTick();
         UpdatePlayer();
-        times[5] = clock();
+        perf_times[5] = svcGetSystemTick();
         if(LivingPlayers() || BattleMode)
             UpdateGraphics();
-        times[6] = clock();
+        perf_times[6] = perf_times[5]; // so we can report it next frame
+        perf_times[7] = svcGetSystemTick();
         UpdateSound();
-        times[7] = clock();
+        perf_times[8] = svcGetSystemTick();
         UpdateEvents();
-        times[8] = clock();
-/*        printf("frame\tlayers\tNPCs\tblocks\tFX\tplayer\tGFX\tsound\tevents\n");
-        printf("%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\t%ld\n", times[0]%10000,
-               times[1]-times[0],
-               times[2]-times[1],
-               times[3]-times[2],
-               times[4]-times[3],
-               times[5]-times[4],
-               times[6]-times[5],
-               times[7]-times[6],
-               times[8]-times[7]);*/
+        perf_times[9] = svcGetSystemTick();
 //        If MagicHand = True Then UpdateEditor
         if(MagicHand)
             UpdateEditor();

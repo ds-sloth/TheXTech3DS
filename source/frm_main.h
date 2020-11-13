@@ -35,6 +35,7 @@
 
 #include "std_picture.h"
 #include "cmd_line_setup.h"
+#include "second_screen.h"
 
 #include <citro2d.h>
 
@@ -155,6 +156,7 @@ private:
 
     C3D_RenderTarget* top;
     C3D_RenderTarget* right;
+    C3D_RenderTarget* bottom;
 
     SDL_Point MapToScr(int x, int y);
 };
