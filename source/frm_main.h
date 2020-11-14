@@ -37,6 +37,7 @@
 #include "cmd_line_setup.h"
 #include "second_screen.h"
 
+#include <citro3d.h>
 #include <citro2d.h>
 
 class FrmMain
@@ -52,9 +53,7 @@ class FrmMain
     std::set<StdPicture*> m_bigPictures;
     uint32_t currentFrame = 0;
     int m_ri; // SDL_RendererInfo
-    int defaultDepth = 0;
     float depthSlider = 1.;
-    int currentEye = 0;
 public:
     int ScaleWidth = 800;
     int ScaleHeight = 600;
@@ -84,7 +83,8 @@ public:
     int setFullScreen(bool fs);
     bool isSdlError();
 
-    void initDraw(int eye = 0);
+    void initDraw(int screen = 0);
+    void setLayer(int layer);
     void finalizeDraw();
     void repaint();
     void updateViewport();
@@ -99,32 +99,30 @@ public:
     void clearAllTextures();
 
     void clearBuffer();
-    void renderRect(int x, int y, int w, int h, uint8_t red = 255, uint8_t green = 255, uint8_t blue = 255, uint8_t alpha = 255, bool filled = true, int depth=-10000);
-    void renderRectBR(int _left, int _top, int _right, int _bottom, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, int depth=-10000);
+    void renderRect(int x, int y, int w, int h, uint8_t red = 255, uint8_t green = 255, uint8_t blue = 255, uint8_t alpha = 255, bool filled = true);
+    void renderRectBR(int _left, int _top, int _right, int _bottom, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
 
-    void renderCircle(int cx, int cy, int radius, float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, bool filled = true, int depth=-10000);
+    void renderCircle(int cx, int cy, int radius, float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, bool filled = true);
 
     // Similar to BitBlt, but without masks, just draw a texture or it's fragment!
     void renderTextureI(int xDst, int yDst, int wDst, int hDst,
                         StdPicture &tx,
                         int xSrc, int ySrc,
                         double rotateAngle = 0.0, SDL_Point *center = nullptr, unsigned int flip = SDL_FLIP_NONE,
-                        bool shadow = false, int depth = -10000);
+                        bool shadow = false);
     void renderTexture(double xDst, double yDst, double wDst, double hDst,
                        StdPicture &tx,
                        int xSrc, int ySrc,
-                       bool shadow = false, int depth = -10000);
+                       bool shadow = false);
 
     void renderTextureFL(double xDst, double yDst, double wDst, double hDst,
                          StdPicture &tx,
                          int xSrc, int ySrc,
                          double rotateAngle = 0.0, SDL_Point *center = nullptr, unsigned int flip = SDL_FLIP_NONE,
-                         bool shadow = false, int depth = -10000);
+                         bool shadow = false);
 
     void renderTexture(int xDst, int yDst, StdPicture &tx,
-                       bool shadow = false, int depth = -10000);
-
-    void setDefaultDepth(int depth);
+                       bool shadow = false);
 
 private:
 
@@ -157,6 +155,11 @@ private:
     C3D_RenderTarget* top;
     C3D_RenderTarget* right;
     C3D_RenderTarget* bottom;
+    int currentLayer = 0;
+    Tex3DS_SubTexture layer_subtexs[4];
+    C3D_Tex layer_texs[4];
+    C2D_Image layer_ims[4];
+    C3D_RenderTarget* layer_targets[4];
 
     SDL_Point MapToScr(int x, int y);
 };

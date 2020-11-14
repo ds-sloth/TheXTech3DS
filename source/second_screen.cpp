@@ -20,7 +20,7 @@ void writeMessage(std::string message)
 void drawSecondScreen()
 {
     char tempBuf[41];
-    frmMain.initDraw(2);
+    frmMain.initDraw(1);
 
     SuperPrint("Logic times (us)", 4, 16, 0);
     // this frame minus last frame

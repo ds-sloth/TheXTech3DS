@@ -73,6 +73,15 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
     right = C2D_CreateScreenTarget(GFX_TOP, GFX_RIGHT);
     bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 
+    for (int i = 0; i < 4; i++)
+    {
+        C3D_TexInitVRAM(&layer_texs[i], 512, 256, GPU_RGBA8);
+        layer_targets[i] = C3D_RenderTargetCreateFromTex(&layer_texs[i], GPU_TEXFACE_2D, 0, GPU_RB_DEPTH24_STENCIL8);
+        layer_subtexs[i] = {410, 240, 0., 1., 410./512., 1-(240./256.)};
+        layer_ims[i].tex = &layer_texs[i];
+        layer_ims[i].subtex = &layer_subtexs[i];
+    }
+
     bool res = false;
 
     // LoadLogSettings(setup.interprocess, setup.verboseLogging);
@@ -92,6 +101,10 @@ void FrmMain::freeSDL()
     GFX.unLoad();
     clearAllTextures();
 
+    for (int i = 0; i < 4; i++)
+    {
+        C3D_TexDelete(&layer_texs[i]);
+    }
     // 3ds libs
     C2D_Fini();
     C3D_Fini();
@@ -154,40 +167,64 @@ bool FrmMain::isSdlError()
     return false;
 }
 
-void FrmMain::initDraw(int eye)
+void FrmMain::initDraw(int screen)
 {
     // enter the draw context!
-    if (eye == 0) {
+    if (screen == 0)
+    {
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-        C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
-        C2D_SceneBegin(top);
-        if (numEyes == 2) currentEye = 0;
-        else currentEye = -1;
-    }
-    else if (eye == 1) {
-        C2D_TargetClear(right, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
-        C2D_SceneBegin(right);
-        currentEye = 1;
-    }
-    else if (eye == 2) {
+        for (int layer = 0; layer < 4; layer++)
+        {
+            C2D_TargetClear(layer_targets[layer], C2D_Color32f(0.0f, 0.0f, 0.0f, 0.0f));
+        }
         C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 1.0f, 1.0f));
-        C2D_SceneBegin(bottom);
-        currentEye = -1;
+        C2D_SceneBegin(layer_targets[2]); // screen plane target
     }
-    setDefaultDepth(0);
+    else
+    {
+        C2D_SceneBegin(bottom);
+    }
+}
+
+void FrmMain::setLayer(int layer)
+{
+    C2D_SceneBegin(layer_targets[layer]);
 }
 
 void FrmMain::finalizeDraw()
 {
     // leave the draw context and wait for vblank...
+    if (numEyes == 1)
+    {
+        C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+        C2D_SceneBegin(top);
+        C2D_DrawImageAt(layer_ims[0], -5, 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -5, 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -5, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -5, 0, 0);
+    }
+    else
+    {
+        C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+        C2D_SceneBegin(top);
+        C2D_DrawImageAt(layer_ims[0], -5 - (int)(5. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -5 - (int)(2. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -5, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -5 + (int)(2. * depthSlider), 0, 0);
+
+        C2D_TargetClear(right, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+        C2D_SceneBegin(right);
+        C2D_DrawImageAt(layer_ims[0], -5 + (int)(5. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -5 + (int)(2. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -5, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -5 - (int)(2. * depthSlider), 0, 0);
+    }
     currentFrame ++;
     C3D_FrameEnd(0);
 }
 
 void FrmMain::repaint()
 {
-    int w, h, off_x, off_y, wDst, hDst;
-    float scale_x, scale_y;
 }
 
 void FrmMain::updateViewport()
@@ -215,7 +252,7 @@ void FrmMain::setViewport(int x, int y, int w, int h)
 
 void FrmMain::offsetViewport(int x, int y)
 {
-    viewport_offset_x = viewport_x+x-10;
+    viewport_offset_x = viewport_x+x;
     viewport_offset_y = viewport_y+y;
 }
 
@@ -507,36 +544,22 @@ void FrmMain::clearBuffer()
     // SDL_RenderClear(m_gRenderer);
 }
 
-void FrmMain::setDefaultDepth(int depth) {
-    defaultDepth = depth;
-}
-void FrmMain::renderRect(int x, int y, int w, int h, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, bool filled, int depth)
+void FrmMain::renderRect(int x, int y, int w, int h, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, bool filled)
 {
-    if (depth == -10000) depth = defaultDepth;
     uint32_t clr = C2D_Color32(red, green, blue, alpha);
 
     // Filled is always True in this game
-    if (currentEye == -1)
-        C2D_DrawRectSolid((x+viewport_offset_x)/2,
-                          (y+viewport_offset_y)/2,
-                          0, w/2, h/2, clr);
-    else if (currentEye == 0)
-        C2D_DrawRectSolid((x+viewport_offset_x)/2 - (int)(depth * depthSlider),
-                          (y+viewport_offset_y)/2,
-                          0, w/2, h/2, clr);
-    else
-        C2D_DrawRectSolid((x+viewport_offset_x)/2 + (int)(depth * depthSlider),
-                          (y+viewport_offset_y)/2,
-                          0, w/2, h/2, clr);
+    C2D_DrawRectSolid((x+viewport_offset_x)/2,
+                      (y+viewport_offset_y)/2,
+                      0, w/2, h/2, clr);
 }
 
-void FrmMain::renderRectBR(int _left, int _top, int _right, int _bottom, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, int depth)
+void FrmMain::renderRectBR(int _left, int _top, int _right, int _bottom, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
 {
-    if (depth == -10000) depth = defaultDepth;
-    renderRect(_left, _top, _right-_left, _bottom-_top, red, green, blue, alpha, true, depth);
+    renderRect(_left, _top, _right-_left, _bottom-_top, red, green, blue, alpha, true);
 }
 
-void FrmMain::renderCircle(int cx, int cy, int radius, float red, float green, float blue, float alpha, bool filled, int depth)
+void FrmMain::renderCircle(int cx, int cy, int radius, float red, float green, float blue, float alpha, bool filled)
 {
     // this is never used
 }
@@ -545,9 +568,8 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
                              StdPicture &tx,
                              int xSrc, int ySrc,
                              double rotateAngle, SDL_Point *center, unsigned int flip,
-                             bool shadow, int depth)
+                             bool shadow)
 {
-    if (depth == -10000) depth = defaultDepth;
     if(!tx.inited)
         return;
 
@@ -621,15 +643,8 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
         // draw the top pic
         if(to_draw_2 != nullptr)
         {
-            if (currentEye == -1)
-                C2D_DrawImage_Custom(*to_draw_2, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, (2048-ySrc)/2,
-                                     xSrc/2, ySrc/2, wDst/2, (2048-ySrc)/2, 0, flip, shadow);
-            else if (currentEye == 0)
-                C2D_DrawImage_Custom(*to_draw_2, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, (2048-ySrc)/2,
-                                     xSrc/2, ySrc/2, wDst/2, (2048-ySrc)/2, 0, flip, shadow);
-            else
-                C2D_DrawImage_Custom(*to_draw_2, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, (2048-ySrc)/2,
-                                     xSrc/2, ySrc/2, wDst/2, (2048-ySrc)/2, 0, flip, shadow);
+            C2D_DrawImage_Custom(*to_draw_2, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, (2048-ySrc)/2,
+                                 xSrc/2, ySrc/2, wDst/2, (2048-ySrc)/2, 0, flip, shadow);
             yDst += (2048 - ySrc);
             hDst -= (2048 - ySrc);
             ySrc = 0;
@@ -641,53 +656,46 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
 
     if (to_draw == nullptr) return;
 
-    // add viewport positioning code...
-    if (currentEye == -1)
-        C2D_DrawImage_Custom(*to_draw, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
-                             xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
-    else if (currentEye == 0)
-        C2D_DrawImage_Custom(*to_draw, (xDst+viewport_offset_x)/2 - (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
-                             xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
-    else
-        C2D_DrawImage_Custom(*to_draw, (xDst+viewport_offset_x)/2 + (int)(depth * depthSlider), (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
-                             xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
+    C2D_DrawImage_Custom(*to_draw, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
+                         xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
 }
 
 void FrmMain::renderTexture(double xDst, double yDst, double wDst, double hDst,
                             StdPicture &tx,
                             int xSrc, int ySrc,
-                            bool shadow, int depth)
+                            bool shadow)
 {
     const unsigned int flip = SDL_FLIP_NONE;
-    renderTextureI((int)xDst,
-                   (int)yDst,
-                   (int)wDst,
-                   (int)hDst,
+    // think through this just a little more (it fails for negatives, etc...)
+    renderTextureI((int)(xDst+0.5),
+                   (int)(yDst+0.5),
+                   (int)(wDst+0.5),
+                   (int)(hDst+0.5),
                    tx,
                    xSrc,
                    ySrc,
                    0.0, nullptr, flip,
-                   shadow, depth);
+                   shadow);
 }
 
 void FrmMain::renderTextureFL(double xDst, double yDst, double wDst, double hDst,
                               StdPicture &tx,
                               int xSrc, int ySrc,
                               double rotateAngle, SDL_Point *center, unsigned int flip,
-                              bool shadow, int depth)
+                              bool shadow)
 {
-    renderTextureI((int)xDst,
-                   (int)yDst,
-                   (int)wDst,
-                   (int)hDst,
+    renderTextureI((int)(xDst+0.5),
+                   (int)(yDst+0.5),
+                   (int)(wDst+0.5),
+                   (int)(hDst+0.5),
                    tx,
                    xSrc,
                    ySrc,
                    rotateAngle, center, flip,
-                   shadow, depth);
+                   shadow);
 }
 
-void FrmMain::renderTexture(int xDst, int yDst, StdPicture &tx, bool shadow, int depth)
+void FrmMain::renderTexture(int xDst, int yDst, StdPicture &tx, bool shadow)
 {
     const unsigned int flip = SDL_FLIP_NONE;
     renderTextureI(xDst,
@@ -698,5 +706,5 @@ void FrmMain::renderTexture(int xDst, int yDst, StdPicture &tx, bool shadow, int
                    0,
                    0,
                    0.0, nullptr, flip,
-                   shadow, depth);
+                   shadow);
 }
