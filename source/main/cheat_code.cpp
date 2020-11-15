@@ -237,7 +237,7 @@ void CheatCode(char NewKey)
         }
         else if(strstr(CheatString.c_str(), "istillplaywithlegos"))
         {
-            ShowLayer("Destroyed Blocks");
+            ShowLayer(HS_DestroyedBlocks);
             PlaySound(34);
             CheatString.clear();
             cheated = true;

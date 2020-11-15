@@ -39,6 +39,8 @@
 // #include <Logger/logger.h>
 #include <PGE_File_Formats/file_formats.h>
 
+#include <algorithm>
+
 
 void addMissingLvlSuffix(std::string &fileName)
 {
@@ -230,10 +232,10 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
         block.DefaultSpecial = block.Special;
         block.Invis = b.invisible;
         block.Slippy = b.slippery;
-        block.Layer = b.layer;
-        block.TriggerDeath = b.event_destroy;
-        block.TriggerHit = b.event_hit;
-        block.TriggerLast = b.event_emptylayer;
+        block.Layer = (HashedString)b.layer;
+        block.TriggerDeath = (HashedString)b.event_destroy;
+        block.TriggerHit = (HashedString)b.event_hit;
+        block.TriggerLast = (HashedString)b.event_emptylayer;
 
         if(block.Type > maxBlockType) // Drop ID to 1 for blocks of out of range IDs
         {
@@ -258,7 +260,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
         bgo.Location.X = double(b.x);
         bgo.Location.Y = double(b.y);
         bgo.Type = int(b.id);
-        bgo.Layer = b.layer;
+        bgo.Layer = (HashedString)b.layer;
         bgo.Location.Width = GFXBackgroundWidth[bgo.Type];
         bgo.Location.Height = BackgroundHeight[bgo.Type];
 
@@ -380,12 +382,12 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
 
         npc.Legacy = n.is_boss;
 
-        npc.Layer = n.layer;
-        npc.TriggerActivate = n.event_activate;
-        npc.TriggerDeath = n.event_die;
-        npc.TriggerTalk = n.event_talk;
-        npc.TriggerLast = n.event_emptylayer;
-        npc.AttLayer = n.attach_layer;
+        npc.Layer = (HashedString)n.layer;
+        npc.TriggerActivate = (HashedString)n.event_activate;
+        npc.TriggerDeath = (HashedString)n.event_die;
+        npc.TriggerTalk = (HashedString)n.event_talk;
+        npc.TriggerLast = (HashedString)n.event_emptylayer;
+        npc.AttLayer = (HashedString)n.attach_layer;
 
         npc.DefaultType = npc.Type;
         npc.Location.Width = NPCWidth[npc.Type];
@@ -455,7 +457,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
         warp.MapY = int(w.world_y);
 
         warp.Stars = w.stars;
-        warp.Layer = w.layer;
+        warp.Layer = (HashedString)w.layer;
         warp.Hidden = w.unknown;
 
         warp.NoYoshi = w.novehicles;
@@ -464,7 +466,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
 
         warp.cannonExit = w.cannon_exit;
         warp.cannonExitSpeed = w.cannon_exit_speed;
-        warp.eventEnter = w.event_enter;
+        warp.eventEnter = (HashedString)w.event_enter;
         warp.StarsMsg = w.stars_msg;
         warp.noPrintStars = w.star_num_hide;
         warp.noEntranceScene = w.hide_entering_scene;
@@ -518,7 +520,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
         water.Location.Height = w.h;
         water.Buoy = w.buoy;
         water.Quicksand = w.env_type;
-        water.Layer = w.layer;
+        water.Layer = (HashedString)w.layer;
     }
 
     A = 0;
@@ -528,7 +530,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
 
         layer = Layer_t();
 
-        layer.Name = l.name;
+        layer.Name = (HashedString)l.name;
         layer.Hidden = l.hidden;
         if(layer.Hidden)
         {
@@ -554,7 +556,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
 
         event = Events_t();
 
-        event.Name = e.name;
+        event.Name = (HashedString)e.name;
         event.Text = e.msg;
         event.Sound = int(e.sound_id);
         event.EndGame = int(e.end_game);
@@ -574,9 +576,17 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
 //            event.ToggleLayer[B].clear();
 //        }
 
-        event.HideLayer = e.layers_hide;
-        event.ShowLayer = e.layers_show;
-        event.ToggleLayer = e.layers_toggle;
+        event.HideLayer.reserve(e.layers_hide.size());
+        event.ShowLayer.reserve(e.layers_show.size());
+        event.ToggleLayer.reserve(e.layers_toggle.size());
+
+        for(std::string s : e.layers_hide) event.HideLayer.push_back((HashedString)s);
+        for(std::string s : e.layers_show) event.ShowLayer.push_back((HashedString)s);
+        for(std::string s : e.layers_toggle) event.ToggleLayer.push_back((HashedString)s);
+
+        // std::transform(e.layers_hide.begin(), e.layers_hide.end(), event.HideLayer.begin(), [](const std::string& s){return (HashedString)s;});
+        // std::transform(e.layers_show.begin(), e.layers_show.end(), event.ShowLayer.begin(), [](const std::string& s){return (HashedString)s;});
+        // std::transform(e.layers_toggle.begin(), e.layers_toggle.end(), event.ToggleLayer.begin(), [](const std::string& s){return (HashedString)s;});
 
 //        for(B = 0; B <= maxSections; B++)
 //        {
@@ -613,7 +623,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
             event.level[B].Width = s.position_right;
         }
 
-        event.TriggerEvent = e.trigger;
+        event.TriggerEvent = (HashedString)e.trigger;
         event.TriggerDelay = e.trigger_timer;
 
         event.LayerSmoke = e.nosmoke;
@@ -630,7 +640,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
         event.Controls.Up = e.ctrl_up;
 
         event.AutoStart = e.autostart;
-        event.MoveLayer = e.movelayer;
+        event.MoveLayer = (HashedString)e.movelayer;
         event.SpeedX = float(e.layer_speed_x);
         event.SpeedY = float(e.layer_speed_y);
 
@@ -736,7 +746,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
                 numLocked++;
                 auto &bgo = Background[B];
                 bgo = Background_t();
-                bgo.Layer = Warp[A].Layer;
+                bgo.Layer = (HashedString)Warp[A].Layer;
                 bgo.Hidden = Warp[A].Hidden;
                 bgo.Location.Width = 24;
                 bgo.Location.Height = 24;
@@ -750,7 +760,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
                 numLocked++;
                 auto &bgo = Background[B];
                 bgo = Background_t();
-                bgo.Layer = Warp[A].Layer;
+                bgo.Layer = (HashedString)Warp[A].Layer;
                 bgo.Hidden = Warp[A].Hidden;
                 bgo.Location = Warp[A].Entrance;
                 bgo.Type = 98;
@@ -793,7 +803,7 @@ void ClearLevel()
 
     for(A = 1; A <= newEventNum; A++)
     {
-        NewEvent[A] = "";
+        NewEvent[A].clear();
         newEventDelay[A] = 0;
     }
 
@@ -820,9 +830,9 @@ void ClearLevel()
         Water[A] = blankwater;
 
     numWater = 0;
-    Events[0].Name = "Level - Start";
-    Events[1].Name = "P Switch - Start";
-    Events[2].Name = "P Switch - End";
+    Events[0].Name = HS_LevelStart;
+    Events[1].Name = HS_PSwitchStart;
+    Events[2].Name = HS_PSwitchEnd;
     curMusic = 0;
     curStars = 0;
     maxStars = 0;
@@ -831,13 +841,13 @@ void ClearLevel()
     BeltDirection = 1;
     StopMusic();
     Layer[0] = Layer_t();
-    Layer[0].Name = "Default";
+    Layer[0].Name = HS_Default;
     Layer[0].Hidden = false;
     Layer[1] = Layer_t();
-    Layer[1].Name = "Destroyed Blocks";
+    Layer[1].Name = HS_DestroyedBlocks;
     Layer[1].Hidden = true;
     Layer[2] = Layer_t();
-    Layer[2].Name = "Spawned NPCs";
+    Layer[2].Name = HS_SpawnedNPCs;
     Layer[2].Hidden = false;
 
     numLayers = 0;
@@ -846,7 +856,7 @@ void ClearLevel()
         Layer[A] = Layer_t();
         if(A > 2)
         {
-            Layer[A].Name = "";
+            Layer[A].Name.clear();
             Layer[A].Hidden = false;
         }
         Layer[A].SpeedX = 0;
@@ -866,8 +876,8 @@ void ClearLevel()
 //        frmEvents.RefreshEvents
 //        frmLayers.lstLayer.Clear
 //        frmLayers.lstLayer.AddItem "Default"
-//        frmLayers.lstLayer.AddItem "Destroyed Blocks"
-//        frmLayers.lstLayer.AddItem "Spawned NPCs"
+//        frmLayers.lstLayer.AddItem HS_DestroyedBlocks
+//        frmLayers.lstLayer.AddItem HS_SpawnedNPCs
 //        frmLayers.lstLayer.Selected(1) = False
 //        frmLayers.lstLayer.Selected(2) = True
 //        frmLayers.lstLayer.Selected(0) = True

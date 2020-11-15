@@ -322,7 +322,7 @@ void UpdateNPCs()
                             }
                             else if(NPC[A].GeneratorEffect == 2) // projectile
                             {
-                                NPC[numNPCs].Layer = "Spawned NPCs";
+                                NPC[numNPCs].Layer = HS_SpawnedNPCs;
                                 PlaySound(22);
                                 NPC[numNPCs].Projectile = true;
                                 if(NPC[numNPCs].Type == 17) // Normal Bullet Bills
@@ -370,7 +370,7 @@ void UpdateNPCs()
                             NPC[numNPCs].TriggerLast = NPC[A].TriggerLast;
                             NPC[numNPCs].TriggerTalk = NPC[A].TriggerTalk;
                             CheckSectionNPC(numNPCs);
-                            if(NPC[numNPCs].TriggerActivate != "")
+                            if(!NPC[numNPCs].TriggerActivate.empty())
                                 ProcEvent(NPC[numNPCs].TriggerActivate);
                             if(NPC[numNPCs].Type == 287)
                                 NPC[numNPCs].Type = RandomBonus();
@@ -474,7 +474,7 @@ void UpdateNPCs()
                                     NPC[B].Section = NPC[newAct[C]].Section;
                                     if(B < A)
                                     {
-                                        if(NPC[B].TriggerActivate != "")
+                                        if(!NPC[B].TriggerActivate.empty())
                                             ProcEvent(NPC[B].TriggerActivate);
                                     }
 
@@ -2001,7 +2001,7 @@ void UpdateNPCs()
                                                                     Block[B].Type = 109;
                                                                 else
                                                                 {
-                                                                    Block[B].Layer = "Destroyed Blocks";
+                                                                    Block[B].Layer = (HS_DestroyedBlocks);
                                                                     Block[B].Hidden = true;
                                                                     numNPCs++;
                                                                     NPC[numNPCs] = NPC_t();
@@ -4739,7 +4739,7 @@ void UpdateNPCs()
                 NPCFrames(A);
 
                 if(NPC[A].Effect == 0 && NPC[A].Type != 91)
-                    NPC[A].Layer = "Spawned NPCs";
+                    NPC[A].Layer = HS_SpawnedNPCs;
 
             }
             else if(NPC[A].Effect == 5) // Grabbed by Yoshi
@@ -4781,11 +4781,11 @@ void UpdateNPCs()
             NPC[A].Location.SpeedX = NPC[A].Location.SpeedX * double(speedVar);
         }
 
-        if(NPC[A].AttLayer != "" && NPC[A].HoldingPlayer == 0)
+        if(!NPC[A].AttLayer.empty() && NPC[A].HoldingPlayer == 0)
         {
             for(B = 1; B <= maxLayers; B++)
             {
-                if(Layer[B].Name != "")
+                if(!Layer[B].Name.empty())
                 {
                     if(Layer[B].Name == NPC[A].AttLayer)
                     {

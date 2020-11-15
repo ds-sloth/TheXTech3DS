@@ -2894,7 +2894,7 @@ void UpdatePlayer()
                                 Player[A].Location.SpeedX = Player[A].GrabSpeed;
                                 Player[A].GrabSpeed = 0;
                                 Block[B].Hidden = true;
-                                Block[B].Layer = "Destroyed Blocks";
+                                Block[B].Layer = HS_DestroyedBlocks;
                                 NewEffect(10, Block[B].Location);
                                 Effect[numEffects].Location.SpeedY = -2;
                                 Player[A].GrabTime = 0;
@@ -4410,7 +4410,7 @@ void UpdatePlayer()
                     MessageText = NPC[MessageNPC].Text;
                     PauseGame(A);
                     MessageText = "";
-                    if(NPC[MessageNPC].TriggerTalk != "")
+                    if(!NPC[MessageNPC].TriggerTalk.empty())
                         ProcEvent(NPC[MessageNPC].TriggerTalk);
                     MessageNPC = 0;
                 }

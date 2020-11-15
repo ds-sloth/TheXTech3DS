@@ -33,13 +33,15 @@
 #include "global_constants.h"
 #include "controls.h"
 
+#include "hashed_string.h"
+
 //Public Type Layer
 struct Layer_t
 {
 //    EffectStop As Boolean
     bool EffectStop = false;
 //    Name As String
-    std::string Name;
+    HashedString Name;
 //    Hidden As Boolean
     bool Hidden = false;
 //    SpeedX As Single
@@ -53,23 +55,23 @@ struct Layer_t
 struct Events_t
 {
 //    addSavedEvent As String
-    std::string addSavedEvent;
+    HashedString addSavedEvent;
 //    RemoveSavedEvent As String
-    std::string RemoveSavedEvent;
+    HashedString RemoveSavedEvent;
 //    LayerSmoke As Boolean
     bool LayerSmoke = false;
 //    Sound As Integer
     int Sound = 0;
 //    Name As String
-    std::string Name;
+    HashedString Name;
 //    Text As String
     std::string Text;
 //    HideLayer(0 To 20) As String
-    std::vector<std::string> HideLayer;
+    std::vector<HashedString> HideLayer;
 //    ShowLayer(0 To 20) As String
-    std::vector<std::string> ShowLayer;
+    std::vector<HashedString> ShowLayer;
 //    ToggleLayer(0 To 20) As String
-    std::vector<std::string> ToggleLayer;
+    std::vector<HashedString> ToggleLayer;
 //    Music(0 To maxSections) As Integer
     RangeArrI<int, 0, maxSections, 0> Music;
 //    Background(0 To maxSections) As Integer
@@ -79,13 +81,13 @@ struct Events_t
 //    EndGame As Integer
     int EndGame = 0;
 //    TriggerEvent As String
-    std::string TriggerEvent;
+    HashedString TriggerEvent;
 //    TriggerDelay As Double
     double TriggerDelay = 0.0;
 //    Controls As Controls
     Controls_t Controls;
 //    MoveLayer As String
-    std::string MoveLayer;
+    HashedString MoveLayer;
 //    SpeedX As Single
     float SpeedX = 0.0f;
 //    SpeedY As Single
@@ -112,7 +114,7 @@ extern int numEvents;
 extern RangeArr<Events_t, 0, maxEvents> Events;
 
 //Public NewEvent(1 To 100) As String
-extern RangeArr<std::string, 1, maxEvents> NewEvent;
+extern RangeArr<HashedString, 1, maxEvents> NewEvent;
 //Public newEventDelay(1 To 100) As Integer
 extern RangeArrI<int, 1, maxEvents, 0> newEventDelay;
 //Public newEventNum As Integer
@@ -120,17 +122,17 @@ extern int newEventNum;
 
 // Public Sub ShowLayer(LayerName As String, Optional NoEffect As Boolean = False) 'shows a layer
 // shows a layer
-void ShowLayer(std::string LayerName, bool NoEffect = false);
+void ShowLayer(HashedString LayerName, bool NoEffect = false);
 
 // Public Sub HideLayer(LayerName As String, Optional NoEffect As Boolean = False) 'hides a layer
 // hides a layer
-void HideLayer(std::string LayerName, bool NoEffect = false);
+void HideLayer(HashedString LayerName, bool NoEffect = false);
 
 // Public Sub SetLayer(LayerName As String)
-void SetLayer(std::string LayerName);
+void SetLayer(HashedString LayerName);
 
 // Public Sub ProcEvent(EventName As String, Optional NoEffect As Boolean = False)
-void ProcEvent(std::string EventName, bool NoEffect = false);
+void ProcEvent(HashedString EventName, bool NoEffect = false);
 
 // Public Sub UpdateEvents()
 void UpdateEvents();

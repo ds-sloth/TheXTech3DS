@@ -156,11 +156,11 @@ void KillNPC(int A, int B)
             }
         }
     }
-    if(NPC[A].TriggerDeath != "" && LevelEditor == false)
+    if(!NPC[A].TriggerDeath.empty() && LevelEditor == false)
     {
         ProcEvent(NPC[A].TriggerDeath);
     }
-    if(NPC[A].TriggerLast != "")
+    if(!NPC[A].TriggerLast.empty())
     {
         tempBool = false;
         for(C = 1; C <= numNPCs; C++)
@@ -1475,7 +1475,7 @@ void KillNPC(int A, int B)
     if(BattleMode == true)
         NPC[A].RespawnDelay = 65 * 30;
 
-    if(NPC[A].AttLayer != "")
+    if(!NPC[A].AttLayer.empty())
     {
         for(C = 1; C <= maxLayers; C++)
         {

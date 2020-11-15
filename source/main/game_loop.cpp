@@ -177,6 +177,7 @@ void GameLoop()
         }
         else if(numPlayers == 2 && Player[2].Controls.Start)
         {
+            // seems like something partly destroyed P2's pause game here...
             if(LevelMacro == 0 && CheckLiving() > 0)
             {
                 if(Player[2].UnStart)

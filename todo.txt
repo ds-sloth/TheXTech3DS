@@ -15,7 +15,16 @@ SMBX Port to 3DS!
     - Hammer bro death anim
 
 - Performance
+  - Eliminating string comparisons
+    - 50% emu
+      - w/o hashes - layers 1835, NPCs 6195
+      - w/  hashes - layers 1817, NPCs 5060
+    - Hardware:
+      - w/o hashes - layers 6679, NPCs 12145 // 5638, 2985
+      - w/  hashes - layers 6400, NPCs 10252 // 5500, 3300
   - Load speeds (loading level)
+  - NPC load: painful playground
+  - Layers load: intro level of Mario Prime
   - Slow draw speed with many tiles
   - Lockup at beginning of world map??
     - Happens after all of the "newpaths" have finished

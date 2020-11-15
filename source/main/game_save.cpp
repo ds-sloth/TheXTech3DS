@@ -32,12 +32,18 @@
 #include <PGE_File_Formats/file_formats.h>
 #include <fmt_format_ne.h>
 
+std::set<std::string> pathsExist;
 
 std::string makeGameSavePath(std::string episode, std::string world, std::string saveFile)
 {
     std::string gameSaveDir = AppPathManager::gameSaveRootDir() + "/"+ Files::basename(Files::dirname(episode + world));
-    if(!DirMan::exists(gameSaveDir))
-        DirMan::mkAbsPath(gameSaveDir);
+    // sd card access is expensive on 3DS, so don't repeat this
+    if(pathsExist.find(gameSaveDir) == pathsExist.end())
+    {
+        if(!DirMan::exists(gameSaveDir))
+            DirMan::mkAbsPath(gameSaveDir);
+        pathsExist.insert(gameSaveDir);
+    }
 
     return gameSaveDir + "/"+ world + "-" + saveFile;
 }

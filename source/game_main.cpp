@@ -407,7 +407,7 @@ int GameMain(const CmdLineSetup_t &setup)
 
             // printf("Um, now?");
 
-            ProcEvent("Level - Start", true);
+            ProcEvent(HS_LevelStart, true);
             For(A, 2, maxEvents)
             {
                 if(Events[A].AutoStart)
@@ -734,7 +734,7 @@ int GameMain(const CmdLineSetup_t &setup)
                     ReturnWarp = 0;
             }
 //'--------------------------------------------
-            ProcEvent("Level - Start", true);
+            ProcEvent(HS_LevelStart, true);
 
             for(int A = 2; A <= maxEvents; ++A)
             {

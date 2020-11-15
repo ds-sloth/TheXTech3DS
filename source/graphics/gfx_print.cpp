@@ -122,7 +122,7 @@ void SuperPrint(const char* SuperWords, int Font, float X, float Y)
     int B = 0;
     int C = 0;
     int i;
-    char c;
+    unsigned char c;
 
     if(Font == 1)
     {

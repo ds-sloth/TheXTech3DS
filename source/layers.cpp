@@ -39,16 +39,23 @@ RangeArr<Layer_t, 0, maxLayers> Layer;
 int numEvents = 0;
 RangeArr<Events_t, 0, maxEvents> Events;
 
-RangeArr<std::string, 1, maxEvents> NewEvent;
+RangeArr<HashedString, 1, maxEvents> NewEvent;
 RangeArrI<int, 1, maxEvents, 0> newEventDelay;
 int newEventNum = 0;
 
+/*
 static bool equalCase(const std::string &x, const std::string &y)
 {
     return (strcasecmp(x.c_str(), y.c_str()) == 0);
 }
+*/
 
-void ShowLayer(std::string LayerName, bool NoEffect)
+static bool equalCase(const HashedString &x, const HashedString &y)
+{
+    return (x.upper_hash == y.upper_hash);
+}
+
+void ShowLayer(HashedString LayerName, bool NoEffect)
 {
     int A = 0;
     int B = 0;
@@ -62,9 +69,9 @@ void ShowLayer(std::string LayerName, bool NoEffect)
         if(equalCase(Layer[A].Name, LayerName))
         {
             Layer[A].Hidden = false;
-            if(Layer[A].Name == "Destroyed Blocks")
+            if(Layer[A].Name == HS_DestroyedBlocks)
                 Layer[A].Hidden = true;
-            if(Layer[A].Name == "Spawned NPCs")
+            if(Layer[A].Name == HS_SpawnedNPCs)
                 Layer[A].Hidden = false;
         }
     }
@@ -112,7 +119,7 @@ void ShowLayer(std::string LayerName, bool NoEffect)
     {
         if(equalCase(Block[A].Layer, LayerName))
         {
-            // If Not (Block(A).DefaultType = 0 And Block(A).Layer = "Destroyed Blocks") Then
+            // If Not (Block(A).DefaultType = 0 And Block(A).Layer = HS_DestroyedBlocks) Then
             if(Block[A].Hidden == true)
             {
                 if(NoEffect == false && Block[A].Invis == false)
@@ -126,12 +133,12 @@ void ShowLayer(std::string LayerName, bool NoEffect)
             Block[A].Hidden = false;
         }
 
-        if(LayerName == "Destroyed Blocks")
+        if(LayerName == HS_DestroyedBlocks)
         {
             if(Block[A].DefaultType > 0)
             {
                 if(Block[A].Layer == LayerName)
-                    Block[A].Layer = "Default";
+                    Block[A].Layer = HS_Default;
                 Block[A].Special = Block[A].DefaultSpecial;
                 Block[A].Type = Block[A].DefaultType;
             }
@@ -171,7 +178,7 @@ void ShowLayer(std::string LayerName, bool NoEffect)
     }
 }
 
-void HideLayer(std::string LayerName, bool NoEffect)
+void HideLayer(HashedString LayerName, bool NoEffect)
 {
     int A = 0;
     Location_t tempLocation;
@@ -256,12 +263,12 @@ void HideLayer(std::string LayerName, bool NoEffect)
     }
 }
 
-void SetLayer(std::string /*LayerName*/)
+void SetLayer(HashedString /*LayerName*/)
 {
     // Unused
 }
 
-void ProcEvent(std::string EventName, bool NoEffect)
+void ProcEvent(HashedString EventName, bool NoEffect)
 {
     // this is for events that have just been triggered
     int A = 0;
@@ -310,7 +317,7 @@ void ProcEvent(std::string EventName, bool NoEffect)
                 {
                     tempLevel = level[B];
                     level[B] = Events[A].level[B];
-                    if(Events[A].AutoStart == false && Events[A].Name != "Level - Start")
+                    if(Events[A].AutoStart == false && Events[A].Name != HS_LevelStart)
                     {
                         for(C = 1; C <= numPlayers; C++)
                         {
@@ -349,7 +356,6 @@ void ProcEvent(std::string EventName, bool NoEffect)
                                                         Player[C].Location.Y = Player[D].Location.Y + Player[D].Location.Height - Player[C].Location.Height;
                                                         Player[C].Effect = 9;
                                                         Player[C].Effect2 = D;
-                                                        break;
                                                     }
                                                 }
                                             }
@@ -361,7 +367,7 @@ void ProcEvent(std::string EventName, bool NoEffect)
                         }
                     }
 
-                    if(Events[A].Name != "Level - Start")
+                    if(Events[A].Name != HS_LevelStart)
                     {
                         C = plr;
                         if(numPlayers == 2 && DScreenType != 5)
@@ -563,7 +569,6 @@ void ProcEvent(std::string EventName, bool NoEffect)
                         {
                             if(Events[B].TriggerEvent == Events[A].Name)
                                 tempBool = true;
-                            break;
                         }
                     }
 
@@ -664,7 +669,7 @@ void UpdateLayers()
             {
                 for(A = 0; A <= maxLayers; A++)
                 {
-                    if(Layer[A].Name != "" && (Layer[A].SpeedX != 0.f || Layer[A].SpeedY != 0.f) && Layer[A].EffectStop)
+                    if(!Layer[A].Name.empty() && (Layer[A].SpeedX != 0.f || Layer[A].SpeedY != 0.f) && Layer[A].EffectStop)
                     {
                         for(C = 1; C <= numBlock; C++)
                         {
@@ -685,7 +690,7 @@ void UpdateLayers()
     {
         if(FreezeNPCs == true)
         {
-            if(Layer[A].Name != "" && (Layer[A].SpeedX != 0.f || Layer[A].SpeedY != 0.f))
+            if(!Layer[A].Name.empty() && (Layer[A].SpeedX != 0.f || Layer[A].SpeedY != 0.f))
             {
                 for(B = 1; B <= numBlock; B++)
                 {

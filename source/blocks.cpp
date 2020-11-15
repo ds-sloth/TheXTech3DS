@@ -1352,11 +1352,11 @@ void KillBlock(int A, bool Splode)
     else
     {
         Score += 50;
-        if(Block[A].TriggerDeath != "")
+        if(!Block[A].TriggerDeath.empty())
         {
             ProcEvent(Block[A].TriggerDeath);
         }
-        if(Block[A].TriggerLast != "")
+        if(!Block[A].TriggerLast.empty())
         {
             tempBool = false;
             for(C = 1; C <= numNPCs; C++)
@@ -1378,7 +1378,7 @@ void KillBlock(int A, bool Splode)
             }
         }
         Block[A].Hidden = true;
-        Block[A].Layer = "Destroyed Blocks";
+        Block[A].Layer = (HS_DestroyedBlocks);
         Block[A].Kill = false;
     }
 
@@ -1637,7 +1637,7 @@ void UpdateBlocks()
                 Block[A].RespawnDelay = Block[A].RespawnDelay + 1;
                 if(Block[A].RespawnDelay >= 65 * 60)
                 {
-                    if(Block[A].DefaultType > 0 || Block[A].DefaultSpecial > 0 || Block[A].Layer == "Destroyed Blocks")
+                    if(Block[A].DefaultType > 0 || Block[A].DefaultSpecial > 0 || Block[A].Layer == HS_DestroyedBlocks)
                     {
                         for(B = 1; B <= numPlayers; B++)
                         {
@@ -1649,8 +1649,8 @@ void UpdateBlocks()
                         }
                         if(B > 0)
                         {
-                            if(Block[A].Layer == "Destroyed Blocks")
-                                Block[A].Layer = "Default";
+                            if(Block[A].Layer == HS_DestroyedBlocks)
+                                Block[A].Layer = HS_Default;
                             if(Block[A].Hidden == true)
                             {
                                 for(B = 0; B <= maxLayers; B++)
@@ -1695,7 +1695,7 @@ void UpdateBlocks()
             Block[iBlock[A]].ShakeY3 = Block[iBlock[A]].ShakeY3 - 2;
             if(Block[iBlock[A]].ShakeY == 0)
             {
-                if(Block[iBlock[A]].TriggerHit != "")
+                if(!Block[iBlock[A]].TriggerHit.empty())
                 {
                     ProcEvent(Block[iBlock[A]].TriggerHit);
                 }
@@ -1719,7 +1719,7 @@ void UpdateBlocks()
             Block[iBlock[A]].ShakeY3 = Block[iBlock[A]].ShakeY3 + 2;
             if(Block[iBlock[A]].ShakeY == 0)
             {
-                if(Block[iBlock[A]].TriggerHit != "")
+                if(!Block[iBlock[A]].TriggerHit.empty())
                 {
                     ProcEvent(Block[iBlock[A]].TriggerHit);
                 }
@@ -1954,7 +1954,7 @@ void PSwitch(bool Bool)
                 }
             }
         }
-        ProcEvent("P Switch - Start", true);
+        ProcEvent(HS_PSwitchStart, true);
     }
     else
     {
@@ -2012,12 +2012,12 @@ void PSwitch(bool Bool)
                     CheckSectionNPC(numNPCs);
                     NPC[numNPCs].Killed = 0;
                     KillBlock(A, false);
-                    Block[A].Layer = "Used P Switch";
+                    Block[A].Layer = (HS_UsedPSwitch);
                 }
             }
         }
 
-        ProcEvent("P Switch - End", true);
+        ProcEvent(HS_PSwitchEnd, true);
     }
     qSortBlocksX(1, numBlock);
     B = 1;

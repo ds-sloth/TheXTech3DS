@@ -717,8 +717,8 @@ void MenuLoop()
 //    If CheckLiving = 0 Then
     if(CheckLiving() == 0)
     {
-//        ShowLayer "Destroyed Blocks"
-        ShowLayer("Destroyed Blocks");
+//        ShowLayer HS_DestroyedBlocks
+        ShowLayer(HS_DestroyedBlocks);
 //        For A = 1 To numNPCs
         For(A, 1, numNPCs)
         {
