@@ -666,166 +666,146 @@ void UpdateLayers()
         for(B = 1; B <= numPlayers; B++)
         {
             if(!(Player[B].Effect == 0 || Player[B].Effect == 3 || Player[B].Effect == 9 || Player[B].Effect == 10))
-            {
-                for(A = 0; A <= maxLayers; A++)
-                {
-                    if(!Layer[A].Name.empty() && (Layer[A].SpeedX != 0.f || Layer[A].SpeedY != 0.f) && Layer[A].EffectStop)
-                    {
-                        for(C = 1; C <= numBlock; C++)
-                        {
-                            if(Block[C].Layer == Layer[A].Name)
-                            {
-                                Block[C].Location.SpeedX = 0;
-                                Block[C].Location.SpeedY = 0;
-                            }
-                        }
-                    }
-                }
                 FreezeLayers = true;
-            }
         }
     }
 
     for(A = 0; A <= maxLayers; A++)
     {
-        if(FreezeNPCs == true)
+        // only consider the non-empty, non-stationary layers
+        if(Layer[A].Name.empty() || (Layer[A].SpeedX == 0.f && Layer[A].SpeedY == 0.f)) continue;
+        if(FreezeNPCs == true || (FreezeLayers && Layer[A].EffectStop))
         {
-            if(!Layer[A].Name.empty() && (Layer[A].SpeedX != 0.f || Layer[A].SpeedY != 0.f))
+            for(B = 1; B <= numBlock; B++)
             {
-                for(B = 1; B <= numBlock; B++)
+                if(Block[B].Layer == Layer[A].Name)
                 {
-                    if(Block[B].Layer == Layer[A].Name)
-                    {
-                        Block[B].Location.SpeedX = 0;
-                        Block[B].Location.SpeedY = 0;
-                    }
+                    Block[B].Location.SpeedX = 0;
+                    Block[B].Location.SpeedY = 0;
                 }
             }
+            // should we also freeze BGOs, etc...??
         }
         else
         {
-            if(!Layer[A].Name.empty() && (Layer[A].SpeedX != 0.f || Layer[A].SpeedY != 0.f) &&
-               !(FreezeLayers && Layer[A].EffectStop))
+            for(B = 1; B <= numBlock; B++)
             {
-                for(B = 1; B <= numBlock; B++)
+                if(Block[B].Layer == Layer[A].Name)
                 {
-                    if(Block[B].Layer == Layer[A].Name)
+                    if(Layer[A].SpeedX != 0.f)
                     {
-                        if(Layer[A].SpeedX != 0.f)
+                        if(BlocksSorted == true)
                         {
-                            if(BlocksSorted == true)
+                            for(C = (int)(-FLBlocks); C <= FLBlocks; C++)
                             {
-                                for(C = (int)(-FLBlocks); C <= FLBlocks; C++)
-                                {
-                                    FirstBlock[C] = 1;
-                                    LastBlock[C] = numBlock;
-                                }
-                                BlocksSorted = false;
+                                FirstBlock[C] = 1;
+                                LastBlock[C] = numBlock;
                             }
+                            BlocksSorted = false;
                         }
-                        Block[B].Location.X += double(Layer[A].SpeedX);
-                        Block[B].Location.Y += double(Layer[A].SpeedY);
-                        Block[B].Location.SpeedX = double(Layer[A].SpeedX);
-                        Block[B].Location.SpeedY = double(Layer[A].SpeedY);
                     }
+                    Block[B].Location.X += double(Layer[A].SpeedX);
+                    Block[B].Location.Y += double(Layer[A].SpeedY);
+                    Block[B].Location.SpeedX = double(Layer[A].SpeedX);
+                    Block[B].Location.SpeedY = double(Layer[A].SpeedY);
                 }
+            }
 
-                int allBGOs = numBackground + numLocked;
-                for(B = 1; B <= allBGOs; B++)
+            int allBGOs = numBackground + numLocked;
+            for(B = 1; B <= allBGOs; B++)
+            {
+                if(Background[B].Layer == Layer[A].Name)
                 {
-                    if(Background[B].Layer == Layer[A].Name)
-                    {
-                        Background[B].Location.X += double(Layer[A].SpeedX);
-                        Background[B].Location.Y += double(Layer[A].SpeedY);
-                    }
+                    Background[B].Location.X += double(Layer[A].SpeedX);
+                    Background[B].Location.Y += double(Layer[A].SpeedY);
                 }
+            }
 
-                for(B = 1; B <= numWater; B++)
+            for(B = 1; B <= numWater; B++)
+            {
+                if(Water[B].Layer == Layer[A].Name)
                 {
-                    if(Water[B].Layer == Layer[A].Name)
-                    {
-                        Water[B].Location.X += double(Layer[A].SpeedX);
-                        Water[B].Location.Y += double(Layer[A].SpeedY);
-                    }
+                    Water[B].Location.X += double(Layer[A].SpeedX);
+                    Water[B].Location.Y += double(Layer[A].SpeedY);
                 }
+            }
 
-                for(B = 1; B <= numNPCs; B++)
+            for(B = 1; B <= numNPCs; B++)
+            {
+                if(NPC[B].Layer == Layer[A].Name)
                 {
-                    if(NPC[B].Layer == Layer[A].Name)
-                    {
-                        NPC[B].DefaultLocation.X += double(Layer[A].SpeedX);
-                        NPC[B].DefaultLocation.Y += double(Layer[A].SpeedY);
+                    NPC[B].DefaultLocation.X += double(Layer[A].SpeedX);
+                    NPC[B].DefaultLocation.Y += double(Layer[A].SpeedY);
 
-                        if(!NPC[B].Active || NPC[B].Generator || NPC[B].Effect != 0 ||
-                           NPCIsACoin[NPC[B].Type] || NPC[B].Type == 8 || NPC[B].Type == 37 ||
-                           NPC[B].Type == 51 || NPC[B].Type == 52 || NPC[B].Type == 46 ||
-                           NPC[B].Type == 93 || NPC[B].Type == 74 || NPCIsAVine[NPC[B].Type] ||
-                           NPC[B].Type == 192 || NPC[B].Type == 197 || NPC[B].Type == 91 ||
-                           NPC[B].Type == 211 || NPC[B].Type == 256 || NPC[B].Type == 257 ||
-                           NPC[B].Type == 245)
+                    if(!NPC[B].Active || NPC[B].Generator || NPC[B].Effect != 0 ||
+                       NPCIsACoin[NPC[B].Type] || NPC[B].Type == 8 || NPC[B].Type == 37 ||
+                       NPC[B].Type == 51 || NPC[B].Type == 52 || NPC[B].Type == 46 ||
+                       NPC[B].Type == 93 || NPC[B].Type == 74 || NPCIsAVine[NPC[B].Type] ||
+                       NPC[B].Type == 192 || NPC[B].Type == 197 || NPC[B].Type == 91 ||
+                       NPC[B].Type == 211 || NPC[B].Type == 256 || NPC[B].Type == 257 ||
+                       NPC[B].Type == 245)
+                    {
+                        if(NPC[B].Type == 91 || NPC[B].Type == 211)
                         {
-                            if(NPC[B].Type == 91 || NPC[B].Type == 211)
-                            {
-                                NPC[B].Location.SpeedX = double(Layer[A].SpeedX);
-                                NPC[B].Location.SpeedY = double(Layer[A].SpeedY);
-                            }
-                            else if(NPCIsAVine[NPC[B].Type])
-                            {
-                                NPC[B].Location.SpeedX = double(Layer[A].SpeedX);
-                                NPC[B].Location.SpeedY = double(Layer[A].SpeedY);
-                            }
+                            NPC[B].Location.SpeedX = double(Layer[A].SpeedX);
+                            NPC[B].Location.SpeedY = double(Layer[A].SpeedY);
+                        }
+                        else if(NPCIsAVine[NPC[B].Type])
+                        {
+                            NPC[B].Location.SpeedX = double(Layer[A].SpeedX);
+                            NPC[B].Location.SpeedY = double(Layer[A].SpeedY);
+                        }
 
-                            if(!NPC[B].Active)
-                            {
-                                NPC[B].Location.X = NPC[B].DefaultLocation.X;
-                                NPC[B].Location.Y = NPC[B].DefaultLocation.Y;
-                                if(NPC[B].Type == 8 || NPC[B].Type == 74 || NPC[B].Type == 93 ||
-                                   NPC[B].Type == 256 || NPC[B].Type == 245)
-                                    NPC[B].Location.Y += NPC[B].DefaultLocation.Height;
-                                else if(NPC[B].Type == 52 && fEqual(NPC[B].Direction, -1))
-                                    NPC[B].Location.X += NPC[B].DefaultLocation.Width;
-                            }
+                        if(!NPC[B].Active)
+                        {
+                            NPC[B].Location.X = NPC[B].DefaultLocation.X;
+                            NPC[B].Location.Y = NPC[B].DefaultLocation.Y;
+                            if(NPC[B].Type == 8 || NPC[B].Type == 74 || NPC[B].Type == 93 ||
+                               NPC[B].Type == 256 || NPC[B].Type == 245)
+                                NPC[B].Location.Y += NPC[B].DefaultLocation.Height;
+                            else if(NPC[B].Type == 52 && fEqual(NPC[B].Direction, -1))
+                                NPC[B].Location.X += NPC[B].DefaultLocation.Width;
+                        }
+                        else
+                        {
+                            NPC[B].Location.X += double(Layer[A].SpeedX);
+                            NPC[B].Location.Y += double(Layer[A].SpeedY);
+                        }
+
+                        if(NPC[B].Effect == 4)
+                        {
+                            if(NPC[B].Effect3 == 1 || NPC[B].Effect3 == 3)
+                                NPC[B].Effect2 += double(Layer[A].SpeedY);
                             else
-                            {
-                                NPC[B].Location.X += double(Layer[A].SpeedX);
-                                NPC[B].Location.Y += double(Layer[A].SpeedY);
-                            }
+                                NPC[B].Effect2 += double(Layer[A].SpeedX);
+                        }
 
-                            if(NPC[B].Effect == 4)
+                        if(!NPC[B].Active)
+                        {
+                            if(!NPC[B].AttLayer.empty())
                             {
-                                if(NPC[B].Effect3 == 1 || NPC[B].Effect3 == 3)
-                                    NPC[B].Effect2 += double(Layer[A].SpeedY);
-                                else
-                                    NPC[B].Effect2 += double(Layer[A].SpeedX);
-                            }
-
-                            if(!NPC[B].Active)
-                            {
-                                if(!NPC[B].AttLayer.empty())
-                                {
-                                     for(C = 1; C <= maxLayers; C++)
+                                 for(C = 1; C <= maxLayers; C++)
+                                 {
+                                     if(NPC[B].AttLayer == Layer[C].Name)
                                      {
-                                         if(NPC[B].AttLayer == Layer[C].Name)
-                                         {
-                                             Layer[C].SpeedX = Layer[A].SpeedX;
-                                             Layer[C].SpeedY = Layer[A].SpeedY;
-                                         }
+                                         Layer[C].SpeedX = Layer[A].SpeedX;
+                                         Layer[C].SpeedY = Layer[A].SpeedY;
                                      }
                                  }
                              }
-                        }
+                         }
                     }
                 }
+            }
 
-                for(B = 1; B <= numWarps; B++)
+            for(B = 1; B <= numWarps; B++)
+            {
+                if(Warp[B].Layer == Layer[A].Name)
                 {
-                    if(Warp[B].Layer == Layer[A].Name)
-                    {
-                        Warp[B].Entrance.X += double(Layer[A].SpeedX);
-                        Warp[B].Entrance.Y += double(Layer[A].SpeedY);
-                        Warp[B].Exit.X += double(Layer[A].SpeedX);
-                        Warp[B].Exit.Y += double(Layer[A].SpeedY);
-                    }
+                    Warp[B].Entrance.X += double(Layer[A].SpeedX);
+                    Warp[B].Entrance.Y += double(Layer[A].SpeedY);
+                    Warp[B].Exit.X += double(Layer[A].SpeedX);
+                    Warp[B].Exit.Y += double(Layer[A].SpeedY);
                 }
             }
         }
