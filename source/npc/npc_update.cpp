@@ -232,39 +232,48 @@ void UpdateNPCs()
                     if(NPC[A].GeneratorTime >= NPC[A].GeneratorTimeMax * 6.5f)
                     {
                         tempBool = false;
-                        for(B = 1; B <= numNPCs; B++)
-                        {
-                            if(B != A && NPC[B].Active == true && NPC[B].Type != 57)
-                            {
-                                if(CheckCollision(NPC[A].Location, NPC[B].Location))
-                                    tempBool = true;
-                            }
-                        }
-
-                        if(NPC[A].Type != 91)
-                        {
-                            for(B = 1; B <= numBlock; B++)
-                            {
-                                if(!Block[B].Hidden && !BlockIsSizable[Block[B].Type])
-                                {
-                                    if(CheckCollision(NPC[A].Location,
-                                                      newLoc(Block[B].Location.X + 0.1, Block[B].Location.Y + 0.1,
-                                                             Block[B].Location.Width - 0.2, Block[B].Location.Height - 0.2)))
-                                        tempBool = true;
-                                }
-                            }
-                            for(B = 1; B <= numPlayers; B++)
-                            {
-                                if(!Player[B].Dead && Player[B].TimeToLive == 0)
-                                {
-                                    if(CheckCollision(NPC[A].Location, Player[B].Location) == true)
-                                        tempBool = true;
-                                }
-                            }
-                        }
-
                         if(numNPCs == maxNPCs - 100)
                             tempBool = true;
+                        else
+                        {
+                            // TODO: does this collision detection need optimization? how much?
+                            // does it only check onscreen NPCs? blocks?
+                            for(B = 1; B <= numNPCs; B++)
+                            {
+                                if(B != A && NPC[B].Active == true && NPC[B].Type != 57)
+                                {
+                                    if(CheckCollision(NPC[A].Location, NPC[B].Location))
+                                    {
+                                        tempBool = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(!tempBool && NPC[A].Type != 91)
+                            {
+                                for(B = 1; B <= numBlock; B++)
+                                {
+                                    if(!Block[B].Hidden && !BlockIsSizable[Block[B].Type])
+                                    {
+                                        if(CheckCollision(NPC[A].Location,
+                                                          newLoc(Block[B].Location.X + 0.1, Block[B].Location.Y + 0.1,
+                                                                 Block[B].Location.Width - 0.2, Block[B].Location.Height - 0.2)))
+                                        {
+                                            tempBool = true;
+                                            break;
+                                        }
+                                    }
+                                }
+                                for(B = 1; B <= numPlayers; B++)
+                                {
+                                    if(!Player[B].Dead && Player[B].TimeToLive == 0)
+                                    {
+                                        if(CheckCollision(NPC[A].Location, Player[B].Location) == true)
+                                            tempBool = true;
+                                    }
+                                }
+                            }
+                        }
 
                         if(tempBool == true)
                             NPC[A].GeneratorTime = NPC[A].GeneratorTimeMax;
@@ -520,6 +529,7 @@ void UpdateNPCs()
             NPC[A].TimeLeft = 100;
         }
 
+        // TODO: determine whether this is ever relevant except for NPC creation
         if(fEqual(NPC[A].Location.Width, 32.0))
         {
             if(NPC[A].Type != 57 && NPC[A].Type != 84)
@@ -4850,30 +4860,5 @@ void UpdateNPCs()
             KillNPC(A, NPC[A].Killed);
         }
     }
-    //    if(nPlay.Online == true)
-    //    {
-    //        if(nPlay.Mode == 1)
-    //        {
-    //            nPlay.NPCWaitCount = nPlay.NPCWaitCount + 10;
-    //            if(nPlay.NPCWaitCount >= 5)
-    //            {
-    //                tempStr = "L" + LB;
-    //                for(A = 1; A <= numNPCs; A++)
-    //                {
-    //                    if(NPC[A].Active == true && NPC[A].TimeLeft > 1)
-    //                    {
-    //                        if(NPC[A].HoldingPlayer <= 1)
-    //                        {
-    //                            tempStr = tempStr + "K" + std::to_string(A) + "|" + NPC[A].Type + "|" + NPC[A].Location.X + "|" + NPC[A].Location.Y + "|" + std::to_string(NPC[A].Location.Width) + "|" + std::to_string(NPC[A].Location.Height) + "|" + NPC[A].Location.SpeedX + "|" + NPC[A].Location.SpeedY + "|" + NPC[A].Section + "|" + NPC[A].TimeLeft + "|" + NPC[A].Direction + "|" + std::to_string(static_cast<int>(floor(static_cast<double>(NPC[A].Projectile)))) + "|" + NPC[A].Special + "|" + NPC[A].Special2 + "|" + NPC[A].Special3 + "|" + NPC[A].Special4 + "|" + NPC[A].Special5 + "|" + NPC[A].Effect + LB;
-    //                            if(NPC[A].Effect != 0)
-    //                                tempStr = tempStr + "2c" + std::to_string(A) + "|" + NPC[A].Effect2 + "|" + NPC[A].Effect3 + LB;
-    //                        }
-    //                    }
-    //                }
-    //                Netplay::sendData tempStr + "O" + std::to_string(numPlayers) + LB;
-    //                nPlay.NPCWaitCount = 0;
-    //            }
-    //        }
-    //    }
     CharStuff();
 }
