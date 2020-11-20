@@ -584,14 +584,14 @@ const double power10[] =
 
 int vb6Round(double x)
 {
-    return static_cast<int>(vb6Round(x, 0));
+    return (int)std::round(x);
 }
 
 static double toNearest(double x)
 {
     // int round_old = std::fegetround();
     // if(round_old == FE_TONEAREST)
-        return std::nearbyint(x);
+        return std::round(x);
     // else
     // {
     //     std::fesetround(FE_TONEAREST);

@@ -39,7 +39,7 @@
 #include "location.h"
 #include "range_arr.hpp"
 #include "rand.h"
-#include "floats.h"
+#include "fastcalcs.h"
 
 #include "global_constants.h"
 #include "controls.h"

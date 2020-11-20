@@ -33,7 +33,7 @@
 #include "../blocks.h"
 #include "../sorting.h"
 
-#include <Utils/maths.h>
+#include "../fastcalcs.h"
 
 static RangeArr<int, 0, maxNPCs> newAct;
 // Why this array is here? to don't reallocate it every call of UpdateNPCs()
@@ -688,17 +688,17 @@ void UpdateNPCs()
                         NPC[A].Active = false;
                         NPC[A].TimeLeft = 0;
                     }
-                    else if(Maths::iRound(NPC[A].Direction) == -1 && NPC[A].Location.X < Player[NPC[A].JustActivated].Location.X)
+                    else if(iEqual(NPC[A].Direction, -1) && NPC[A].Location.X < Player[NPC[A].JustActivated].Location.X)
                     {
                         NPC[A].Active = false;
                         NPC[A].TimeLeft = 0;
                     }
-                    else if(Maths::iRound(NPC[A].Direction) == 1 && NPC[A].Location.X > Player[NPC[A].JustActivated].Location.X)
+                    else if(iEqual(NPC[A].Direction, 1) && NPC[A].Location.X > Player[NPC[A].JustActivated].Location.X)
                     {
                         NPC[A].Active = false;
                         NPC[A].TimeLeft = 0;
                     }
-                    else if(NPCIsCheep[NPC[A].Type] && Maths::iRound(NPC[A].Special) == 2)
+                    else if(NPCIsCheep[NPC[A].Type] && iEqual(NPC[A].Special, 2))
                     {
                         NPC[A].Location.Y = level[Player[NPC[A].JustActivated].Section].Height - 0.1;
                         NPC[A].Location.SpeedX = (1 + (NPC[A].Location.Y - NPC[A].DefaultLocation.Y) * 0.005) * NPC[A].Direction;
@@ -720,7 +720,7 @@ void UpdateNPCs()
             if(NPC[A].Type == 22)
                 NPC[A].Projectile = false;
         }
-        else if(!(NPCIsCheep[NPC[A].Type] && Maths::iRound(NPC[A].Special) == 2) && !(NPC[A].Type == 12))
+        else if(!(NPCIsCheep[NPC[A].Type] && iEqual(NPC[A].Special, 2)) && !(NPC[A].Type == 12))
         {
             if(GameMenu == false && NPC[A].Location.Y > level[NPC[A].Section].Height + 16)
                 NPCHit(A, 9);
@@ -1587,7 +1587,7 @@ void UpdateNPCs()
 
                         else if((NPCIsCheep[NPC[A].Type] && NPC[A].Special == 2) && NPC[A].Projectile == false)
                         {
-                            if(Maths::iRound(NPC[A].Special5) == 1)
+                            if(iEqual(NPC[A].Special5, 1))
                             {
                                 if(NPC[A].Location.Y > NPC[A].DefaultLocation.Y)
                                     NPC[A].Location.SpeedY = -4 - (NPC[A].Location.Y - NPC[A].DefaultLocation.Y) * 0.02;

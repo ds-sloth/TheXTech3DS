@@ -34,7 +34,7 @@
 #include "../editor.h"
 #include "../game_main.h"
 
-#include <Utils/maths.h>
+#include "../fastcalcs.h"
 
 
 void UpdatePlayer()
@@ -507,7 +507,7 @@ void UpdatePlayer()
                             Player[A].Mount = 0;
                             numNPCs += 1;
                             NPC[numNPCs].Direction = Player[A].Direction;
-                            if(Maths::iRound(NPC[numNPCs].Direction) == 1)
+                            if(iEqual(NPC[numNPCs].Direction, 1))
                                 NPC[numNPCs].Frame = 4;
                             NPC[numNPCs].Frame = NPC[numNPCs].Frame + SpecialFrame[2];
                             NPC[numNPCs].Active = true;

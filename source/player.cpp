@@ -25,7 +25,6 @@
 
 #include <cmath>
 #include <ctime>
-#include <Utils/maths.h>
 #include <fmt_format_ne.h>
 #include <pge_delay.h>
 
@@ -41,6 +40,8 @@
 #include "editor.h"
 #include "layers.h"
 #include "main/level_file.h"
+
+#include "fastcalcs.h"
 
 
 
@@ -352,7 +353,7 @@ void SetupPlayers()
                 if(NPC[A].Type != 192)
                     continue;
 
-                if(cp.id != Maths::iRound(NPC[A].Special))
+                if(!iEqual(cp.id, NPC[A].Special))
                     continue;
 
                 NPC[A].Killed = 9;
@@ -717,7 +718,7 @@ void PlayerDead(int A)
         numNPCs++;
         NPC[numNPCs] = NPC_t();
         NPC[numNPCs].Direction = Player[A].Direction;
-        if(Maths::iRound(NPC[numNPCs].Direction) == 1)
+        if(iEqual(NPC[numNPCs].Direction, 1))
             NPC[numNPCs].Frame = 4;
         NPC[numNPCs].Frame = NPC[numNPCs].Frame + SpecialFrame[2];
         NPC[numNPCs].Active = true;
@@ -3286,12 +3287,12 @@ void ClownCar()
                                 NPC[numNPCs].Special = A;
                                 NPC[numNPCs].Special2 = B;
                                 NPC[numNPCs].Direction = NPC[B].Direction;
-                                if(Maths::iRound(NPC[numNPCs].Direction) == 1)
+                                if(iEqual(NPC[numNPCs].Direction, 1))
                                     NPC[numNPCs].Frame = 2;
                             }
                             for(int numNPCsMax9 = numNPCs, C = 1; C <= numNPCsMax9; C++)
                             {
-                                if(NPC[C].Type == 50 && Maths::iRound(NPC[C].Special) == A && Maths::iRound(NPC[C].Special2) == B)
+                                if(NPC[C].Type == 50 && iEqual(NPC[C].Special, A) && iEqual(NPC[C].Special2, B))
                                 {
                                     NPC[C].standingOnPlayer = A;
                                     NPC[C].Projectile = true;
@@ -3529,7 +3530,7 @@ void PowerUps(int A)
             {
                 if(NPC[B].Type == 292)
                 {
-                    if(Maths::iRound(NPC[B].Special5) == A)
+                    if(iEqual(NPC[B].Special5, A))
                         BoomOut = true;
                 }
             }
@@ -3678,11 +3679,11 @@ void PowerUps(int A)
                             Player[A].HoldingNPC = numNPCs;
                             NPC[numNPCs].HoldingPlayer = A;
                         }
-                        if(Maths::iRound(NPC[numNPCs].Special) == 2)
+                        if(iEqual(NPC[numNPCs].Special, 2))
                             NPC[numNPCs].Frame = 4;
-                        if(Maths::iRound(NPC[numNPCs].Special) == 3)
+                        if(iEqual(NPC[numNPCs].Special, 3))
                             NPC[numNPCs].Frame = 8;
-                        if(Maths::iRound(NPC[numNPCs].Special) == 4)
+                        if(iEqual(NPC[numNPCs].Special, 4))
                             NPC[numNPCs].Frame = 12;
                         CheckSectionNPC(numNPCs);
                         Player[A].FireBallCD = 30;
@@ -3718,7 +3719,7 @@ void PowerUps(int A)
                         }
                         else
                         {
-                            if(Maths::iRound(NPC[numNPCs].Special) == 2)
+                            if(iEqual(NPC[numNPCs].Special, 2))
                                 NPC[numNPCs].Location.SpeedX = NPC[numNPCs].Location.SpeedX * 0.85;
 
                             if(Player[A].Controls.Up == true)

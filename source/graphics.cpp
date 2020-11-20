@@ -32,8 +32,7 @@
 
 #include "pseudo_vb.h"
 
-#include <Utils/maths.h>
-
+#include "fastcalcs.h"
 
 //  Get the screen position
 void GetvScreen(int A)
@@ -319,7 +318,7 @@ void PlayerWarpGFX(int A, Location_t &tempLocation, float &X2, float &Y2)
                 tempLocation.X = Warp[Player[A].Warp].Entrance.X;
         }
     }
-    else if(Maths::iRound(Player[A].Effect2) == 2)
+    else if(iEqual(Player[A].Effect2, 2))
     {
         if(Warp[Player[A].Warp].Direction2 == 3) // Moving up
         {
@@ -347,7 +346,7 @@ void PlayerWarpGFX(int A, Location_t &tempLocation, float &X2, float &Y2)
         }
     }
 
-    if(Maths::iRound(Player[A].Effect2) == 1 || Player[A].Effect2 >= 100)
+    if(iEqual(Player[A].Effect2, 1) || Player[A].Effect2 >= 100)
         tempLocation.Height = 0;
 
     if(tempLocation.Height < 0)
@@ -394,7 +393,7 @@ void NPCWarpGFX(int A, Location_t &tempLocation, float &X2, float &Y2)
                 tempLocation.X = Warp[Player[A].Warp].Entrance.X;
         }
     }
-    else if(Maths::iRound(Player[A].Effect2) == 2)
+    else if(iEqual(Player[A].Effect2, 2))
     {
         if(Warp[Player[A].Warp].Direction2 == 3) // Moving up
         {
@@ -422,7 +421,7 @@ void NPCWarpGFX(int A, Location_t &tempLocation, float &X2, float &Y2)
         }
     }
 
-    if(Maths::iRound(Player[A].Effect2) == 1 || Player[A].Effect2 >= 100)
+    if(iEqual(Player[A].Effect2, 1) || Player[A].Effect2 >= 100)
         tempLocation.Height = 0;
 
     if(tempLocation.Height < 0)

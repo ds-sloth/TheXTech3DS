@@ -23,6 +23,8 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#include <cmath>
+
 #include "../globals.h"
 #include "../npc.h"
 #include "../sound.h"
@@ -31,8 +33,6 @@
 #include "../graphics.h"
 #include "../player.h"
 #include "../game_main.h"
-
-#include <Utils/maths.h>
 
 
 void DropBonus(int A)
@@ -200,7 +200,7 @@ void TouchBonus(int A, int B)
             PlaySound(58);
             Checkpoint = FullFileName;
             Checkpoint_t cp;
-            cp.id = Maths::iRound(NPC[B].Special);
+            cp.id = (int)std::round(NPC[B].Special);
             CheckpointsList.push_back(cp);
             printf("Added checkpoint ID %d", cp.id);
             return;

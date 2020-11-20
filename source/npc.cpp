@@ -34,7 +34,7 @@
 #include "editor.h"
 #include "blocks.h"
 
-#include <Utils/maths.h>
+#include "fastcalcs.h"
 
 // UpdateNPCs at npc/npc_update.cpp
 
@@ -662,7 +662,7 @@ void NPCSpecial(int A)
                 NPC[A].Location.SpeedX = dRand() * 1 - 0.5;
             }
 
-            if(Maths::iRound(NPC[A].Direction) == 0)
+            if(iEqual(NPC[A].Direction, 0))
             {
                 if(iRand() % 2 == 1)
                     NPC[A].Direction = 1;
@@ -1079,7 +1079,7 @@ void NPCSpecial(int A)
                 NPC[numNPCs].Location.Height = 8;
                 NPC[numNPCs].Frame = 3;
                 NPC[numNPCs].Special2 = NPC[A].Special3;
-                if(Maths::iRound(NPC[numNPCs].Direction) == -1)
+                if(iEqual(NPC[numNPCs].Direction, -1))
                     NPC[numNPCs].Location.X = NPC[A].Location.X - 20;
                 else
                     NPC[numNPCs].Location.X = NPC[A].Location.X + NPC[A].Location.Width - NPC[numNPCs].Location.Width + 20;
@@ -1232,7 +1232,7 @@ void NPCSpecial(int A)
                 NPC[numNPCs].Location.Width = NPCWidth[NPC[numNPCs].Type];
                 NPC[numNPCs].Location.Height = NPCHeight[NPC[numNPCs].Type];
                 NPC[numNPCs].Frame = 0;
-                if(Maths::iRound(NPC[numNPCs].Direction) == -1)
+                if(iEqual(NPC[numNPCs].Direction, -1))
                     NPC[numNPCs].Location.X = NPC[A].Location.X - 24;
                 else
                     NPC[numNPCs].Location.X = NPC[A].Location.X + NPC[A].Location.Width - NPC[numNPCs].Location.Width + 24;
@@ -1699,7 +1699,7 @@ void NPCSpecial(int A)
         tempBool2 = false;
         if(NPC[A].Special == 0.0)
         {
-            if(Maths::iRound(NPC[A].Direction) == 0)
+            if(iEqual(NPC[A].Direction, 0))
             {
                 if(iRand() % 2 == 1)
                     NPC[A].Direction = 1;
@@ -2481,7 +2481,7 @@ void NPCSpecial(int A)
                 }
             }
         }
-        else if(Maths::iRound(NPC[A].Special) == 1)
+        else if(iEqual(NPC[A].Special, 1))
         {
             NPC[A].Special2 = NPC[A].Special2 + 1;
             if(NPC[A].Special2 == 90)

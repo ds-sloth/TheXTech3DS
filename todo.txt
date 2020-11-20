@@ -4,11 +4,10 @@ SMBX Port to 3DS!
   - Think through exceptions in standard library / PGE stuff
 
 - Appearance glitches
-  - Verify that layer render targets work well
   - Judder when Mario is on a conveyer belt
   - Judder when holding vegetable
   - Improve rounding
-    - Negatives (including xDst/2)
+    - Standard math round might be cheaper w optimizations
     - Sometimes tiled backgrounds desync (force them to round same way)
   - Bugs
     - Skeleton death anim (Hyrule temple)

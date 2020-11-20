@@ -33,7 +33,6 @@
 #include "../second_screen.h"
 
 #include <fmt_format_ne.h>
-#include <Utils/maths.h>
 
 
 // This draws the graphic to the screen when in a level/game menu/outro/level editor
