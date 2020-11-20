@@ -82,7 +82,7 @@ namespace Maths
 
     inline int iRound(double d)
     {
-        return d >= 0.0 ? int(d + 0.5) : int(d - double(int(d - 1)) + 0.5) + int(d - 1);
+        return d >= 0.0 ? int(d + 0.5) : int(d - 0.5);
     }
     inline unsigned int uRound(double d)
     {
@@ -92,17 +92,17 @@ namespace Maths
     }
     inline long lRound(double d)
     {
-        return d >= 0.0 ? long(d + 0.5) : long(d - double(long(d - 1)) + 0.5) + long(d - 1);
+        return d >= 0.0 ? long(d + 0.5) : long(d - 0.5);
     }
 
     inline int iRound(float d)
     {
-        return d >= 0.0f ? int(d + 0.5f) : int(d - float(int(d - 1)) + 0.5f) + int(d - 1);
+        return d >= 0.0f ? int(d + 0.5f) : int(d - 0.5f);
     }
 
     inline long lRound(float d)
     {
-        return d >= 0.0f ? long(d + 0.5f) : long(d - float(long(d - 1)) + 0.5f) + long(d - 1);
+        return d >= 0.0f ? long(d + 0.5f) : long(d - 0.5f);
     }
 
     inline bool equals(long double a, long double b, long double epsilon = LDBL_EPSILON)

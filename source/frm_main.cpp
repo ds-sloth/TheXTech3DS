@@ -564,6 +564,8 @@ void FrmMain::renderCircle(int cx, int cy, int radius, float red, float green, f
     // this is never used
 }
 
+#define FLOORDIV2(x) (x>0)?(x)/2:(x-1)/2
+
 void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
                              StdPicture &tx,
                              int xSrc, int ySrc,
@@ -643,7 +645,7 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
         // draw the top pic
         if(to_draw_2 != nullptr)
         {
-            C2D_DrawImage_Custom(*to_draw_2, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, (2048-ySrc)/2,
+            C2D_DrawImage_Custom(*to_draw_2, FLOORDIV2(xDst+viewport_offset_x), FLOORDIV2(yDst+viewport_offset_y), wDst/2, (2048-ySrc)/2,
                                  xSrc/2, ySrc/2, wDst/2, (2048-ySrc)/2, 0, flip, shadow);
             yDst += (2048 - ySrc);
             hDst -= (2048 - ySrc);
@@ -656,7 +658,7 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
 
     if (to_draw == nullptr) return;
 
-    C2D_DrawImage_Custom(*to_draw, (xDst+viewport_offset_x)/2, (yDst+viewport_offset_y)/2, wDst/2, hDst/2,
+    C2D_DrawImage_Custom(*to_draw, FLOORDIV2(xDst+viewport_offset_x), FLOORDIV2(yDst+viewport_offset_y), wDst/2, hDst/2,
                          xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
 }
 
@@ -667,10 +669,10 @@ void FrmMain::renderTexture(double xDst, double yDst, double wDst, double hDst,
 {
     const unsigned int flip = SDL_FLIP_NONE;
     // think through this just a little more (it fails for negatives, etc...)
-    renderTextureI((int)(xDst+0.5),
-                   (int)(yDst+0.5),
-                   (int)(wDst+0.5),
-                   (int)(hDst+0.5),
+    renderTextureI((int)std::round(xDst),
+                   (int)std::round(yDst),
+                   (int)std::round(wDst),
+                   (int)std::round(hDst),
                    tx,
                    xSrc,
                    ySrc,
@@ -684,10 +686,11 @@ void FrmMain::renderTextureFL(double xDst, double yDst, double wDst, double hDst
                               double rotateAngle, SDL_Point *center, unsigned int flip,
                               bool shadow)
 {
-    renderTextureI((int)(xDst+0.5),
-                   (int)(yDst+0.5),
-                   (int)(wDst+0.5),
-                   (int)(hDst+0.5),
+    // TODO: don't be scared of floor
+    renderTextureI((int)std::round(xDst),
+                   (int)std::round(yDst),
+                   (int)std::round(wDst),
+                   (int)std::round(hDst),
                    tx,
                    xSrc,
                    ySrc,
