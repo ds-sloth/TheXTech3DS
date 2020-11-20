@@ -45,9 +45,9 @@ struct Layer_t
 //    Hidden As Boolean
     bool Hidden = false;
 //    SpeedX As Single
-    float SpeedX = 0.0f;
+    double SpeedX = 0.0;
 //    SpeedY As Single
-    float SpeedY = 0.0f;
+    double SpeedY = 0.0;
 //End Type
 };
 

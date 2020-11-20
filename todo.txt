@@ -6,6 +6,7 @@ SMBX Port to 3DS!
 - Appearance glitches
   - Judder when Mario is on a conveyer belt
   - Judder when holding vegetable
+  - MCZ judder
   - Improve rounding
     - Standard math round might be cheaper w optimizations
     - Sometimes tiled backgrounds desync (force them to round same way)
