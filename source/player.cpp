@@ -541,6 +541,7 @@ void PlayerHurt(int A)
                 NPC[numNPCs].Location.SpeedX = 0;
                 NPC[numNPCs].CantHurt = 10;
                 NPC[numNPCs].CantHurtPlayer = A;
+                syncLayers_NPC(numNPCs);
                 Player[A].Location.Height = Physics.PlayerHeight[Player[A].Character][Player[A].State];
             }
             else
@@ -634,6 +635,7 @@ void PlayerHurt(int A)
                         NPC[numNPCs].Location.SpeedX = 0;
                         NPC[numNPCs].CantHurt = 10;
                         NPC[numNPCs].CantHurtPlayer = A;
+                        syncLayers_NPC(numNPCs);
                         Player[A].Location.Height = Physics.PlayerHeight[Player[A].Character][Player[A].State];
                         Player[A].Location.Width = Physics.PlayerWidth[Player[A].Character][Player[A].State];
                         Player[A].Location.X = Player[A].Location.X + 64 - Physics.PlayerWidth[Player[A].Character][Player[A].State] / 2;
@@ -732,6 +734,7 @@ void PlayerDead(int A)
         NPC[numNPCs].Location.SpeedX = 0;
         NPC[numNPCs].CantHurt = 10;
         NPC[numNPCs].CantHurtPlayer = A;
+        syncLayers_NPC(numNPCs);
         Player[A].Mount = 0;
         Player[A].Location.Y = Player[A].Location.Y - 32;
         Player[A].Location.Height = 32;
@@ -2151,6 +2154,7 @@ void TailSwipe(int plr, bool boo, bool Stab, int StabDir)
                                 Block[A].Layer = (HS_DestroyedBlocks);
                                 NewEffect(10, Block[A].Location);
                                 Effect[numEffects].Location.SpeedY = -2;
+                                syncLayers_Block(A);
                             }
                             if(Block[A].Type == 457 && Player[plr].State == 6)
                             {
@@ -2449,6 +2453,7 @@ void YoshiSpit(int A)
                     NPC[numNPCs].Location.SpeedY = 0.8;
                     NPC[numNPCs].Location.SpeedX = 5 * Player[A].Direction;
                 }
+                syncLayers_NPC(numNPCs);
             }
         }
         else
@@ -3242,6 +3247,7 @@ void ClownCar()
             NPC[numNPCs].Location.Y = NPC[numNPCs].Location.Y + NPC[numNPCs].Location.SpeedY;
             NPC[numNPCs].Location.X = NPC[numNPCs].Location.X + NPC[numNPCs].Location.SpeedX;
             NPC[numNPCs].Section = Player[A].Section;
+            syncLayers_NPC(numNPCs);
             for(B = 1; B <= numPlayers; B++)
             {
                 if(Player[B].StandingOnTempNPC == 56)
@@ -3289,6 +3295,7 @@ void ClownCar()
                                 NPC[numNPCs].Direction = NPC[B].Direction;
                                 if(iEqual(NPC[numNPCs].Direction, 1))
                                     NPC[numNPCs].Frame = 2;
+                                syncLayers_NPC(numNPCs);
                             }
                             for(int numNPCsMax9 = numNPCs, C = 1; C <= numNPCsMax9; C++)
                             {
@@ -3630,6 +3637,7 @@ void PowerUps(int A)
                         }
                         if(Player[A].Character == 4)
                             NPC[numNPCs].Location.X = Player[A].Location.X + Player[A].Location.Width / 2.0 - NPC[numNPCs].Location.Width / 2.0;
+                        syncLayers_NPC(numNPCs);
                         CheckSectionNPC(numNPCs);
                     }
                 }
@@ -3685,6 +3693,7 @@ void PowerUps(int A)
                             NPC[numNPCs].Frame = 8;
                         if(iEqual(NPC[numNPCs].Special, 4))
                             NPC[numNPCs].Frame = 12;
+                        syncLayers_NPC(numNPCs);
                         CheckSectionNPC(numNPCs);
                         Player[A].FireBallCD = 30;
                         if(Player[A].Character == 2)
@@ -3815,8 +3824,7 @@ void PowerUps(int A)
                     Player[A].SwordPoke = -10;
                 PlaySound(75);
             }
-
-
+            syncLayers_NPC(numNPCs);
         }
         else if(Player[A].FireBallCD == 0 && Player[A].Controls.Run == true && Player[A].RunRelease == true)
         {
@@ -4442,6 +4450,7 @@ void PlayerGrabCode(int A, bool DontResetGrabTime)
 
                         NPC[numNPCs].Projectile = true;
                         NPC[numNPCs].Frame = EditorNPCFrame(NPC[numNPCs].Type, NPC[numNPCs].Direction);
+                        syncLayers_NPC(numNPCs);
                     // Next B
                 }
             }
@@ -4511,6 +4520,7 @@ void PlayerGrabCode(int A, bool DontResetGrabTime)
                     NPC[numNPCs].Special = A;
                     if(Player[A].Direction > 0)
                         NPC[numNPCs].Frame = 2;
+                    syncLayers_NPC(numNPCs);
                 }
                 for(B = 1; B <= numNPCs; B++)
                 {
@@ -4761,23 +4771,17 @@ void PlayerGrabCode(int A, bool DontResetGrabTime)
                             Layer[B].EffectStop = true;
                             Layer[B].SpeedX = 0;
                             Layer[B].SpeedY = 0;
-                            for(C = 1; C <= numBlock; C++)
+                            for(int C : Layer[B].blocks)
                             {
-                                if(Block[C].Layer == Layer[B].Name)
-                                {
-                                    Block[C].Location.SpeedX = Layer[B].SpeedX;
-                                    Block[C].Location.SpeedY = Layer[B].SpeedY;
-                                }
+                                Block[C].Location.SpeedX = Layer[B].SpeedX;
+                                Block[C].Location.SpeedY = Layer[B].SpeedY;
                             }
-                            for(C = 1; C <= numNPCs; C++)
+                            for(int C : Layer[B].NPCs)
                             {
-                                if(NPC[C].Layer == Layer[B].Name)
+                                if(NPCIsAVine[NPC[C].Type] || NPC[C].Type == 91)
                                 {
-                                    if(NPCIsAVine[NPC[C].Type] || NPC[C].Type == 91)
-                                    {
-                                        NPC[C].Location.SpeedX = 0;
-                                        NPC[C].Location.SpeedY = 0;
-                                    }
+                                    NPC[C].Location.SpeedX = 0;
+                                    NPC[C].Location.SpeedY = 0;
                                 }
                             }
                         }

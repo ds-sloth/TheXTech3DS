@@ -390,6 +390,7 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
                     }
                     NPC[numNPCs].Special = 1;
                     NPC[numNPCs].Immune = 20;
+                    syncLayers_NPC(numNPCs);
                     CheckSectionNPC(numNPCs);
                     if(B > 20 || (Player[whatPlayer].Character == 5 && B > 5))
                     {
@@ -461,6 +462,7 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
                 NPC[numNPCs].Special = 1;
                 NPC[numNPCs].Immune = 20;
                 PlaySound(14);
+                syncLayers_NPC(numNPCs);
                 CheckSectionNPC(numNPCs);
                 b.Special = b.Special - 1;
             }
@@ -797,6 +799,7 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
                 NPC[numNPCs].Effect = 3;
             }
             NPC[numNPCs].Effect2 = 0;
+            syncLayers_NPC(numNPCs);
             CheckSectionNPC(numNPCs);
         }
         else
@@ -888,6 +891,7 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
                 NPC[numNPCs].Effect = 3;
             }
             NPC[numNPCs].Effect2 = 0;
+            syncLayers_NPC(numNPCs);
             CheckSectionNPC(numNPCs);
         }
         else // Rez player
@@ -988,6 +992,7 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
                 NPC[numNPCs].Effect = 3;
             }
             NPC[numNPCs].Effect2 = 0;
+            syncLayers_NPC(numNPCs);
             CheckSectionNPC(numNPCs);
         }
         else // Rez player
@@ -1060,6 +1065,7 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
             NPC[numNPCs].Effect = 3;
         }
         NPC[numNPCs].Effect2 = 0;
+        syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
     }
     else if(b.Special == 105) // Block contains a Green Yoshi
@@ -1116,6 +1122,7 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
             NPC[numNPCs].Effect = 3;
         }
         NPC[numNPCs].Effect2 = 0;
+        syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
     }
     else if(b.Special == 101) // Block contains a Goomba
@@ -1167,6 +1174,7 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
             NPC[numNPCs].Effect = 3;
         }
         NPC[numNPCs].Effect2 = 0;
+        syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
     }
     else if(b.Special == 201) // Block contains a 1-up
@@ -1218,6 +1226,7 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
             NPC[numNPCs].Effect = 3;
         }
         NPC[numNPCs].Effect2 = 0;
+        syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
     }
 
@@ -1236,6 +1245,7 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
         NPC[numNPCs].Location.Y = NPC[numNPCs].Location.Y - 0.01;
         NPC[numNPCs].DefaultLocation = NPC[numNPCs].Location;
         NPC[numNPCs].DefaultType = NPC[numNPCs].Type;
+        syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
         b = blankBlock;
     }
@@ -1346,6 +1356,8 @@ void KillBlock(int A, bool Splode)
         {
             Block[A] = Block[numBlock];
             Block[numBlock] = blankBlock;
+            syncLayers_Block(A);
+            syncLayers_Block(numBlock);
             numBlock = numBlock - 1;
         }
     }
@@ -1356,21 +1368,31 @@ void KillBlock(int A, bool Splode)
         {
             ProcEvent(Block[A].TriggerDeath);
         }
+        // can improve this...
         if(!Block[A].TriggerLast.empty())
         {
             tempBool = false;
-            for(C = 1; C <= numNPCs; C++)
+            for(C = 0; C <= numLayers; C++)
             {
-                if(NPC[C].Layer == Block[A].Layer && NPC[C].Generator == false)
-                    tempBool = true;
-            }
-            for(C = 1; C <= numBlock; C++)
-            {
-                if(C != A)
+                if(Layer[C].Name != Block[A].Layer) continue;
+                for (int npc : Layer[C].NPCs)
                 {
-                    if(Block[A].Layer == Block[C].Layer)
+                    if(NPC[npc].Generator == false)
+                    {
                         tempBool = true;
+                        break;
+                    }
                 }
+                if (tempBool) break;
+                for (int other_block : Layer[C].blocks)
+                {
+                    if(other_block != A)
+                    {
+                        tempBool = true;
+                        break;
+                    }
+                }
+                if (tempBool) break;
             }
             if(tempBool == false)
             {
@@ -1380,6 +1402,9 @@ void KillBlock(int A, bool Splode)
         Block[A].Hidden = true;
         Block[A].Layer = (HS_DestroyedBlocks);
         Block[A].Kill = false;
+        // the ONLY case where Splode is not set is when the P-switch turns off
+        if (Splode)
+            syncLayers_Block(A);
     }
 
 }
@@ -1653,13 +1678,13 @@ void UpdateBlocks()
                                 Block[A].Layer = HS_Default;
                             if(Block[A].Hidden == true)
                             {
-                                for(B = 0; B <= maxLayers; B++)
-                                {
-                                    if(Layer[B].Name == Block[A].Layer)
-                                        Block[A].Hidden = Layer[B].Hidden;
-                                }
+                                syncLayers_Block_SetHidden(A);
                                 if(Block[A].Hidden == false)
                                     NewEffect(10, newLoc(Block[A].Location.X + Block[A].Location.Width / 2.0 - EffectWidth[10] / 2, Block[A].Location.Y + Block[A].Location.Height / 2.0 - EffectHeight[10] / 2));
+                            }
+                            else
+                            {
+                                syncLayers_Block(A);
                             }
                             if(Block[A].Type != Block[A].DefaultType || Block[A].Special != Block[A].DefaultSpecial)
                             {
@@ -1947,6 +1972,7 @@ void PSwitch(bool Bool)
                     NPC[numNPCs].Location.X = NPC[numNPCs].Location.X + (Block[A].Location.Width - NPC[numNPCs].Location.Width) / 2.0;
                     NPC[numNPCs].DefaultLocation = NPC[numNPCs].Location;
                     NPC[numNPCs].DefaultType = NPC[numNPCs].Type;
+                    syncLayers_NPC(numNPCs);
                     CheckSectionNPC(numNPCs);
                     Block[A] = Block[numBlock];
                     Block[numBlock] = blankBlock;
@@ -2011,6 +2037,7 @@ void PSwitch(bool Bool)
                     NPC[numNPCs].DefaultType = NPC[numNPCs].Type;
                     CheckSectionNPC(numNPCs);
                     NPC[numNPCs].Killed = 0;
+                    syncLayers_NPC(numNPCs);
                     KillBlock(A, false);
                     Block[A].Layer = (HS_UsedPSwitch);
                 }
@@ -2032,6 +2059,7 @@ void PSwitch(bool Bool)
     qSortBlocksY(B, A - 1);
     FindSBlocks();
     FindBlocks();
+    syncLayers_AllBlocks();
     iBlocks = numBlock;
     for(A = 1; A <= numBlock; A++)
         iBlock[A] = A;

@@ -1,0 +1,19 @@
+#!/usr/bin/python3
+
+import time
+import sys
+
+last_frame = time.time()
+
+OCC = {}
+
+for line in sys.stdin:
+    if not line in OCC:
+        OCC[line] = 0
+    OCC[line] += 1
+    if time.time() - last_frame > 1:
+        last_frame = time.time()
+        best = sorted(OCC.items(), key=lambda p: -p[1])
+        print("\033c", end="")
+        for b in best[:25]:
+            print(b)

@@ -141,6 +141,8 @@ void ShowLayer(HashedString LayerName, bool NoEffect)
                     Block[A].Layer = HS_Default;
                 Block[A].Special = Block[A].DefaultSpecial;
                 Block[A].Type = Block[A].DefaultType;
+                // TODO: check that this does not cause undefined behavior
+                syncLayers_Block(A);
             }
         }
         // End If
@@ -497,23 +499,17 @@ void ProcEvent(HashedString EventName, bool NoEffect)
                         {
                             // stop layer
                             Layer[B].EffectStop = false;
-                            for(C = 1; C <= numBlock; C++)
+                            for(int C : Layer[B].blocks)
                             {
-                                if(Block[C].Layer == Layer[B].Name)
-                                {
-                                    Block[C].Location.SpeedX = double(Layer[B].SpeedX);
-                                    Block[C].Location.SpeedY = double(Layer[B].SpeedY);
-                                }
+                                Block[C].Location.SpeedX = double(Layer[B].SpeedX);
+                                Block[C].Location.SpeedY = double(Layer[B].SpeedY);
                             }
-                            for(C = 1; C <= numNPCs; C++)
+                            for(int C : Layer[B].NPCs)
                             {
-                                if(NPC[C].Layer == Layer[B].Name)
+                                if(NPCIsAVine[NPC[C].Type] || NPC[C].Type == 91)
                                 {
-                                    if(NPCIsAVine[NPC[C].Type] || NPC[C].Type == 91)
-                                    {
-                                        NPC[C].Location.SpeedX = 0;
-                                        NPC[C].Location.SpeedY = 0;
-                                    }
+                                    NPC[C].Location.SpeedX = 0;
+                                    NPC[C].Location.SpeedY = 0;
                                 }
                             }
                         }
@@ -656,14 +652,13 @@ void UpdateLayers()
 {
     // this is mainly for moving layers
     int A = 0;
-    int B = 0;
     int C = 0;
 
     bool FreezeLayers = false;
 
     if(!GameMenu)
     {
-        for(B = 1; B <= numPlayers; B++)
+        for(int B = 1; B <= numPlayers; B++)
         {
             if(!(Player[B].Effect == 0 || Player[B].Effect == 3 || Player[B].Effect == 9 || Player[B].Effect == 10))
                 FreezeLayers = true;
@@ -676,138 +671,204 @@ void UpdateLayers()
         if(Layer[A].Name.empty() || (Layer[A].SpeedX == 0.f && Layer[A].SpeedY == 0.f)) continue;
         if(FreezeNPCs == true || (FreezeLayers && Layer[A].EffectStop))
         {
-            for(B = 1; B <= numBlock; B++)
+            for(int B : Layer[A].blocks)
             {
-                if(Block[B].Layer == Layer[A].Name)
-                {
-                    Block[B].Location.SpeedX = 0;
-                    Block[B].Location.SpeedY = 0;
-                }
+                Block[B].Location.SpeedX = 0;
+                Block[B].Location.SpeedY = 0;
             }
             // should we also freeze BGOs, etc...??
         }
         else
         {
-            for(B = 1; B <= numBlock; B++)
+            if(!Layer[A].blocks.empty() && Layer[A].SpeedX != 0.f)
             {
-                if(Block[B].Layer == Layer[A].Name)
+                if(BlocksSorted == true)
                 {
-                    if(Layer[A].SpeedX != 0.f)
+                    for(C = (int)(-FLBlocks); C <= FLBlocks; C++)
                     {
-                        if(BlocksSorted == true)
-                        {
-                            for(C = (int)(-FLBlocks); C <= FLBlocks; C++)
-                            {
-                                FirstBlock[C] = 1;
-                                LastBlock[C] = numBlock;
-                            }
-                            BlocksSorted = false;
-                        }
+                        FirstBlock[C] = 1;
+                        LastBlock[C] = numBlock;
                     }
-                    Block[B].Location.X += double(Layer[A].SpeedX);
-                    Block[B].Location.Y += double(Layer[A].SpeedY);
-                    Block[B].Location.SpeedX = double(Layer[A].SpeedX);
-                    Block[B].Location.SpeedY = double(Layer[A].SpeedY);
+                    BlocksSorted = false;
                 }
             }
-
-            int allBGOs = numBackground + numLocked;
-            for(B = 1; B <= allBGOs; B++)
+            for(int B : Layer[A].blocks)
             {
-                if(Background[B].Layer == Layer[A].Name)
-                {
-                    Background[B].Location.X += double(Layer[A].SpeedX);
-                    Background[B].Location.Y += double(Layer[A].SpeedY);
-                }
+                Block[B].Location.X += double(Layer[A].SpeedX);
+                Block[B].Location.Y += double(Layer[A].SpeedY);
+                Block[B].Location.SpeedX = double(Layer[A].SpeedX);
+                Block[B].Location.SpeedY = double(Layer[A].SpeedY);
             }
 
-            for(B = 1; B <= numWater; B++)
+            for(int B : Layer[A].BGOs)
             {
-                if(Water[B].Layer == Layer[A].Name)
-                {
-                    Water[B].Location.X += double(Layer[A].SpeedX);
-                    Water[B].Location.Y += double(Layer[A].SpeedY);
-                }
+                Background[B].Location.X += double(Layer[A].SpeedX);
+                Background[B].Location.Y += double(Layer[A].SpeedY);
             }
 
-            for(B = 1; B <= numNPCs; B++)
+            for(int B : Layer[A].waters)
             {
-                if(NPC[B].Layer == Layer[A].Name)
-                {
-                    NPC[B].DefaultLocation.X += double(Layer[A].SpeedX);
-                    NPC[B].DefaultLocation.Y += double(Layer[A].SpeedY);
+                Water[B].Location.X += double(Layer[A].SpeedX);
+                Water[B].Location.Y += double(Layer[A].SpeedY);
+            }
 
-                    if(!NPC[B].Active || NPC[B].Generator || NPC[B].Effect != 0 ||
-                       NPCIsACoin[NPC[B].Type] || NPC[B].Type == 8 || NPC[B].Type == 37 ||
-                       NPC[B].Type == 51 || NPC[B].Type == 52 || NPC[B].Type == 46 ||
-                       NPC[B].Type == 93 || NPC[B].Type == 74 || NPCIsAVine[NPC[B].Type] ||
-                       NPC[B].Type == 192 || NPC[B].Type == 197 || NPC[B].Type == 91 ||
-                       NPC[B].Type == 211 || NPC[B].Type == 256 || NPC[B].Type == 257 ||
-                       NPC[B].Type == 245)
+            for(int B : Layer[A].NPCs)
+            {
+                NPC[B].DefaultLocation.X += double(Layer[A].SpeedX);
+                NPC[B].DefaultLocation.Y += double(Layer[A].SpeedY);
+
+                if(!NPC[B].Active || NPC[B].Generator || NPC[B].Effect != 0 ||
+                   NPCIsACoin[NPC[B].Type] || NPC[B].Type == 8 || NPC[B].Type == 37 ||
+                   NPC[B].Type == 51 || NPC[B].Type == 52 || NPC[B].Type == 46 ||
+                   NPC[B].Type == 93 || NPC[B].Type == 74 || NPCIsAVine[NPC[B].Type] ||
+                   NPC[B].Type == 192 || NPC[B].Type == 197 || NPC[B].Type == 91 ||
+                   NPC[B].Type == 211 || NPC[B].Type == 256 || NPC[B].Type == 257 ||
+                   NPC[B].Type == 245)
+                {
+                    if(NPC[B].Type == 91 || NPC[B].Type == 211)
                     {
-                        if(NPC[B].Type == 91 || NPC[B].Type == 211)
-                        {
-                            NPC[B].Location.SpeedX = double(Layer[A].SpeedX);
-                            NPC[B].Location.SpeedY = double(Layer[A].SpeedY);
-                        }
-                        else if(NPCIsAVine[NPC[B].Type])
-                        {
-                            NPC[B].Location.SpeedX = double(Layer[A].SpeedX);
-                            NPC[B].Location.SpeedY = double(Layer[A].SpeedY);
-                        }
+                        NPC[B].Location.SpeedX = double(Layer[A].SpeedX);
+                        NPC[B].Location.SpeedY = double(Layer[A].SpeedY);
+                    }
+                    else if(NPCIsAVine[NPC[B].Type])
+                    {
+                        NPC[B].Location.SpeedX = double(Layer[A].SpeedX);
+                        NPC[B].Location.SpeedY = double(Layer[A].SpeedY);
+                    }
 
-                        if(!NPC[B].Active)
-                        {
-                            NPC[B].Location.X = NPC[B].DefaultLocation.X;
-                            NPC[B].Location.Y = NPC[B].DefaultLocation.Y;
-                            if(NPC[B].Type == 8 || NPC[B].Type == 74 || NPC[B].Type == 93 ||
-                               NPC[B].Type == 256 || NPC[B].Type == 245)
-                                NPC[B].Location.Y += NPC[B].DefaultLocation.Height;
-                            else if(NPC[B].Type == 52 && fEqual(NPC[B].Direction, -1))
-                                NPC[B].Location.X += NPC[B].DefaultLocation.Width;
-                        }
+                    if(!NPC[B].Active)
+                    {
+                        NPC[B].Location.X = NPC[B].DefaultLocation.X;
+                        NPC[B].Location.Y = NPC[B].DefaultLocation.Y;
+                        if(NPC[B].Type == 8 || NPC[B].Type == 74 || NPC[B].Type == 93 ||
+                           NPC[B].Type == 256 || NPC[B].Type == 245)
+                            NPC[B].Location.Y += NPC[B].DefaultLocation.Height;
+                        else if(NPC[B].Type == 52 && fEqual(NPC[B].Direction, -1))
+                            NPC[B].Location.X += NPC[B].DefaultLocation.Width;
+                    }
+                    else
+                    {
+                        NPC[B].Location.X += double(Layer[A].SpeedX);
+                        NPC[B].Location.Y += double(Layer[A].SpeedY);
+                    }
+
+                    if(NPC[B].Effect == 4)
+                    {
+                        if(NPC[B].Effect3 == 1 || NPC[B].Effect3 == 3)
+                            NPC[B].Effect2 += double(Layer[A].SpeedY);
                         else
-                        {
-                            NPC[B].Location.X += double(Layer[A].SpeedX);
-                            NPC[B].Location.Y += double(Layer[A].SpeedY);
-                        }
+                            NPC[B].Effect2 += double(Layer[A].SpeedX);
+                    }
 
-                        if(NPC[B].Effect == 4)
+                    if(!NPC[B].Active)
+                    {
+                        if(!NPC[B].AttLayer.empty())
                         {
-                            if(NPC[B].Effect3 == 1 || NPC[B].Effect3 == 3)
-                                NPC[B].Effect2 += double(Layer[A].SpeedY);
-                            else
-                                NPC[B].Effect2 += double(Layer[A].SpeedX);
-                        }
-
-                        if(!NPC[B].Active)
-                        {
-                            if(!NPC[B].AttLayer.empty())
-                            {
-                                 for(C = 1; C <= maxLayers; C++)
+                             for(C = 1; C <= maxLayers; C++)
+                             {
+                                 if(NPC[B].AttLayer == Layer[C].Name)
                                  {
-                                     if(NPC[B].AttLayer == Layer[C].Name)
-                                     {
-                                         Layer[C].SpeedX = Layer[A].SpeedX;
-                                         Layer[C].SpeedY = Layer[A].SpeedY;
-                                     }
+                                     Layer[C].SpeedX = Layer[A].SpeedX;
+                                     Layer[C].SpeedY = Layer[A].SpeedY;
                                  }
                              }
                          }
-                    }
+                     }
                 }
             }
 
-            for(B = 1; B <= numWarps; B++)
+            for(int B : Layer[A].warps)
             {
-                if(Warp[B].Layer == Layer[A].Name)
-                {
-                    Warp[B].Entrance.X += double(Layer[A].SpeedX);
-                    Warp[B].Entrance.Y += double(Layer[A].SpeedY);
-                    Warp[B].Exit.X += double(Layer[A].SpeedX);
-                    Warp[B].Exit.Y += double(Layer[A].SpeedY);
-                }
+                Warp[B].Entrance.X += double(Layer[A].SpeedX);
+                Warp[B].Entrance.Y += double(Layer[A].SpeedY);
+                Warp[B].Exit.X += double(Layer[A].SpeedX);
+                Warp[B].Exit.Y += double(Layer[A].SpeedY);
             }
         }
+    }
+}
+
+void syncLayers_AllBlocks()
+{
+    for (int block = 1; block <= numBlock; block++)
+    {
+        syncLayers_Block(block);
+    }
+}
+
+void syncLayers_Block(int block)
+{
+    for (int layer = 0; layer <= numLayers; layer++)
+    {
+        if (Block[block].Layer == Layer[layer].Name)
+            Layer[layer].blocks.insert(block);
+        else
+            Layer[layer].blocks.erase(block);
+    }
+}
+
+void syncLayers_Block_SetHidden(int block) // set block hidden based on layer
+{
+    for (int layer = 0; layer <= numLayers; layer++)
+    {
+        if (Block[block].Layer == Layer[layer].Name)
+        {
+            Layer[layer].blocks.insert(block);
+            Block[block].Hidden = Layer[layer].Hidden;
+        }
+        else
+            Layer[layer].blocks.erase(block);
+    }
+}
+
+void syncLayers_NPC(int npc)
+{
+    for (int layer = 0; layer <= numLayers; layer++)
+    {
+        if (NPC[npc].Layer == Layer[layer].Name)
+            Layer[layer].NPCs.insert(npc);
+        else
+            Layer[layer].NPCs.erase(npc);
+    }
+}
+
+void syncLayers_AllBGOs()
+{
+    for (int bgo = 1; bgo <= numBackground + numLocked; bgo++)
+    {
+        syncLayers_BGO(bgo);
+    }
+}
+
+void syncLayers_BGO(int bgo)
+{
+    for (int layer = 0; layer <= numLayers; layer++)
+    {
+        if (Background[bgo].Layer == Layer[layer].Name)
+            Layer[layer].BGOs.insert(bgo);
+        else
+            Layer[layer].BGOs.erase(bgo);
+    }
+}
+
+void syncLayers_Warp(int warp)
+{
+    for (int layer = 0; layer <= numLayers; layer++)
+    {
+        if (Warp[warp].Layer == Layer[layer].Name)
+            Layer[layer].warps.insert(warp);
+        else
+            Layer[layer].warps.erase(warp);
+    }
+}
+
+void syncLayers_Water(int water)
+{
+    for (int layer = 0; layer <= numLayers; layer++)
+    {
+        if (Water[water].Layer == Layer[layer].Name)
+            Layer[layer].waters.insert(water);
+        else
+            Layer[layer].waters.erase(water);
     }
 }

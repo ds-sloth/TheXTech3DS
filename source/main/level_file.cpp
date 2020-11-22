@@ -200,6 +200,24 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
             break;
     }
 
+    A = 0;
+    for(auto &l : lvl.layers)
+    {
+        auto &layer = Layer[A];
+
+        layer = Layer_t();
+        // does this clear all of those lists???
+
+        layer.Name = (HashedString)l.name;
+        layer.Hidden = l.hidden;
+        A++;
+        numLayers++;
+        if(numLayers > maxLayers)
+        {
+            numLayers = maxLayers;
+            break;
+        }
+    }
 
     for(auto &b : lvl.blocks)
     {
@@ -398,6 +416,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
         npc.Active = true;
         npc.JustActivated = 1;
 
+        syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
 
         if(npc.Type == 192) // Is a checkpoint
@@ -475,6 +494,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
         warp.Entrance.Width = 32;
         warp.Exit.Height = 32;
         warp.Exit.Width = 32;
+        syncLayers_Warp(numWarps);
         if(w.two_way)
             twoWayWarps.push_back(numWarps);
     }
@@ -498,6 +518,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
             warp.Entrance = w.Exit;
             warp.Direction2 = w.Direction;
             warp.Direction = w.Direction2;
+            syncLayers_Warp(numWarps);
         }
     }
 
@@ -521,32 +542,7 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
         water.Buoy = w.buoy;
         water.Quicksand = w.env_type;
         water.Layer = (HashedString)w.layer;
-    }
-
-    A = 0;
-    for(auto &l : lvl.layers)
-    {
-        auto &layer = Layer[A];
-
-        layer = Layer_t();
-
-        layer.Name = (HashedString)l.name;
-        layer.Hidden = l.hidden;
-        if(layer.Hidden)
-        {
-            HideLayer(layer.Name, true);
-        }
-//        if(LevelEditor == true || MagicHand == true)
-//        {
-//            // Add into listbox
-//        }
-        A++;
-        numLayers++;
-        if(numLayers > maxLayers)
-        {
-            numLayers = maxLayers;
-            break;
-        }
+        syncLayers_Water(numWater);
     }
 
     A = 0;
@@ -661,111 +657,57 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
     qSortBackgrounds(1, numBackground);
     UpdateBackgrounds();
     FindSBlocks();
+    FindStars();
+    syncLayers_AllBlocks();
+    syncLayers_AllBGOs();
 
-
-//    if(LevelEditor == true || MagicHand == true)
-//    {
-//        frmEvents::lstEvent.ListIndex = 0;
-//        frmLayers::lstLayer.ListIndex = 0;
-//        frmEvents::RefreshEvents;
-//    }
-
-//    if(LevelEditor == true)
-//    {
-//        ResetNPC EditorCursor.NPC.Type;
-//        curSection = 0;
-//        vScreenY[1] = -(level[curSection].Height - 600);
-//        vScreenX[1] = -level[curSection].X;
-//        numWarps = numWarps + 1;
-//        for(A = 0; A < frmLevelSettings::optBackground.Count; A++)
-//        {
-//            if(Background2[0] == A)
-//                frmLevelSettings::optBackground(A).Value = true;
-//            else
-//                frmLevelSettings::optBackground(A).Value = false;
-//        }
-//        for(A = 1; A <= frmLevelSettings::optBackgroundColor.Count; A++)
-//        {
-//            if(bgColor[0] == frmLevelSettings::optBackgroundColor(A).BackColor)
-//            {
-//                frmLevelSettings::optBackgroundColor(A).Value = true;
-//                break;
-//            }
-//        }
-//        frmLevelSettings::optMusic(bgMusic[0]).Value = true;
-//        if(LevelWrap[0] == true)
-//            frmLevelSettings::cmdWrap.Caption = "On";
-//        else
-//            frmLevelSettings::cmdWrap.Caption = "Off";
-//        if(UnderWater[0] == true)
-//            frmLevelSettings::cmdWater.Caption = "On";
-//        else
-//            frmLevelSettings::cmdWater.Caption = "Off";
-//        if(OffScreenExit[0] == true)
-//            frmLevelSettings::cmdExit.Caption = "On";
-//        else
-//            frmLevelSettings::cmdExit.Caption = "Off";
-//        frmLevelSettings::txtMusic.Enabled = false;
-//        frmLevelSettings::txtMusic.Text = CustomMusic[0];
-//        frmLevelSettings::txtMusic.Enabled = true;
-//        if(nPlay.Online == true && nPlay.Mode == 1) // sync to server
-//        {
-//            Netplay::sendData "j" + LB + "d" + LocalNick + " has loaded " + FileName + "." + LB + "w1" + LB + EoT;
-//            frmChat.txtChat = frmChat::txtChat + LocalNick + " has loaded " + FileName + "." + LB;
-//            frmChat::txtChat.SelStart = frmChat::txtChat.Text.Length;
-//            PlaySound(47);
-//            SoundPause[47] = 2;
-//            for(A = 1; A <= 15; A++)
-//            {
-//                if(nPlay.ClientCon(A) == true)
-//                {
-//                    Netplay::InitSync A;
-//                }
-//            }
-//        }
-//    }
-//    else
+    LevelMacro = 0;
+    for(A = 0; A <= numSections; A++) // Automatically correct 608 section height to 600
     {
-        FindStars();
-        LevelMacro = 0;
-        for(A = 0; A <= numSections; A++) // Automatically correct 608 section height to 600
-        {
-//            if(int(level[A].Height - level[A].Y) == 608)
-//                level[A].Y = level[A].Y + 8;
-            int height = int(level[A].Height - level[A].Y);
-            if(height > 600 && height < 610)
-                level[A].Y = level[A].Height - 600; // Better and cleaner logic
-        }
+        int height = int(level[A].Height - level[A].Y);
+        if(height > 600 && height < 610)
+            level[A].Y = level[A].Height - 600; // Better and cleaner logic
+    }
 
-        B = numBackground;
-        for(A = 1; A <= numWarps; A++)
+    B = numBackground;
+    for(A = 1; A <= numWarps; A++)
+    {
+        if(Warp[A].Effect == 2 && Warp[A].Stars > numStars)
         {
-            if(Warp[A].Effect == 2 && Warp[A].Stars > numStars)
-            {
-                B++;
-                numLocked++;
-                auto &bgo = Background[B];
-                bgo = Background_t();
-                bgo.Layer = (HashedString)Warp[A].Layer;
-                bgo.Hidden = Warp[A].Hidden;
-                bgo.Location.Width = 24;
-                bgo.Location.Height = 24;
-                bgo.Location.Y = Warp[A].Entrance.Y - bgo.Location.Height;
-                bgo.Location.X = Warp[A].Entrance.X + Warp[A].Entrance.Width / 2.0 - bgo.Location.Width / 2.0;
-                bgo.Type = 160;
-            }
-            else if(Warp[A].Effect == 2 && Warp[A].Locked) // For locks
-            {
-                B++;
-                numLocked++;
-                auto &bgo = Background[B];
-                bgo = Background_t();
-                bgo.Layer = (HashedString)Warp[A].Layer;
-                bgo.Hidden = Warp[A].Hidden;
-                bgo.Location = Warp[A].Entrance;
-                bgo.Type = 98;
-                bgo.Location.Width = 16;
-            }
+            B++;
+            numLocked++;
+            auto &bgo = Background[B];
+            bgo = Background_t();
+            bgo.Layer = (HashedString)Warp[A].Layer;
+            bgo.Hidden = Warp[A].Hidden;
+            bgo.Location.Width = 24;
+            bgo.Location.Height = 24;
+            bgo.Location.Y = Warp[A].Entrance.Y - bgo.Location.Height;
+            bgo.Location.X = Warp[A].Entrance.X + Warp[A].Entrance.Width / 2.0 - bgo.Location.Width / 2.0;
+            bgo.Type = 160;
+            syncLayers_BGO(B);
+        }
+        else if(Warp[A].Effect == 2 && Warp[A].Locked) // For locks
+        {
+            B++;
+            numLocked++;
+            auto &bgo = Background[B];
+            bgo = Background_t();
+            bgo.Layer = (HashedString)Warp[A].Layer;
+            bgo.Hidden = Warp[A].Hidden;
+            bgo.Location = Warp[A].Entrance;
+            bgo.Type = 98;
+            bgo.Location.Width = 16;
+            syncLayers_BGO(B);
+        }
+    }
+
+    for (A = 0; A < numLayers; A++)
+    {
+        auto &layer = Layer[A];
+        if(layer.Hidden)
+        {
+            HideLayer(layer.Name, true);
         }
     }
 

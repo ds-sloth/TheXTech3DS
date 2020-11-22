@@ -28,6 +28,7 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include "range_arr.hpp"
 #include "location.h"
 #include "global_constants.h"
@@ -48,6 +49,12 @@ struct Layer_t
     double SpeedX = 0.0;
 //    SpeedY As Single
     double SpeedY = 0.0;
+
+    std::set<int> blocks;
+    std::set<int> BGOs;
+    std::set<int> NPCs;
+    std::set<int> warps;
+    std::set<int> waters;
 //End Type
 };
 
@@ -104,12 +111,12 @@ struct Events_t
 };
 
 //Public Layer(0 To 100) As Layer
-const int maxLayers = 255; // 100
+const int maxLayers = 100; // 100
 extern int numLayers;
 extern RangeArr<Layer_t, 0, maxLayers> Layer;
 
 //Public Events(0 To 100) As Events
-const int maxEvents = 255; // 100
+const int maxEvents = 100; // 100
 extern int numEvents;
 extern RangeArr<Events_t, 0, maxEvents> Events;
 
@@ -139,5 +146,18 @@ void UpdateEvents();
 
 // Public Sub UpdateLayers()
 void UpdateLayers();
+
+void syncLayers_AllBlocks();
+void syncLayers_Block(int block);
+void syncLayers_Block_SetHidden(int block); // set block hidden based on layer
+
+void syncLayers_NPC(int npc);
+
+void syncLayers_AllBGOs();
+void syncLayers_BGO(int bgo);
+
+void syncLayers_Warp(int warp);
+
+void syncLayers_Water(int water);
 
 #endif // LAYERS_H
