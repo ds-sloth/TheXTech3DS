@@ -105,21 +105,26 @@ public:
     void renderCircle(int cx, int cy, int radius, float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, bool filled = true);
 
     // Similar to BitBlt, but without masks, just draw a texture or it's fragment!
-    void renderTextureI(int xDst, int yDst, int wDst, int hDst,
+private:
+    void renderTexturePrivate(float xDst, float yDst, float wDst, float hDst,
                         StdPicture &tx,
-                        int xSrc, int ySrc,
-                        double rotateAngle = 0.0, SDL_Point *center = nullptr, unsigned int flip = SDL_FLIP_NONE,
+                        float xSrc, float ySrc,
                         bool shadow = false);
+public:
     void renderTexture(double xDst, double yDst, double wDst, double hDst,
                        StdPicture &tx,
-                       int xSrc, int ySrc,
+                       unsigned int xSrc, unsigned int ySrc,
                        bool shadow = false);
 
-    void renderTextureFL(double xDst, double yDst, double wDst, double hDst,
-                         StdPicture &tx,
-                         int xSrc, int ySrc,
-                         double rotateAngle = 0.0, SDL_Point *center = nullptr, unsigned int flip = SDL_FLIP_NONE,
-                         bool shadow = false);
+    void renderTexture(double xDst, double yDst, int wDst, int hDst,
+                       StdPicture &tx,
+                       unsigned int xSrc, unsigned int ySrc,
+                       bool shadow = false);
+
+    void renderTexture(int xDst, int yDst, int wDst, int hDst,
+                       StdPicture &tx,
+                       unsigned int xSrc, unsigned int ySrc,
+                       bool shadow = false);
 
     void renderTexture(int xDst, int yDst, StdPicture &tx,
                        bool shadow = false);
@@ -141,8 +146,8 @@ private:
     float offset_x = 0.f;
     float offset_y = 0.f;
     //Offset to shake screen
-    int viewport_offset_x = -10.f;
-    int viewport_offset_y = 0.f;
+    int viewport_offset_x = -5;
+    int viewport_offset_y = 0;
     //Need to calculate relative viewport position when screen was scaled
     float viewport_scale_x = 1.0f;
     float viewport_scale_y = 1.0f;

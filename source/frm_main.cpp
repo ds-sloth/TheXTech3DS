@@ -29,7 +29,6 @@
 #include "joystick.h"
 #include "sound.h"
 #include "editor.h"
-#include "custom_draw_image.h"
 #include "n3ds-clock.h"
 #include "second_screen.h"
 
@@ -241,10 +240,10 @@ void FrmMain::setViewport(int x, int y, int w, int h)
 {
     int offset_x = viewport_offset_x - viewport_x;
     int offset_y = viewport_offset_y - viewport_y;
-    viewport_x = x;
-    viewport_y = y;
-    viewport_w = w;
-    viewport_h = h;
+    viewport_x = x/2;
+    viewport_y = y/2;
+    viewport_w = w/2;
+    viewport_h = h/2;
     viewport_offset_x = viewport_x + offset_x;
     viewport_offset_y = viewport_y + offset_y;
 }
@@ -548,8 +547,8 @@ void FrmMain::renderRect(int x, int y, int w, int h, uint8_t red, uint8_t green,
     uint32_t clr = C2D_Color32(red, green, blue, alpha);
 
     // Filled is always True in this game
-    C2D_DrawRectSolid((x+viewport_offset_x)/2,
-                      (y+viewport_offset_y)/2,
+    C2D_DrawRectSolid(x/2+viewport_offset_x,
+                      y/2+viewport_offset_y,
                       0, w/2, h/2, clr);
 }
 
@@ -563,12 +562,60 @@ void FrmMain::renderCircle(int cx, int cy, int radius, float red, float green, f
     // this is never used
 }
 
-#define FLOORDIV2(x) (x>0)?(x)/2:(x-1)/2
+inline int ROUNDDIV2(int x)
+{
+    return (x<0)?(x-1)/2:x/2;
+}
 
-void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
+inline float ROUNDDIV2(float x)
+{
+    return std::nearbyintf(x/2.f);
+}
+
+inline float ROUNDDIV2(double x)
+{
+    return std::nearbyintf(((float)x)/2.f);
+}
+
+inline float FLOORDIV2(float x)
+{
+    return std::floor(x/2.f);
+}
+
+const C2D_ImageTint shadowTint =
+{C2D_Color32(0,0,0,255), 1.,
+C2D_Color32(0,0,0,255), 1.,
+C2D_Color32(0,0,0,255), 1.,
+C2D_Color32(0,0,0,255), 1.};
+
+inline bool C2D_DrawImage_Custom(C2D_Image img, float x, float y, float src_x, float src_y, float src_w, float src_h, bool shadow)
+{
+    const Tex3DS_SubTexture* old_subtex = img.subtex;
+    // assuming not rotated (it isn't here)
+    float scale_x = (old_subtex->right - old_subtex->left)/old_subtex->width;
+    float scale_y = (old_subtex->bottom - old_subtex->top)/old_subtex->height;
+    const Tex3DS_SubTexture new_subtex = {
+        src_w,
+        src_h,
+        old_subtex->left + src_x*scale_x,
+        old_subtex->top + src_y*scale_y,
+        old_subtex->left + (src_x + src_w)*scale_x,
+        old_subtex->top + (src_y + src_h)*scale_y,
+    };
+    img.subtex = &new_subtex;
+
+    bool result;
+    if (shadow)
+        result = C2D_DrawImageAt(img, x, y, 0.f, &shadowTint);
+    else
+        result = C2D_DrawImageAt(img, x, y, 0.f);
+    img.subtex = old_subtex;
+    return result;
+}
+
+void FrmMain::renderTexturePrivate(float xDst, float yDst, float wDst, float hDst,
                              StdPicture &tx,
-                             int xSrc, int ySrc,
-                             double rotateAngle, SDL_Point *center, unsigned int flip,
+                             float xSrc, float ySrc,
                              bool shadow)
 {
     if(!tx.inited)
@@ -582,22 +629,22 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
     if(!tx.texture)
         return;
 
-    if(xDst < 0)
+    if(xDst < 0.f)
     {
         xSrc -= xDst;
         wDst += xDst;
-        xDst = 0;
+        xDst = 0.f;
     }
     if(xDst + wDst > viewport_w)
     {
         if(xDst > viewport_w) return;
         wDst = (viewport_w - xDst);
     }
-    if(yDst < 0)
+    if(yDst < 0.f)
     {
         ySrc -= yDst;
         hDst += yDst;
-        yDst = 0;
+        yDst = 0.f;
     }
     if(yDst + hDst > viewport_h)
     {
@@ -606,107 +653,115 @@ void FrmMain::renderTextureI(int xDst, int yDst, int wDst, int hDst,
     }
 
     // texture boundaries
-    if((xSrc < 0) || (ySrc < 0)) return;
+    if((xSrc < 0.f) || (ySrc < 0.f)) return;
+
+    C2D_Image* to_draw = nullptr;
+    C2D_Image* to_draw_2 = nullptr;
 
     // Don't go more than size of texture
     if(xSrc + wDst > tx.w)
     {
         wDst = tx.w - xSrc;
-        if(wDst < 0)
-            wDst = 0;
+        if(wDst < 0.f)
+            wDst = 0.f;
     }
     if(ySrc + hDst > tx.h)
     {
         hDst = tx.h - ySrc;
-        if(hDst < 0)
-            hDst = 0;
+        if(hDst < 0.f)
+            hDst = 0.f;
     }
 
-    C2D_Image* to_draw = nullptr;
-    C2D_Image* to_draw_2 = nullptr;
-    if(ySrc + hDst > 2048)
+    if(ySrc + hDst > 1024.f)
     {
-        if(ySrc + hDst > 4096)
+        if(ySrc + hDst > 2048.f)
         {
             if(tx.texture3)
                 to_draw = &tx.image3;
-            if(ySrc < 4096 && tx.texture2)
+            if(ySrc < 2048.f && tx.texture2)
                 to_draw_2 = &tx.image2;
-            ySrc -= 2048;
+            ySrc -= 1024.f;
         }
         else
         {
             if(tx.texture2)
                 to_draw = &tx.image2;
-            if(ySrc < 2048)
+            if(ySrc < 1024.f)
                 to_draw_2 = &tx.image;
         }
         // draw the top pic
         if(to_draw_2 != nullptr)
         {
-            C2D_DrawImage_Custom(*to_draw_2, FLOORDIV2(xDst+viewport_offset_x), FLOORDIV2(yDst+viewport_offset_y), wDst/2, (2048-ySrc)/2,
-                                 xSrc/2, ySrc/2, wDst/2, (2048-ySrc)/2, 0, flip, shadow);
-            yDst += (2048 - ySrc);
-            hDst -= (2048 - ySrc);
-            ySrc = 0;
+            C2D_DrawImage_Custom(*to_draw_2, xDst+viewport_offset_x, yDst+viewport_offset_y,
+                                 xSrc, ySrc, wDst, 1024.f-ySrc, shadow);
+            yDst += (1024.f - ySrc);
+            hDst -= (1024.f - ySrc);
+            ySrc = 0.f;
         }
         else
-            ySrc -= 2048;
+            ySrc -= 1024.f;
     }
     else to_draw = &tx.image;
 
     if (to_draw == nullptr) return;
 
-    C2D_DrawImage_Custom(*to_draw, FLOORDIV2(xDst+viewport_offset_x), FLOORDIV2(yDst+viewport_offset_y), wDst/2, hDst/2,
-                         xSrc/2, ySrc/2, wDst/2, hDst/2, 0, flip, shadow);
+    C2D_DrawImage_Custom(*to_draw, xDst+viewport_offset_x, yDst+viewport_offset_y,
+                         xSrc, ySrc, wDst, hDst, shadow);
 }
 
 void FrmMain::renderTexture(double xDst, double yDst, double wDst, double hDst,
                             StdPicture &tx,
-                            int xSrc, int ySrc,
+                            unsigned int xSrc, unsigned int ySrc,
                             bool shadow)
 {
-    const unsigned int flip = SDL_FLIP_NONE;
-    // think through this just a little more (it fails for negatives, etc...)
-    renderTextureI((int)std::round(xDst),
-                   (int)std::round(yDst),
-                   (int)std::round(wDst),
-                   (int)std::round(hDst),
+    renderTexturePrivate(ROUNDDIV2(xDst),
+                   ROUNDDIV2(yDst),
+                   ROUNDDIV2(wDst),
+                   ROUNDDIV2(hDst),
                    tx,
-                   xSrc,
-                   ySrc,
-                   0.0, nullptr, flip,
+                   xSrc/2,
+                   ySrc/2,
                    shadow);
 }
 
-void FrmMain::renderTextureFL(double xDst, double yDst, double wDst, double hDst,
-                              StdPicture &tx,
-                              int xSrc, int ySrc,
-                              double rotateAngle, SDL_Point *center, unsigned int flip,
-                              bool shadow)
+void FrmMain::renderTexture(double xDst, double yDst, int wDst, int hDst,
+                            StdPicture &tx,
+                            unsigned int xSrc, unsigned int ySrc,
+                            bool shadow)
 {
-    // TODO: don't be scared of floor
-    renderTextureI((int)std::round(xDst),
-                   (int)std::round(yDst),
-                   (int)std::round(wDst),
-                   (int)std::round(hDst),
+    renderTexturePrivate(ROUNDDIV2(xDst),
+                   ROUNDDIV2(yDst),
+                   wDst/2,
+                   hDst/2,
                    tx,
-                   xSrc,
-                   ySrc,
-                   rotateAngle, center, flip,
+                   xSrc/2,
+                   ySrc/2,
+                   shadow);
+}
+
+void FrmMain::renderTexture(int xDst, int yDst, int wDst, int hDst,
+                            StdPicture &tx,
+                            unsigned int xSrc, unsigned int ySrc,
+                            bool shadow)
+{
+    renderTexturePrivate(ROUNDDIV2(xDst),
+                   ROUNDDIV2(yDst),
+                   wDst/2,
+                   hDst/2,
+                   tx,
+                   xSrc/2,
+                   ySrc/2,
                    shadow);
 }
 
 void FrmMain::renderTexture(int xDst, int yDst, StdPicture &tx, bool shadow)
 {
-    const unsigned int flip = SDL_FLIP_NONE;
-    renderTextureI(xDst,
-                   yDst,
-                   tx.w,
-                   tx.h,
+    renderTexturePrivate(ROUNDDIV2(xDst),
+                   ROUNDDIV2(yDst),
+                   tx.w/2,
+                   tx.h/2,
                    tx,
-                   0,
-                   0,
-                   0.0, nullptr, flip,
+                   0.f,
+                   0.f,
                    shadow);
 }

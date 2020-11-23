@@ -89,7 +89,6 @@ void SaveConfig();
 
 void NPCyFix();
 
-void CheatCode(char NewKey);
 //! credit loop
 void OutroLoop();
 

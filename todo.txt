@@ -15,16 +15,19 @@ SMBX Port to 3DS!
     - Hammer bro death anim
 
 - Performance
+  - Saves
+    - Load all files in rw mode at game launch
+  - The WILD changes to layers
+    - Pre hashes: layer 11133, NPC 1730
+    - Post hashes, pre wild: 8975, 1803
+    - Layer sets: layer 1186, NPC 1811-3000
   - Eliminating string comparisons
-    - 50% emu
-      - w/o hashes - layers 1835, NPCs 6195
-      - w/  hashes - layers 1817, NPCs 5060
     - Hardware:
       - w/o hashes - layers 6679, NPCs 12145 // 5638, 2985
       - w/  hashes - layers 6400, NPCs 10252 // 5500, 3300
+      - w/  sets   - layers   40, NPCs 10726 //   37, 3306
   - Load speeds (loading level)
   - NPC load: painful playground
-  - Layers load: intro level of Mario Prime
   - Slow draw speed with many tiles
   - Lockup at beginning of world map??
     - Happens after all of the "newpaths" have finished
@@ -33,6 +36,18 @@ SMBX Port to 3DS!
   - 30fps lock??
   - New 3DS RAM...?
   - Allow user to disable sound?
+  - Layers load: intro level of Mario Prime
+    - FIXED!
+
+- Sound
+  - Store P-Switch music in own track; pause & resume music
+  - Add play ID to channel, combine with channel # to get global ID for
+    individual sound plays
+  - Fix OGG looping
+  - Properly load and cache audio files...!
+
+- Quick save/load
+
 
 - Sound
   - Music fadeins/fadeouts

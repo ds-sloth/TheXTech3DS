@@ -46,7 +46,7 @@ void UpdateGraphics2(bool skipRedraw)
     int A = 0;
     int B = 0;
     int Z = 0;
-    int WPHeight = 0;
+    double WPHeight = 0;
 //    Location_t tempLocation;
     Z = 1;
 
@@ -243,11 +243,11 @@ void UpdateGraphics2(bool skipRedraw)
     if(Player[1].Character == 5)
         WorldPlayer[1].Type = 5;
     if(WorldPlayer[1].Type == 3)
-        WPHeight = 44;
+        WPHeight = 44.;
     else if(WorldPlayer[1].Type == 4)
-        WPHeight = 40;
+        WPHeight = 40.;
     else
-        WPHeight = 32;
+        WPHeight = 32.;
     frmMain.renderTexture(vScreenX[Z] + WorldPlayer[1].Location.X,
                       vScreenY[Z] + WorldPlayer[1].Location.Y - 10 + WorldPlayer[1].Location.Height - WPHeight,
                       WorldPlayer[1].Location.Width, WPHeight,
@@ -283,12 +283,12 @@ void UpdateGraphics2(bool skipRedraw)
                 Player[A].MountType = 1;
             B = Player[A].MountType;
             // Yoshi's Body
-            frmMain.renderTexture(32 + (48 * A) + Player[A].YoshiBX, 124 - Player[A].Location.Height + Player[A].YoshiBY,
+            frmMain.renderTexture(32 + (48 * A) + Player[A].YoshiBX, 124 - (int)Player[A].Location.Height + Player[A].YoshiBY,
                                   32, 32, GFXYoshiBBMP[B], 0, 32 * Player[A].YoshiBFrame, ShadowMode);
 
             // Yoshi's Head
             frmMain.renderTexture(32 + (48 * A) + Player[A].YoshiTX,
-                                  124 - Player[A].Location.Height + Player[A].YoshiTY,
+                                  124 - (int)Player[A].Location.Height + Player[A].YoshiTY,
                                   32, 32, GFXYoshiTBMP[B], 0, 32 * Player[A].YoshiTFrame, ShadowMode);
         }
         if(Player[A].Character == 1)
@@ -296,7 +296,7 @@ void UpdateGraphics2(bool skipRedraw)
             if(Player[A].Mount == 0 || Player[A].Mount == 3)
             {
                 frmMain.renderTexture(32 + (48 * A) + MarioFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)],
-                                      124 - Player[A].Location.Height + MarioFrameY[(Player[A].State * 100) +
+                                      124 - (int)Player[A].Location.Height + MarioFrameY[(Player[A].State * 100) +
                                         (Player[A].Frame * Player[A].Direction)] + Player[A].MountOffsetY,
                                       99, 99, GFXMarioBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction),
                                       pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
@@ -305,13 +305,13 @@ void UpdateGraphics2(bool skipRedraw)
             {
                 frmMain.renderTexture(32 + (48 * A) + MarioFrameX[(Player[A].State * 100) +
                                         (Player[A].Frame * Player[A].Direction)],
-                                      124 - Player[A].Location.Height + MarioFrameY[(Player[A].State * 100) +
+                                      124 - (int)Player[A].Location.Height + MarioFrameY[(Player[A].State * 100) +
                                         (Player[A].Frame * Player[A].Direction)],
-                                      99, Player[A].Location.Height - 26,
+                                      99, (int)Player[A].Location.Height - 26,
                                       GFXMarioBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction),
                                       pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
 
-                frmMain.renderTexture(32 + (48 * A) + Player[A].Location.Width / 2.0 - 16, 124 - 30, 32, 32,
+                frmMain.renderTexture(32 + (48 * A) + (int)Player[A].Location.Width / 2 - 16, 124 - 30, 32, 32,
                                       GFX.Boot[Player[A].MountType], 0, 32 * Player[A].MountFrame, ShadowMode);
 
                 if(Player[A].MountType == 3)
@@ -323,7 +323,7 @@ void UpdateGraphics2(bool skipRedraw)
                     else if(Player[A].YoshiWingsFrameCount >= 24)
                         Player[A].YoshiWingsFrameCount = 0;
 
-                    frmMain.renderTexture(32 + (48 * A) + Player[A].Location.Width / 2.0 - 16 + 20, 124 - 30 - 10, 32, 32,
+                    frmMain.renderTexture(32 + (48 * A) + (int)Player[A].Location.Width / 2 - 16 + 20, 124 - 30 - 10, 32, 32,
                                           GFX.YoshiWings, 0, 0 + 32 * Player[A].YoshiWingsFrame);
                 }
             }
@@ -334,7 +334,7 @@ void UpdateGraphics2(bool skipRedraw)
             {
                 frmMain.renderTexture(32 + (48 * A) + LuigiFrameX[(Player[A].State * 100) +
                                         (Player[A].Frame * Player[A].Direction)],
-                                      124 - Player[A].Location.Height + LuigiFrameY[(Player[A].State * 100) +
+                                      124 - (int)Player[A].Location.Height + LuigiFrameY[(Player[A].State * 100) +
                                         (Player[A].Frame * Player[A].Direction)] + Player[A].MountOffsetY, 99, 99,
                                       GFXLuigiBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction),
                                       pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
@@ -343,14 +343,14 @@ void UpdateGraphics2(bool skipRedraw)
             {
                 frmMain.renderTexture(32 + (48 * A) + LuigiFrameX[(Player[A].State * 100) +
                                         (Player[A].Frame * Player[A].Direction)],
-                                      124 - Player[A].Location.Height +
+                                      124 - (int)Player[A].Location.Height +
                                         LuigiFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)],
-                                      99, Player[A].Location.Height - 24,
+                                      99, (int)Player[A].Location.Height - 24,
                                       GFXLuigiBMP[Player[A].State],
                                       pfrX(100 + Player[A].Frame * Player[A].Direction),
                                       pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
 
-                frmMain.renderTexture(32 + (48 * A) + Player[A].Location.Width / 2.0 - 16, 124 - 30, 32, 32, GFX.Boot[Player[A].MountType], 0, 32 * Player[A].MountFrame, ShadowMode);
+                frmMain.renderTexture(32 + (48 * A) + (int)Player[A].Location.Width / 2 - 16, 124 - 30, 32, 32, GFX.Boot[Player[A].MountType], 0, 32 * Player[A].MountFrame, ShadowMode);
 
                 if(Player[A].MountType == 3)
                 {
@@ -361,7 +361,7 @@ void UpdateGraphics2(bool skipRedraw)
                     else if(Player[A].YoshiWingsFrameCount >= 24)
                         Player[A].YoshiWingsFrameCount = 0;
 
-                    frmMain.renderTexture(32 + (48 * A) + Player[A].Location.Width / 2.0 - 16 + 20, 124 - 30 - 10, 32, 32, GFX.YoshiWings, 0, 0 + 32 * Player[A].YoshiWingsFrame, ShadowMode);
+                    frmMain.renderTexture(32 + (48 * A) + (int)Player[A].Location.Width / 2 - 16 + 20, 124 - 30 - 10, 32, 32, GFX.YoshiWings, 0, 0 + 32 * Player[A].YoshiWingsFrame, ShadowMode);
                 }
             }
         }
@@ -369,13 +369,13 @@ void UpdateGraphics2(bool skipRedraw)
         {
             if(Player[A].Mount == 0 || Player[A].Mount == 3)
             {
-                frmMain.renderTexture(32 + (48 * A) + PeachFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 124 - Player[A].Location.Height + PeachFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)] + Player[A].MountOffsetY, 99, 99, GFXPeachBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
+                frmMain.renderTexture(32 + (48 * A) + PeachFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 124 - (int)Player[A].Location.Height + PeachFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)] + Player[A].MountOffsetY, 99, 99, GFXPeachBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
             }
             else if(Player[A].Mount == 1)
             {
-                frmMain.renderTexture(32 + (48 * A) + PeachFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 124 - Player[A].Location.Height + PeachFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 99, Player[A].Location.Height - 24, GFXPeachBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
+                frmMain.renderTexture(32 + (48 * A) + PeachFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 124 - (int)Player[A].Location.Height + PeachFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 99, (int)Player[A].Location.Height - 24, GFXPeachBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
 
-                frmMain.renderTexture(32 + (48 * A) + Player[A].Location.Width / 2.0 - 16, 124 - 30, 32, 32, GFX.Boot[Player[A].MountType], 0, 32 * Player[A].MountFrame, ShadowMode);
+                frmMain.renderTexture(32 + (48 * A) + (int)Player[A].Location.Width / 2 - 16, 124 - 30, 32, 32, GFX.Boot[Player[A].MountType], 0, 32 * Player[A].MountFrame, ShadowMode);
 
                 if(Player[A].MountType == 3)
                 {
@@ -386,7 +386,7 @@ void UpdateGraphics2(bool skipRedraw)
                     else if(Player[A].YoshiWingsFrameCount >= 24)
                         Player[A].YoshiWingsFrameCount = 0;
 
-                    frmMain.renderTexture(32 + (48 * A) + Player[A].Location.Width / 2.0 - 16 + 20, 124 - 30 - 10, 32, 32, GFX.YoshiWings, 0, 0 + 32 * Player[A].YoshiWingsFrame, ShadowMode);
+                    frmMain.renderTexture(32 + (48 * A) + (int)Player[A].Location.Width / 2 - 16 + 20, 124 - 30 - 10, 32, 32, GFX.YoshiWings, 0, 0 + 32 * Player[A].YoshiWingsFrame, ShadowMode);
                 }
             }
         }
@@ -394,19 +394,19 @@ void UpdateGraphics2(bool skipRedraw)
         {
             if(Player[A].Mount == 0 || Player[A].Mount == 3)
             {
-                frmMain.renderTexture(32 + (48 * A) + ToadFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 124 - Player[A].Location.Height + ToadFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)] + Player[A].MountOffsetY, 99, 99, GFXToadBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
+                frmMain.renderTexture(32 + (48 * A) + ToadFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 124 - (int)Player[A].Location.Height + ToadFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)] + Player[A].MountOffsetY, 99, 99, GFXToadBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
             }
             else if(Player[A].Mount == 1)
             {
                 if(Player[A].State == 1)
                 {
-                    frmMain.renderTexture(32 + (48 * A) + ToadFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 6 + 124 - Player[A].Location.Height + ToadFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 99, Player[A].Location.Height - 24, GFXToadBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
+                    frmMain.renderTexture(32 + (48 * A) + ToadFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 6 + 124 - (int)Player[A].Location.Height + ToadFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 99, (int)Player[A].Location.Height - 24, GFXToadBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
                 }
                 else
                 {
-                    frmMain.renderTexture(32 + (48 * A) + ToadFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 124 - Player[A].Location.Height + ToadFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 99, Player[A].Location.Height - 24, GFXToadBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
+                    frmMain.renderTexture(32 + (48 * A) + ToadFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 124 - (int)Player[A].Location.Height + ToadFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 99, (int)Player[A].Location.Height - 24, GFXToadBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
                 }
-                frmMain.renderTexture(32 + (48 * A) + Player[A].Location.Width / 2.0 - 16, 124 - 30, 32, 32, GFX.Boot[Player[A].MountType], 0, 32 * Player[A].MountFrame, ShadowMode);
+                frmMain.renderTexture(32 + (48 * A) + (int)Player[A].Location.Width / 2 - 16, 124 - 30, 32, 32, GFX.Boot[Player[A].MountType], 0, 32 * Player[A].MountFrame, ShadowMode);
 
                 if(Player[A].MountType == 3)
                 {
@@ -416,13 +416,13 @@ void UpdateGraphics2(bool skipRedraw)
                         Player[A].YoshiWingsFrame = 1;
                     else if(Player[A].YoshiWingsFrameCount >= 24)
                         Player[A].YoshiWingsFrameCount = 0;
-                    frmMain.renderTexture(32 + (48 * A) + Player[A].Location.Width / 2.0 - 16 + 20, 124 - 30 - 10, 32, 32, GFX.YoshiWings, 0, 0 + 32 * Player[A].YoshiWingsFrame, ShadowMode);
+                    frmMain.renderTexture(32 + (48 * A) + (int)Player[A].Location.Width / 2 - 16 + 20, 124 - 30 - 10, 32, 32, GFX.YoshiWings, 0, 0 + 32 * Player[A].YoshiWingsFrame, ShadowMode);
                 }
             }
         }
         else if(Player[A].Character == 5)
         {
-            frmMain.renderTexture(32 + (48 * A) + LinkFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 124 - Player[A].Location.Height + LinkFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 99, 99, GFXLinkBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
+            frmMain.renderTexture(32 + (48 * A) + LinkFrameX[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 124 - (int)Player[A].Location.Height + LinkFrameY[(Player[A].State * 100) + (Player[A].Frame * Player[A].Direction)], 99, 99, GFXLinkBMP[Player[A].State], pfrX(100 + Player[A].Frame * Player[A].Direction), pfrY(100 + Player[A].Frame * Player[A].Direction), ShadowMode);
         }
     }
     A = numPlayers + 1;

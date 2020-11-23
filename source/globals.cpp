@@ -591,7 +591,7 @@ static double toNearest(double x)
 {
     // int round_old = std::fegetround();
     // if(round_old == FE_TONEAREST)
-        return std::round(x);
+        return std::nearbyint(x);
     // else
     // {
     //     std::fesetround(FE_TONEAREST);

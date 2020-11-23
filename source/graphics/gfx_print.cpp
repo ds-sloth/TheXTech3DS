@@ -29,7 +29,7 @@
 #include "../graphics.h"
 
 
-void SuperPrint(std::string SuperWords, int Font, float X, float Y)
+void SuperPrint(std::string SuperWords, int Font, int X, int Y)
 {
 //    int A = 0;
     int B = 0;
@@ -116,7 +116,7 @@ void SuperPrint(std::string SuperWords, int Font, float X, float Y)
     }
 }
 
-void SuperPrint(const char* SuperWords, int Font, float X, float Y)
+void SuperPrint(const char* SuperWords, int Font, int X, int Y)
 {
 //    int A = 0;
     int B = 0;
