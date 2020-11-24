@@ -22,10 +22,13 @@ void drawSecondScreen()
     char tempBuf[41];
     frmMain.initDraw(1);
 
+    uint64_t waitTime = (graphics_times[2]-graphics_times[1])/268;
+    uint64_t totalTime = (perf_times[5]-perf_times[6])/268 - waitTime;
+
     SuperPrint("Logic times (us)", 4, 16, 0);
     // this frame minus last frame
-    snprintf(tempBuf, 41, "Total %llu (%llu%%)", (perf_times[5]-perf_times[6])/268,
-        100-((graphics_times[2]-graphics_times[1])*100)/(perf_times[5]-perf_times[6]));
+    snprintf(tempBuf, 41, "Total %llu (%llu%%)", totalTime,
+        100*totalTime/16667);
     SuperPrint(tempBuf, 4, 336, 0);
     SuperPrint("Layers   NPCs Blocks Effect", 4, 16, 16);
     snprintf(tempBuf, 41, "%6llu %6llu %6llu %6llu", (perf_times[1]-perf_times[0])/268,
@@ -58,5 +61,18 @@ void drawSecondScreen()
 
 void drawSecondScreen2()
 {
+    char tempBuf[41];
+    frmMain.initDraw(1);
 
+    SuperPrint("Draw times (us)", 4, 16, 96);
+    SuperPrint("  Prep Tiles Scenes Paths  Player", 4, 16, 112);
+    snprintf(tempBuf, 41, "%6llu %6llu %6llu %6llu %6llu", (graphics_times[1]-graphics_times[0])/268,
+        (graphics_times[2]-graphics_times[1])/268, (graphics_times[3]-graphics_times[2])/268,
+        (graphics_times[4]-graphics_times[3])/268, (graphics_times[5]-graphics_times[4])/268);
+    SuperPrint(tempBuf, 4, 16, 160);
+    SuperPrint("  Menu 2ndeye 2ndscr GPUdrw", 4, 16, 176);
+    snprintf(tempBuf, 41, "%6llu %6llu %6llu %6llu", (graphics_times[11]-graphics_times[5])/268,
+        (graphics_times[12]-graphics_times[11])/268, (graphics_times[14]-graphics_times[13])/268,
+        (graphics_times[15]-graphics_times[14])/268);
+    SuperPrint(tempBuf, 4, 16, 194);
 }

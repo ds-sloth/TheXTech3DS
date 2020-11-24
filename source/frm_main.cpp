@@ -582,36 +582,7 @@ inline float FLOORDIV2(float x)
     return std::floor(x/2.f);
 }
 
-const C2D_ImageTint shadowTint =
-{C2D_Color32(0,0,0,255), 1.,
-C2D_Color32(0,0,0,255), 1.,
-C2D_Color32(0,0,0,255), 1.,
-C2D_Color32(0,0,0,255), 1.};
-
-inline bool C2D_DrawImage_Custom(C2D_Image img, float x, float y, float src_x, float src_y, float src_w, float src_h, bool shadow)
-{
-    const Tex3DS_SubTexture* old_subtex = img.subtex;
-    // assuming not rotated (it isn't here)
-    float scale_x = (old_subtex->right - old_subtex->left)/old_subtex->width;
-    float scale_y = (old_subtex->bottom - old_subtex->top)/old_subtex->height;
-    const Tex3DS_SubTexture new_subtex = {
-        src_w,
-        src_h,
-        old_subtex->left + src_x*scale_x,
-        old_subtex->top + src_y*scale_y,
-        old_subtex->left + (src_x + src_w)*scale_x,
-        old_subtex->top + (src_y + src_h)*scale_y,
-    };
-    img.subtex = &new_subtex;
-
-    bool result;
-    if (shadow)
-        result = C2D_DrawImageAt(img, x, y, 0.f, &shadowTint);
-    else
-        result = C2D_DrawImageAt(img, x, y, 0.f);
-    img.subtex = old_subtex;
-    return result;
-}
+#include "custom_draw_supplement.h"
 
 void FrmMain::renderTexturePrivate(float xDst, float yDst, float wDst, float hDst,
                              StdPicture &tx,
@@ -628,16 +599,23 @@ void FrmMain::renderTexturePrivate(float xDst, float yDst, float wDst, float hDs
 
     if(!tx.texture)
         return;
+    if(xDst > viewport_w || yDst > viewport_h)
+        return;
+
+    // texture boundaries
+    // this never happens unless there was an invalid input
+    // if((xSrc < 0.f) || (ySrc < 0.f)) return;
 
     if(xDst < 0.f)
     {
         xSrc -= xDst;
         wDst += xDst;
         xDst = 0.f;
+        if (wDst > viewport_w)
+            wDst = viewport_w;
     }
-    if(xDst + wDst > viewport_w)
+    else if(xDst + wDst > viewport_w)
     {
-        if(xDst > viewport_w) return;
         wDst = (viewport_w - xDst);
     }
     if(yDst < 0.f)
@@ -645,31 +623,30 @@ void FrmMain::renderTexturePrivate(float xDst, float yDst, float wDst, float hDs
         ySrc -= yDst;
         hDst += yDst;
         yDst = 0.f;
+        if (hDst > viewport_h)
+            hDst = viewport_h;
     }
-    if(yDst + hDst > viewport_h)
+    else if(yDst + hDst > viewport_h)
     {
-        if(yDst > viewport_h) return;
         hDst = (viewport_h - yDst);
     }
-
-    // texture boundaries
-    if((xSrc < 0.f) || (ySrc < 0.f)) return;
 
     C2D_Image* to_draw = nullptr;
     C2D_Image* to_draw_2 = nullptr;
 
     // Don't go more than size of texture
-    if(xSrc + wDst > tx.w)
+    // Failure conditions should only happen if texture is smaller than expected
+    if(xSrc + wDst > tx.w/2)
     {
-        wDst = tx.w - xSrc;
+        wDst = tx.w/2 - xSrc;
         if(wDst < 0.f)
-            wDst = 0.f;
+            return;
     }
-    if(ySrc + hDst > tx.h)
+    if(ySrc + hDst > tx.h/2)
     {
-        hDst = tx.h - ySrc;
+        hDst = tx.h/2 - ySrc;
         if(hDst < 0.f)
-            hDst = 0.f;
+            return;
     }
 
     if(ySrc + hDst > 1024.f)
