@@ -64,13 +64,16 @@ void WorldLoop()
     {
         if(LevelBeatCode > 0)
         {
-            for(A = 1; A <= numWorldMusic; A++)
+            for(A = numWorldMusic; A >= 1; A--)
             {
                 if(CheckCollision(WorldPlayer[1].Location, WorldMusic[A].Location))
                 {
-                    if(curWorldMusic != WorldMusic[A].Type)
+                    if((curWorldMusic != WorldMusic[A].Type) ||
+                       (WorldMusic[A].Type == CustomWorldMusicId() && curWorldMusicFile != WorldMusic[A].MusicFile))
                     {
+                        curWorldMusicFile = WorldMusic[A].MusicFile;
                         StartMusic(WorldMusic[A].Type);
+                        break;
                     }
                 }
             }
@@ -87,13 +90,16 @@ void WorldLoop()
         }
         else if(LevelBeatCode == -1)
         {
-            for(A = 1; A <= numWorldMusic; A++)
+            for(A = numWorldMusic; A >= 1; A--)
             {
                 if(CheckCollision(WorldPlayer[1].Location, WorldMusic[A].Location))
                 {
-                    if(curWorldMusic != WorldMusic[A].Type)
+                    if((curWorldMusic != WorldMusic[A].Type) ||
+                       (WorldMusic[A].Type == CustomWorldMusicId() && curWorldMusicFile != WorldMusic[A].MusicFile))
                     {
+                        curWorldMusicFile = WorldMusic[A].MusicFile;
                         StartMusic(WorldMusic[A].Type);
+                        break;
                     }
                 }
             }
@@ -396,7 +402,7 @@ void WorldLoop()
             WorldPlayer[1].Move3 = false;
             PlaySound(26);
         }
-        for(A = 1; A <= numWorldMusic; A++)
+        for(A = numWorldMusic; A >= 1; A--)
         {
             if(CheckCollision(WorldPlayer[1].Location, WorldMusic[A].Location))
             {
@@ -405,6 +411,7 @@ void WorldLoop()
                 {
                     curWorldMusicFile = WorldMusic[A].MusicFile;
                     StartMusic(WorldMusic[A].Type);
+                    break;
                 }
             }
         }

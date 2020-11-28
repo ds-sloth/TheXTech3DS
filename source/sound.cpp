@@ -116,9 +116,6 @@ void QuitMixerX()
         return;
 
     noSound = true;
-    // if(g_curMusic)
-    //     Mix_FreeMusic(g_curMusic);
-    // g_curMusic = nullptr;
 
     for(auto it = sound.begin(); it != sound.end(); ++it)
     {
@@ -265,15 +262,21 @@ void PlayMusic(std::string Alias, int fadeInMs)
         g_curMusic = INVALID_ID;
     }
 
+    int loops = -1;
+    if (Alias == "stmusic" || Alias == "smusic")
+        loops = 0;
+
     auto mus = music.find(Alias);
     if(mus != music.end())
     {
         auto &m = mus->second;
-        g_curMusic = playSoundOGG(m.path.c_str(), -1);
+        g_curMusic = playSoundOGG(m.path.c_str(), loops);
         if(g_curMusic == INVALID_ID)
         {
             printf("Music '%s' opening error :(\n", m.path.c_str());
         }
+        else
+            musicPlaying = true;
     }
 }
 
@@ -325,7 +328,6 @@ void StartMusic(int A, int fadeInMs)
         {
             printf("Starting custom music [%s]", curWorldMusicFile.c_str());
             g_curMusic = playSoundOGG((FileNamePath + curWorldMusicFile).c_str(), -1);
-
         }
         else
         {
@@ -368,7 +370,7 @@ void StartMusic(int A, int fadeInMs)
 
 void StopMusic()
 {
-    if(!musicPlaying || noSound)
+    if(noSound)
         return;
 
     printf("Stopping music\n");
@@ -381,7 +383,7 @@ void StopMusic()
 
 void FadeOutMusic(int ms)
 {
-    if(!musicPlaying || noSound)
+    if(noSound)
         return;
     // printf("Fading out music (unsupported...)\n");
     StopMusic();

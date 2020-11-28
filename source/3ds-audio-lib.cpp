@@ -187,7 +187,7 @@ void audioThread(void* nul_)
         for (size_t ci = 0; ci < NUM_CHANNELS; ci++)
         {
             volatile SimpleChannel *channel = &channels[ci];
-            if (channel->kill)
+            if (channel->kill && channel->format != FORMAT_LOADING)
             {
                 closeChannel(channel);
                 ndspChnWaveBufClear(channel->channel_id);
@@ -293,14 +293,14 @@ void loadOGG_Thread(void* passed_val)
     OggVorbis_File *vf = (OggVorbis_File*)malloc(sizeof(OggVorbis_File));
     if(!vf) {
         fclose(f);
-        channel->kill = true;
+        channel->format = FORMAT_FREE;
         return;
     }
     if(ov_open(f,vf,nullptr,0))
     {
         free(vf);
         fclose(f);
-        channel->kill = true;
+        channel->format = FORMAT_FREE;
         return;
     }
     int ci = channel->channel_id;
@@ -323,7 +323,7 @@ void loadOGG_Thread(void* passed_val)
     {
         ov_clear(vf);
         free(vf);
-        channel->kill = true;
+        channel->format = FORMAT_FREE;
         return;
     }
     ndspChnSetRate(channel->channel_id, vi->rate);
@@ -346,9 +346,27 @@ uint32_t playSoundOGG(const char* path, int loops) {
         channel->data_pointer = (void*)f;
         uint32_t uniquePlayId = getSoundId(channel);
 
-        loadOGG_Thread((void*)channel);
+        // Set the thread priority to the main thread's priority ...
+        int32_t priority = 0x30;
+        svcGetThreadPriority(&priority, CUR_THREAD_HANDLE);
+        // ... then add 1, as higher number => lower actual priority ...
+        priority += 1;
+        // ... finally, clamp it between 0x18 and 0x3F to guarantee that it's valid.
+        priority = priority < 0x18 ? 0x18 : priority;
+        priority = priority > 0x3F ? 0x3F : priority;
 
-        return uniquePlayId;
+        sound_thread = threadCreate(loadOGG_Thread, (void*)channel,
+                                     THREAD_STACK_SZ, priority,
+                                     0, false);
+
+        if (sound_thread)
+            return uniquePlayId;
+        else
+        {
+            fclose(f);
+            channel->data_pointer = nullptr;
+            channel->format = FORMAT_FREE;
+        }
     }
     return INVALID_ID;
 }
@@ -477,6 +495,12 @@ WaveObject* audioLoadWave(const char* path)
     fread(&wave->sampleRate, 4, 1, f);
     fseek(f, 40, SEEK_SET);
     fread(&wave->length, 4, 1, f);
+    if (wave->length > 256*1024)
+    {
+        free(wave);
+        fclose(f);
+        return nullptr;
+    }
     // fseek(f, 44, SEEK_SET); // unnecessary
     char* temp_buf = (char*) malloc(wave->length);
     if (!temp_buf)
