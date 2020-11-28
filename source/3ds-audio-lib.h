@@ -10,23 +10,34 @@
 #endif
 
 typedef enum _CHANNEL_FORMAT {
- FORMAT_FREE,
- FORMAT_PCM_FILE,
- FORMAT_OGG_FILE,
- FORMAT_PCM_MEM,
+ FORMAT_FREE = 1 << 0,
+ FORMAT_LOADING = 1 << 1,
+ FORMAT_PCM_FILE = 1 << 2,
+ FORMAT_OGG_FILE = 1 << 3,
+ FORMAT_PCM_MEM = 1 << 4,
 } CHANNEL_FORMAT;
 
 typedef struct _SimpleChannel {
     int channel_id;
     CHANNEL_FORMAT format;
     void *data_pointer;
-    size_t data_left;
+    size_t data_idx;
+    size_t data_size;
     ndspWaveBuf wavebufs[NUM_BUFFERS];
     bool kill;
     bool stereo;
     int loops;
-    uint32_t id;
+    uint32_t index;
 } SimpleChannel;
+
+typedef struct _WaveObject {
+    bool stereo;
+    uint32_t sampleRate;
+    const char* data;
+    uint32_t length;
+} WaveObject;
+
+static const uint32_t INVALID_ID = -1;
 
 bool audioInit();
 
@@ -37,6 +48,14 @@ void audioExit();
 void audioPause();
 void audioResume();
 
-SimpleChannel* playSound(const char* path, int loops=0);
+uint32_t playSound(const char* path, int loops=0);
 
-SimpleChannel* playSoundOGG(const char* path, int loops=-1);
+uint32_t playSoundMem(const WaveObject* wave, int loops=0);
+
+uint32_t playSoundOGG(const char* path, int loops=-1);
+
+void killSound(uint32_t soundId);
+
+WaveObject* audioLoadWave(const char* path);
+
+void audioFreeWave(WaveObject* wave);

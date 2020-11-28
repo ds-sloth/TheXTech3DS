@@ -19,19 +19,38 @@ void myAudioCallback(void *const nul_) {
     LightEvent_Signal(&sound_event);
 }
 
+inline uint32_t getSoundId(volatile SimpleChannel *channel)
+{
+    return channel->channel_id+channel->index*32;
+}
+
+inline volatile SimpleChannel* validateSoundId(uint32_t id)
+{
+    if (id == INVALID_ID) return nullptr;
+    int channel_id = id % 32;
+    uint32_t index = id / 32;
+    if (channels[channel_id].index == index)
+    {
+        return &channels[channel_id];
+    }
+    return nullptr;
+}
+
 // should only be called by the audio thread if it is running
 void closeChannel(volatile SimpleChannel *channel)
 {
-    if (channel->format == FORMAT_PCM_FILE && channel->data_pointer != NULL)
+    if (channel->format == FORMAT_PCM_FILE && channel->data_pointer != nullptr)
     {
         fclose((FILE*)channel->data_pointer);
     }
-    if (channel->format == FORMAT_OGG_FILE && channel->data_pointer != NULL)
+    if (channel->format == FORMAT_OGG_FILE && channel->data_pointer != nullptr)
     {
         ov_clear((OggVorbis_File*)channel->data_pointer);
         free(channel->data_pointer);
     }
+    // DO NOT free the data pointer if it is a PCM_MEM because it is shared.
     channel->data_pointer = nullptr;
+    channel->index ++;
 }
 
 // returns true on success, false on failure
@@ -39,14 +58,12 @@ bool fillBuffer(volatile SimpleChannel *channel, volatile ndspWaveBuf *wavebuf)
 {
     if (wavebuf->status != NDSP_WBUF_DONE) return false;
     // load data into wavebuf...
-    if (channel->format == FORMAT_PCM_FILE && channel->data_pointer != NULL)
+    if (channel->format == FORMAT_PCM_FILE && channel->data_pointer != nullptr)
     {
-        int32_t *buffer_loc = (int32_t *)wavebuf->data_pcm16; // in 2x16-bit samples
+        uint32_t *buffer_loc = (uint32_t *)wavebuf->data_pcm16; // in 2x16-bit samples
         wavebuf->nsamples = 0;
         size_t samplesToRead = BUFFER_SIZE / sizeof(*buffer_loc);
         while(samplesToRead > 0) {
-            // Decode bufferSize samples from opusFile_ into buffer,
-            // storing the number of samples that were decoded (or error)
             int samples = fread(buffer_loc, sizeof(*buffer_loc), samplesToRead, (FILE*)channel->data_pointer);
             if(samples == 0) {
                 if (channel->loops == 0)
@@ -81,7 +98,42 @@ bool fillBuffer(volatile SimpleChannel *channel, volatile ndspWaveBuf *wavebuf)
         }
         return true;
     }
-    if (channel->format == FORMAT_OGG_FILE && channel->data_pointer != NULL)
+    if (channel->format == FORMAT_PCM_MEM && channel->data_pointer != nullptr)
+    {
+        size_t bytesToCopy = (channel->data_size - channel->data_idx);
+        if (bytesToCopy == 0)
+        {
+            if (channel->loops == 0)
+            {
+                closeChannel(channel);
+                return true;
+            }
+            else
+            {
+                if (channel->loops > 0)
+                    channel->loops -= 1;
+                channel->data_idx = 0;
+                bytesToCopy = channel->data_size;
+            }
+        }
+        if (bytesToCopy > BUFFER_SIZE) bytesToCopy = BUFFER_SIZE;
+        memcpy(wavebuf->data_pcm16, (char*)channel->data_pointer + channel->data_idx, bytesToCopy);
+        channel->data_idx += bytesToCopy;
+        if (channel->stereo)
+        {
+            wavebuf->nsamples = bytesToCopy / 4;
+            ndspChnWaveBufAdd(channel->channel_id, (ndspWaveBuf*)wavebuf);
+            DSP_FlushDataCache(wavebuf->data_pcm16, bytesToCopy);
+        }
+        else
+        {
+            wavebuf->nsamples = bytesToCopy / 2;
+            ndspChnWaveBufAdd(channel->channel_id, (ndspWaveBuf*)wavebuf);
+            DSP_FlushDataCache(wavebuf->data_pcm16, bytesToCopy);
+        }
+        return true;
+    }
+    if (channel->format == FORMAT_OGG_FILE && channel->data_pointer != nullptr)
     {
         char *buffer_loc = (char *)wavebuf->data_pcm16; // in 2x16-bit samples
         wavebuf->nsamples = 0;
@@ -143,7 +195,7 @@ void audioThread(void* nul_)
                 channel->format = FORMAT_FREE;
                 channel->kill = false;
             }
-            else if (channel->format != FORMAT_FREE)
+            else if (channel->format != FORMAT_FREE && channel->format != FORMAT_LOADING)
             {
                 for (size_t wi = 0; wi < NUM_BUFFERS; wi++)
                 {
@@ -159,7 +211,7 @@ void audioThread(void* nul_)
     }
 }
 
-int loadWaveFile(FILE* f, uint16_t* nChannels, uint32_t* sampleRate)
+int loadWaveFileData(FILE* f, uint16_t* nChannels, uint32_t* sampleRate)
 {
     fseek(f, 22, SEEK_SET);
     fread(nChannels, 2, 1, f);
@@ -168,20 +220,19 @@ int loadWaveFile(FILE* f, uint16_t* nChannels, uint32_t* sampleRate)
     return 0;
 }
 
-SimpleChannel* playSound(const char* path, int loops) {
-    printf("Playin sound %s\n", path);
+uint32_t playSound(const char* path, int loops) {
+    // printf("Playin sound %s\n", path);
     for (size_t ci = 0; ci < NUM_CHANNELS; ci++)
     {
         volatile SimpleChannel *channel = &channels[ci];
         if(channel->format != FORMAT_FREE) continue;
 
         FILE* f = fopen(path, "rb");
-        if (!f) return nullptr;
+        if (!f) return INVALID_ID;
         channel->data_pointer = f;
         uint16_t nChannels;
         uint32_t sampleRate;
-        loadWaveFile(f, &nChannels, &sampleRate);
-        // switch over to WAVE file format soon....
+        loadWaveFileData(f, &nChannels, &sampleRate);
         ndspChnReset(ci);
         ndspChnSetInterp(ci, NDSP_INTERP_POLYPHASE);
         if (nChannels == 2)
@@ -198,12 +249,90 @@ SimpleChannel* playSound(const char* path, int loops) {
         channel->format = FORMAT_PCM_FILE;
         channel->loops = loops;
         LightEvent_Signal(&sound_event);
-        return (SimpleChannel *)channel;
+        return getSoundId(channel);
     }
-    return nullptr;
+    return INVALID_ID;
 }
 
-SimpleChannel* playSoundOGG(const char* path, int loops) {
+uint32_t playSoundMem(const WaveObject* wave, int loops) {
+    for (size_t ci = 0; ci < NUM_CHANNELS; ci++)
+    {
+        volatile SimpleChannel *channel = &channels[ci];
+        if(channel->format != FORMAT_FREE) continue;
+
+        ndspChnReset(ci);
+        ndspChnSetInterp(ci, NDSP_INTERP_POLYPHASE);
+        channel->data_pointer = (void*) wave->data;
+        channel->data_idx = 0;
+        channel->data_size = wave->length;
+        if (wave->stereo)
+        {
+            ndspChnSetFormat(channel->channel_id, NDSP_FORMAT_STEREO_PCM16);
+            channel->stereo=true;
+        }
+        else
+        {
+            ndspChnSetFormat(channel->channel_id, NDSP_FORMAT_MONO_PCM16);
+            channel->stereo=false;
+        }
+        ndspChnSetRate(channel->channel_id, wave->sampleRate);
+        channel->format = FORMAT_PCM_MEM;
+        channel->loops = loops;
+        LightEvent_Signal(&sound_event);
+        return getSoundId(channel);
+    }
+    return INVALID_ID;
+}
+
+void loadOGG_Thread(void* passed_val)
+{
+    volatile SimpleChannel* channel = (volatile SimpleChannel*) passed_val;
+    FILE* f = (FILE*) channel->data_pointer;
+    channel->data_pointer = nullptr;
+
+    OggVorbis_File *vf = (OggVorbis_File*)malloc(sizeof(OggVorbis_File));
+    if(!vf) {
+        fclose(f);
+        channel->kill = true;
+        return;
+    }
+    if(ov_open(f,vf,nullptr,0))
+    {
+        free(vf);
+        fclose(f);
+        channel->kill = true;
+        return;
+    }
+    int ci = channel->channel_id;
+
+    ndspChnReset(ci);
+    ndspChnSetInterp(ci, NDSP_INTERP_POLYPHASE);
+
+    vorbis_info *vi = ov_info(vf,-1);
+    if (vi->channels == 2)
+    {
+        ndspChnSetFormat(channel->channel_id, NDSP_FORMAT_STEREO_PCM16);
+        channel->stereo=true;
+    }
+    else if (vi->channels == 1)
+    {
+        ndspChnSetFormat(channel->channel_id, NDSP_FORMAT_MONO_PCM16);
+        channel->stereo=false;
+    }
+    else
+    {
+        ov_clear(vf);
+        free(vf);
+        channel->kill = true;
+        return;
+    }
+    ndspChnSetRate(channel->channel_id, vi->rate);
+    channel->data_pointer = (void*)vf;
+    channel->format = FORMAT_OGG_FILE;
+    LightEvent_Signal(&sound_event);
+}
+
+uint32_t playSoundOGG(const char* path, int loops) {
     printf("Playin music %s\n", path);
     for (size_t ci = 0; ci < NUM_CHANNELS; ci++)
     {
@@ -211,46 +340,17 @@ SimpleChannel* playSoundOGG(const char* path, int loops) {
         if(channel->format != FORMAT_FREE) continue;
 
         FILE* f = fopen(path, "rb");
-        if (!f) return nullptr;
-        OggVorbis_File *vf = (OggVorbis_File*)malloc(sizeof(OggVorbis_File));
-        if(!vf) {
-            fclose(f);
-            return nullptr;
-        }
-        if(ov_open(f,vf,nullptr,0))
-        {
-            free(vf);
-            fclose(f);
-            return nullptr;
-        }
-        ndspChnReset(ci);
-        ndspChnSetInterp(ci, NDSP_INTERP_POLYPHASE);
-        vorbis_info *vi = ov_info(vf,-1);
-        if (vi->channels == 2)
-        {
-            ndspChnSetFormat(channel->channel_id, NDSP_FORMAT_STEREO_PCM16);
-            channel->stereo=true;
-        }
-        else if (vi->channels == 1)
-        {
-            ndspChnSetFormat(channel->channel_id, NDSP_FORMAT_MONO_PCM16);
-            channel->stereo=false;
-        }
-        else
-        {
-            ov_clear(vf);
-            free(vf);
-            return nullptr;
-        }
-        printf("Malloc'ed an oggmusic object at %p..\n", vf);
-        ndspChnSetRate(channel->channel_id, vi->rate);
-        channel->data_pointer = (void*)vf;
-        channel->format = FORMAT_OGG_FILE;
+        if (!f) return INVALID_ID;
         channel->loops = loops;
-        LightEvent_Signal(&sound_event);
-        return (SimpleChannel *)channel;
+        channel->format = FORMAT_LOADING;
+        channel->data_pointer = (void*)f;
+        uint32_t uniquePlayId = getSoundId(channel);
+
+        loadOGG_Thread((void*)channel);
+
+        return uniquePlayId;
     }
-    return nullptr;
+    return INVALID_ID;
 }
 
 bool audioInit() {
@@ -347,4 +447,66 @@ void audioResume() {
     {
         ndspChnSetPaused(ci, false);
     }
+}
+
+void killSound(uint32_t soundId)
+{
+    volatile SimpleChannel* channel = validateSoundId(soundId);
+    if (channel) channel->kill = true;
+}
+
+WaveObject* audioLoadWave(const char* path)
+{
+    FILE* f = fopen(path, "rb");
+    if (!f) return nullptr;
+    WaveObject* wave = (WaveObject*) malloc(sizeof(WaveObject));
+    uint16_t nChannels;
+    fseek(f, 22, SEEK_SET);
+    fread(&nChannels, 2, 1, f);
+    if (nChannels == 2)
+        wave->stereo = true;
+    else if (nChannels == 1)
+        wave->stereo = false;
+    else
+    {
+        free(wave);
+        fclose(f);
+        return nullptr;
+    }
+
+    fread(&wave->sampleRate, 4, 1, f);
+    fseek(f, 40, SEEK_SET);
+    fread(&wave->length, 4, 1, f);
+    // fseek(f, 44, SEEK_SET); // unnecessary
+    char* temp_buf = (char*) malloc(wave->length);
+    if (!temp_buf)
+    {
+        free(wave);
+        fclose(f);
+        return nullptr;
+    }
+    wave->data = temp_buf;
+    uint32_t to_read = wave->length;
+    while (to_read)
+    {
+        unsigned int samples_read = fread(temp_buf, 1, to_read, f);
+        if (!samples_read) break;
+        to_read -= samples_read;
+        temp_buf += samples_read;
+    }
+    fclose(f);
+    if (!to_read)
+        return wave;
+    else
+    {
+        free((void*)wave->data);
+        free(wave);
+        return nullptr;
+    }
+}
+
+void audioFreeWave(WaveObject* wave)
+{
+    free((void*)wave->data);
+    free(wave);
 }

@@ -45,12 +45,11 @@ int musicLoop = 0;
 // Public musicName As String
 std::string musicName;
 
-static SimpleChannel *g_curMusic = nullptr;
+static uint32_t g_curMusic = -1;
 static bool g_mixerLoaded = false;
 
 static int g_customLvlMusicId = 24;
 static int g_customWldMusicId = 17;
-static int g_reservedChannels = 0;
 
 //! Total count of loaded default sounds
 static unsigned int g_totalSounds = 0;
@@ -84,17 +83,16 @@ struct SFX_t
 {
     std::string path;
     std::string customPath;
-    int *chunk = nullptr;
-    int *chunkOrig = nullptr;
+    WaveObject* wave_ptr = nullptr;
+    WaveObject* wave_ptr_orig = nullptr;
     bool isCustom = false;
     int volume = 128;
-    int channel = -1;
+    uint32_t playingSoundId = -1;
 };
 
 static std::unordered_map<std::string, Music_t> music;
 static std::unordered_map<std::string, SFX_t>   sound;
 
-static const int maxSfxChannels = 91;
 
 int CustomWorldMusicId()
 {
@@ -108,17 +106,6 @@ void InitMixerX()
 
     if(g_mixerLoaded)
         return;
-    // printf("Opening sound...");
-    // Mix_Init(MIX_INIT_MID|MIX_INIT_MOD|MIX_INIT_FLAC|MIX_INIT_OGG|MIX_INIT_OPUS|MIX_INIT_MP3);
-    // if(Mix_OpenAudio(44100, AUDIO_S16LSB, 2, 2048) < 0)
-    // {
-    //     std::string msg = fmt::format_ne("Can't open audio stream, continuing without audio: ({0})", Mix_GetError());
-    //     pLogCritical(msg.c_str());
-    //     SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Sound opening error", msg.c_str(), nullptr);
-    //     noSound = true;
-    // }
-    // Mix_VolumeMusic(MIX_MAX_VOLUME);
-    // Mix_AllocateChannels(maxSfxChannels);
     audioInit();
     g_mixerLoaded = true;
 }
@@ -136,8 +123,10 @@ void QuitMixerX()
     for(auto it = sound.begin(); it != sound.end(); ++it)
     {
         auto &s = it->second;
-        // if(s.chunk)
-        //     Mix_FreeChunk(s.chunk);
+        if(s.wave_ptr)
+            audioFreeWave(s.wave_ptr);
+        if(s.wave_ptr_orig)
+            audioFreeWave(s.wave_ptr_orig);
     }
     sound.clear();
     music.clear();
@@ -174,12 +163,12 @@ static void RestoreSfx(SFX_t &u)
 {
     if(u.isCustom)
     {
-        if(u.chunk && u.chunkOrig)
+        if(u.wave_ptr)
         {
-            // Mix_FreeChunk(u.chunk);
-            u.chunk = u.chunkOrig;
-            u.chunkOrig = nullptr;
+            audioFreeWave(u.wave_ptr);
         }
+        u.wave_ptr = u.wave_ptr_orig;
+        u.wave_ptr_orig = nullptr;
         u.isCustom = false;
     }
 }
@@ -208,22 +197,20 @@ static void AddSfx(const std::string &root,
                     return;  // Don't load same file twice!
                 }
 
-                // Mix_Chunk *backup = m.chunk;
-                int *backup = m.chunk;
+                WaveObject* WAV_backup = m.wave_ptr;
                 m.customPath = newPath;
-                // m.chunk = Mix_LoadWAV((root + f).c_str());
-                if(m.chunk)
+                m.wave_ptr = audioLoadWave((root + f).c_str());
+                if(m.wave_ptr)
                 {
-                    if(!m.isCustom && !m.chunkOrig)
-                        m.chunkOrig = backup;
-                    else;
-                        // Mix_FreeChunk(backup);
+                    if(!m.isCustom && !m.wave_ptr_orig)
+                        m.wave_ptr_orig = WAV_backup;
+                    else
+                        audioFreeWave(WAV_backup);
                     m.isCustom = true;
                 }
                 else
                 {
-                    m.chunk = backup;
-                    // printf("ERROR: SFX '%s' loading error: %s", m.path.c_str(), Mix_GetError());
+                    m.wave_ptr = WAV_backup;
                 }
             }
         }
@@ -232,10 +219,8 @@ static void AddSfx(const std::string &root,
             SFX_t m;
             m.path = root + f;
             m.volume = 128;
-            // printf("Adding SFX [%s] '%s'", alias.c_str(), m.path.c_str());
-            // m.chunk = Mix_LoadWAV(m.path.c_str());
-            // m.chunk = (int*)&m.path; // if it would be permaloaded.....
-            m.channel = -1;
+            m.wave_ptr = audioLoadWave(m.path.c_str());
+            m.playingSoundId = -1;
             sound.insert({alias, m});
         }
     }
@@ -274,10 +259,10 @@ void PlayMusic(std::string Alias, int fadeInMs)
 {
     if(noSound)
         return;
-    if(g_curMusic)
+    if(g_curMusic != INVALID_ID)
     {
-        g_curMusic->kill = true;
-        g_curMusic = nullptr;
+        killSound(g_curMusic);
+        g_curMusic = INVALID_ID;
     }
 
     auto mus = music.find(Alias);
@@ -285,17 +270,9 @@ void PlayMusic(std::string Alias, int fadeInMs)
     {
         auto &m = mus->second;
         g_curMusic = playSoundOGG(m.path.c_str(), -1);
-        if(!g_curMusic)
+        if(g_curMusic == INVALID_ID)
         {
             printf("Music '%s' opening error :(\n", m.path.c_str());
-        }
-        else
-        {
-            // Mix_VolumeMusicStream(g_curMusic, m.volume);
-            // if(fadeInMs > 0)
-            //     Mix_FadeInMusic(g_curMusic, -1, fadeInMs);
-            // else
-            //     Mix_PlayMusic(g_curMusic, -1);
         }
     }
 }
@@ -305,10 +282,22 @@ void PlaySfx(std::string Alias, int loops)
     auto sfx = sound.find(Alias);
     if(sfx != sound.end())
     {
-        auto &s = sfx->second;
-        if (s.isCustom && playSound(s.customPath.c_str(), loops)) return;
-        playSound(s.path.c_str(), loops); // do loops... D:
-        // Mix_PlayChannel(s.channel, s.chunk, loops);
+        SFX_t &s = sfx->second;
+
+        killSound(s.playingSoundId);
+        if (s.wave_ptr)
+        {
+            s.playingSoundId = playSoundMem(s.wave_ptr, loops);
+            if (s.playingSoundId != INVALID_ID)
+                return;
+        }
+        if (s.isCustom)
+        {
+            s.playingSoundId = playSound(s.customPath.c_str(), loops);
+            if (s.playingSoundId != INVALID_ID)
+                return;
+        }
+        s.playingSoundId = playSound(s.path.c_str(), loops);
     }
 }
 
@@ -317,8 +306,8 @@ void StopSfx(std::string Alias)
     auto sfx = sound.find(Alias);
     if(sfx != sound.end())
     {
-        auto &s = sfx->second;
-        // Mix_HaltChannel(s.channel);
+        SFX_t &s = sfx->second;
+        killSound(s.playingSoundId);
     }
 }
 
@@ -336,10 +325,7 @@ void StartMusic(int A, int fadeInMs)
         {
             printf("Starting custom music [%s]", curWorldMusicFile.c_str());
             g_curMusic = playSoundOGG((FileNamePath + curWorldMusicFile).c_str(), -1);
-            // if(fadeInMs > 0)
-            //     Mix_FadeInMusic(g_curMusic, -1, fadeInMs);
-            // else
-            //     Mix_PlayMusic(g_curMusic, -1);
+
         }
         else
         {
@@ -377,7 +363,7 @@ void StartMusic(int A, int fadeInMs)
         musicName = mus;
     }
 
-    if (g_curMusic) musicPlaying = true;
+    if (g_curMusic != INVALID_ID) musicPlaying = true;
 }
 
 void StopMusic()
@@ -387,9 +373,9 @@ void StopMusic()
 
     printf("Stopping music\n");
 
-    if (g_curMusic)
-        g_curMusic->kill = true;
-    g_curMusic = nullptr;
+    if (g_curMusic != INVALID_ID)
+        killSound(g_curMusic);
+    g_curMusic = INVALID_ID;
     musicPlaying = false;
 }
 
@@ -397,8 +383,8 @@ void FadeOutMusic(int ms)
 {
     if(!musicPlaying || noSound)
         return;
-    printf("Fading out music (unsupported...)\n");
-    // Mix_FadeOutMusic(ms);
+    // printf("Fading out music (unsupported...)\n");
+    StopMusic();
     musicPlaying = false;
 }
 
@@ -422,8 +408,6 @@ void PlayInitSound()
         if(!p.empty())
         {
             playSound((SfxRoot + p).c_str());
-            // g_curMusic = Mix_LoadMUS((SfxRoot + p).c_str());
-            // Mix_PlayMusic(g_curMusic, 0);
         }
     }
 }
@@ -511,30 +495,18 @@ void InitSound()
     UpdateLoad();
     if(!Files::fileExists(musicIni) && !Files::fileExists(sfxIni))
     {
-        printf("music.ini and sounds.ini are missing");
-        // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-        //                          "music.ini and sounds.ini are missing",
-        //                          "Files music.ini and sounds.ini are not exist, game will work without default music and SFX.",
-        //                          frmMain.getWindow());
+        printf("music.ini and sounds.ini are missing\n");
         g_customLvlMusicId = 24;
         g_customWldMusicId = 17;
         return;
     }
     else if(!Files::fileExists(musicIni))
     {
-        printf("music.ini is missing");
-        // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-        //                          "music.ini is missing",
-        //                          "File music.ini is not exist, game will work without default music.",
-        //                          frmMain.getWindow());
+        printf("music.ini is missing\n");
     }
     else if(!Files::fileExists(sfxIni))
     {
-        printf("sounds.ini is missing");
-        // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR,
-        //                          "sounds.ini is missing",
-        //                          "File sounds.ini is not exist, game will work without SFX.",
-        //                          frmMain.getWindow());
+        printf("sounds.ini is missing\n");
     }
 
     loadMusicIni(MusicRoot, musicIni, false);
@@ -553,13 +525,10 @@ void InitSound()
         AddSfx(SfxRoot, sounds, alias, group);
     }
     UpdateLoad();
-    // Mix_ReserveChannels(g_reservedChannels);
 
     if(g_errorsSfx > 0)
     {
         printf("had an SFX error...\n");
-        // std::string msg = fmt::format_ne("Failed to load some SFX assets. Loo a log file to get more details:\n{0}", getLogFilePath());
-        // SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Sounds loading error", msg.c_str(), frmMain.getWindow());
     }
 }
 
