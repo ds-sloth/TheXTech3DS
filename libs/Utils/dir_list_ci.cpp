@@ -3,6 +3,8 @@
 #include "../DirManager/dirman.h"
 #include "strings.h"
 #include <cstring>
+#include <algorithm>
+#include <utility>
 // #include <SDL2/SDL_stdinc.h>
 
 
@@ -66,17 +68,23 @@ std::string DirListCI::resolveFileCase(const std::string &in_name)
     if(pathArgs != std::string::npos)
     {
         auto n = name.substr(0, pathArgs);
-        for(std::string &c : m_fileList)
-        {
-            if(strcasecmp(c.c_str(), n.c_str()) == 0)
-                return c + name.substr(pathArgs);
-        }
+        std::string uppercase_string;
+        uppercase_string.resize(n.length());
+        std::transform(n.begin(), n.end(), uppercase_string.begin(),
+            [](unsigned char c){ return std::toupper(c); });
+        auto found = m_fileMap.find(uppercase_string);
+        if (found != m_fileMap.end())
+            return found->second + name.substr(pathArgs);
     }
     else
-    for(std::string &c : m_fileList)
     {
-        if(strcasecmp(c.c_str(), name.c_str()) == 0)
-            return c;
+        std::string uppercase_string;
+        uppercase_string.resize(name.length());
+        std::transform(name.begin(), name.end(), uppercase_string.begin(),
+            [](unsigned char c){ return std::toupper(c); });
+        auto found = m_fileMap.find(uppercase_string);
+        if (found != m_fileMap.end())
+            return found->second;
     }
 
     return name;
@@ -91,24 +99,46 @@ std::string DirListCI::resolveDirCase(const std::string &name)
     if(name.empty())
         return name;
 
-    for(std::string &c : m_dirList)
-    {
-        if(strcasecmp(c.c_str(), name.c_str()) == 0)
-            return c;
-    }
+    std::string uppercase_string;
+    uppercase_string.resize(name.length());
+    std::transform(name.begin(), name.end(), uppercase_string.begin(),
+        [](unsigned char c){ return std::toupper(c); });
 
-    return name;
+    auto found = m_dirMap.find(uppercase_string);
+    if (found == m_dirMap.end())
+        return name;
+
+    return found->second;
 #endif
 }
 
 void DirListCI::rescan()
 {
-    m_fileList.clear();
-    m_dirList.clear();
+    m_fileMap.clear();
+    m_dirMap.clear();
     if(m_curDir.empty())
         return;
 
     DirMan d(m_curDir);
-    d.getListOfFiles(m_fileList);
-    d.getListOfFolders(m_dirList);
+    std::vector<std::string> fileList;
+    std::vector<std::string> dirList;
+    d.getListOfFiles(fileList);
+    d.getListOfFolders(dirList);
+
+    std::string uppercase_string;
+
+    for (std::string& file : fileList)
+    {
+        uppercase_string.resize(file.length());
+        std::transform(file.begin(), file.end(), uppercase_string.begin(),
+            [](unsigned char c){ return std::toupper(c); });
+        m_fileMap.insert(std::make_pair(uppercase_string, file));
+    }
+    for (std::string& dir : dirList)
+    {
+        uppercase_string.resize(dir.length());
+        std::transform(dir.begin(), dir.end(), uppercase_string.begin(),
+            [](unsigned char c){ return std::toupper(c); });
+        m_dirMap.insert(std::make_pair(uppercase_string, dir));
+    }
 }
