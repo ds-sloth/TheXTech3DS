@@ -1195,7 +1195,6 @@ void MenuLoop()
                     n.TimeLeft = 100;
 //                        .Section = Player(A).Section
                     n.Section = Player[A].Section;
-                    NPCReduceWidth(numNPCs);
                     syncLayers_NPC(numNPCs);
 //                    End With
                 }

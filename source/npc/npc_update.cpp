@@ -521,8 +521,6 @@ void UpdateNPCs()
                     }
                 }
             } // 208
-            // now done on all initializations
-            // NPCReduceWidth(A);
         } // .JustActivated != 0
 
         NPC[A].tempBlock = 0;
@@ -532,8 +530,26 @@ void UpdateNPCs()
             NPC[A].TimeLeft = 100;
         }
 
-        // original NPCReduceWidth code was here...
-        // NPCReduceWidth(A);
+        // TODO: determine whether this is ever relevant except for NPC creation
+        if(fEqual(NPC[A].Location.Width, 32.0))
+        {
+            if(NPC[A].Type != 57 && NPC[A].Type != 84)
+            {
+                // If .Type = 58 Or .Type = 21 Then
+                if(!(NPCIsAnExit[NPC[A].Type] || NPC[A].Type == 8 || NPC[A].Type == 51 ||
+                     NPC[A].Type == 52 || NPC[A].Type == 74 || NPC[A].Type == 256 ||
+                     NPC[A].Type == 257 || NPC[A].Type == 93 || NPC[A].Type == 245))
+                {
+                    NPC[A].Location.X = NPC[A].Location.X + 0.015;
+                }
+
+                NPC[A].Location.Width = NPC[A].Location.Width - 0.03;
+            }
+        }
+        else if(fEqual(NPC[A].Location.Width, 256.0))
+            NPC[A].Location.Width = 255.9;
+        else if(fEqual(NPC[A].Location.Width, 128.0))
+            NPC[A].Location.Width = 127.9;
 
         if(NPC[A].Active == true && NPC[A].TimeLeft > 1)
         {
@@ -863,7 +879,6 @@ void UpdateNPCs()
                 NPC[A].Location.Height = NPCHeight[NPC[A].Type];
                 NPC[A].Location.X = NPC[A].Location.X - NPC[A].Location.Width / 2.0;
                 NPC[A].Location.Y = NPC[A].Location.Y - NPC[A].Location.Height / 2.0;
-                NPCReduceWidth(A);
             }
             if(NPC[A].Text != "")
             {
@@ -986,7 +1001,6 @@ void UpdateNPCs()
                                 NPC[A].Location.X = NPC[A].Location.X - NPC[A].Location.Width / 2.0;
                                 NPC[A].Location.Y = NPC[A].Location.Y - NPC[A].Location.Height / 2.0;
                             }
-                            NPCReduceWidth(A);
                         }
                         if(NPC[A].Type == 45)
                             NPC[A].Special = 1;
@@ -999,7 +1013,6 @@ void UpdateNPCs()
                             NPC[A].Location.Width = NPCWidth[NPC[A].Type];
                             NPC[A].Location.X = NPC[A].Location.X - NPC[A].Location.Width / 2.0;
                             NPC[A].Location.Y = NPC[A].Location.Y - NPC[A].Location.Height / 2.0;
-                            NPCReduceWidth(A);
                         }
                         NPC[A].TimeLeft = 100;
                         NPC[A].BeltSpeed = 0;
@@ -4178,7 +4191,6 @@ void UpdateNPCs()
                                     NPC[numNPCs].Location.SpeedY = 1;
                                 else if(NPC[numNPCs].Location.SpeedY < -1)
                                     NPC[numNPCs].Location.SpeedY = -1;
-                                NPCReduceWidth(numNPCs);
                                 syncLayers_NPC(numNPCs);
                                 PlaySound(42);
                             }
@@ -4219,7 +4231,6 @@ void UpdateNPCs()
                         NPC[numNPCs].TimeLeft = 50;
                         NPC[numNPCs].Location.SpeedY = -8;
                         NPC[numNPCs].Location.SpeedX = 3 * Player[NPC[A].HoldingPlayer].Direction + Player[NPC[A].HoldingPlayer].Location.SpeedX * 0.8;
-                        NPCReduceWidth(numNPCs);
                         syncLayers_NPC(numNPCs);
                     }
                 }
@@ -4348,7 +4359,6 @@ void UpdateNPCs()
                                     tempLocation.Y = NPC[numNPCs].Location.Y + NPC[numNPCs].Location.Height / 2.0 - EffectHeight[10] / 2.0;
                                     NewEffect(10, tempLocation);
 
-                                    NPCReduceWidth(numNPCs);
                                     PlaySound(22);
                                 }
                                 syncLayers_NPC(numNPCs);

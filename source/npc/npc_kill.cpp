@@ -224,7 +224,6 @@ void KillNPC(int A, int B)
                 NPC[numNPCs].Special = 1;
                 NPC[numNPCs].Location.SpeedY = -5;
                 NPC[numNPCs].Location.SpeedX = (1 + std::fmod(dRand(), 0.5)) * NPC[A].Direction;
-                NPCReduceWidth(numNPCs);
                 syncLayers_NPC(numNPCs);
             }
         }
@@ -250,7 +249,6 @@ void KillNPC(int A, int B)
                 NPC[A].Location.Width = 32;
                 NPC[A].Location.Y = NPC[A].Location.Y + NPC[A].Location.Height - 32;
                 NPC[A].Location.Height = 32;
-                NPCReduceWidth(A);
                 NewEffect(10, NPC[A].Location);
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13, NPC[A].Location);
@@ -394,7 +392,6 @@ void KillNPC(int A, int B)
                 NewEffect(10, NPC[A].Location);
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13 , NPC[A].Location);
-                NPCReduceWidth(A);
             }
             else if(B == 8)
             {
@@ -428,7 +425,6 @@ void KillNPC(int A, int B)
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13 , NPC[A].Location);
             }
-            NPCReduceWidth(A);
         }
         else if(NPC[A].Type == 32) // P Switch
         {
@@ -479,7 +475,6 @@ void KillNPC(int A, int B)
             NewEffect(10 , NPC[A].Location);
             if(NPC[A].NoLavaSplash == false)
                 NewEffect(13 , NPC[A].Location);
-            NPCReduceWidth(A);
         }
         else if(NPC[A].Type == 37 || NPC[A].Type == 179 || NPC[A].Type == 180) // thwomp
         {
@@ -510,7 +505,6 @@ void KillNPC(int A, int B)
                 NewEffect(10 , NPC[A].Location);
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13 , NPC[A].Location);
-                NPCReduceWidth(A);
             }
             else if(NPC[A].Type == 179)
             {
@@ -639,7 +633,6 @@ void KillNPC(int A, int B)
                 NewEffect(10 , NPC[A].Location);
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13 , NPC[A].Location);
-                NPCReduceWidth(A);
             }
             else
             {
@@ -667,7 +660,6 @@ void KillNPC(int A, int B)
                 NewEffect(10 , NPC[A].Location);
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13 , NPC[A].Location);
-                NPCReduceWidth(A);
             }
             else
             {
@@ -690,14 +682,12 @@ void KillNPC(int A, int B)
                 NewEffect(10 , NPC[A].Location);
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13 , NPC[A].Location);
-                NPCReduceWidth(A);
             }
             else
             {
                 NPC[A].Location.Width = NPC[A].Location.Width + 2;
                 NPC[A].Location.X = NPC[A].Location.X - 1;
                 NewEffect(50, NPC[A].Location, NPC[A].Direction);
-                NPCReduceWidth(A);
             }
             PlaySound(44);
             if(NPC[A].Legacy == true)
@@ -794,7 +784,6 @@ void KillNPC(int A, int B)
                 NewEffect(10 , NPC[A].Location);
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13 , NPC[A].Location);
-                NPCReduceWidth(A);
             }
             else if(B == 8)
             {
@@ -875,7 +864,6 @@ void KillNPC(int A, int B)
                 NewEffect(10 , NPC[A].Location);
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13 , NPC[A].Location);
-                NPCReduceWidth(A);
             }
             else
             {
@@ -1037,7 +1025,6 @@ void KillNPC(int A, int B)
                 NewEffect(10 , NPC[A].Location);
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13 , NPC[A].Location);
-                NPCReduceWidth(A);
             }
             else if(B == 8)
             {
@@ -1075,7 +1062,6 @@ void KillNPC(int A, int B)
                     NPC[numNPCs].Active = true;
                     NPC[numNPCs].TimeLeft = 100;
                     NPC[numNPCs].Frame = 0;
-                    NPCReduceWidth(numNPCs);
                     syncLayers_NPC(numNPCs);
                     CheckSectionNPC(numNPCs);
                     PlaySound(41);
@@ -1249,7 +1235,6 @@ void KillNPC(int A, int B)
                 NPC[A].Location.X = NPC[A].Location.X + 2;
                 if(NPC[A].NoLavaSplash == false)
                     NewEffect(13 , NPC[A].Location);
-                NPCReduceWidth(A);
             }
             else
             {

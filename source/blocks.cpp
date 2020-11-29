@@ -390,7 +390,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
                     }
                     NPC[numNPCs].Special = 1;
                     NPC[numNPCs].Immune = 20;
-                    NPCReduceWidth(numNPCs);
                     syncLayers_NPC(numNPCs);
                     CheckSectionNPC(numNPCs);
                     if(B > 20 || (Player[whatPlayer].Character == 5 && B > 5))
@@ -463,7 +462,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
                 NPC[numNPCs].Special = 1;
                 NPC[numNPCs].Immune = 20;
                 PlaySound(14);
-                NPCReduceWidth(numNPCs);
                 syncLayers_NPC(numNPCs);
                 CheckSectionNPC(numNPCs);
                 b.Special = b.Special - 1;
@@ -730,7 +728,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
             {
                 NPC[numNPCs].TimeLeft = Physics.NPCTimeOffScreen * 20;
             }
-            NPCReduceWidth(numNPCs);
         }
         else // Spawn the player
         {
@@ -802,7 +799,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
                 NPC[numNPCs].Effect = 3;
             }
             NPC[numNPCs].Effect2 = 0;
-            NPCReduceWidth(numNPCs);
             syncLayers_NPC(numNPCs);
             CheckSectionNPC(numNPCs);
         }
@@ -895,7 +891,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
                 NPC[numNPCs].Effect = 3;
             }
             NPC[numNPCs].Effect2 = 0;
-            NPCReduceWidth(numNPCs);
             syncLayers_NPC(numNPCs);
             CheckSectionNPC(numNPCs);
         }
@@ -997,7 +992,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
                 NPC[numNPCs].Effect = 3;
             }
             NPC[numNPCs].Effect2 = 0;
-            NPCReduceWidth(numNPCs);
             syncLayers_NPC(numNPCs);
             CheckSectionNPC(numNPCs);
         }
@@ -1071,7 +1065,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
             NPC[numNPCs].Effect = 3;
         }
         NPC[numNPCs].Effect2 = 0;
-        NPCReduceWidth(numNPCs);
         syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
     }
@@ -1129,7 +1122,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
             NPC[numNPCs].Effect = 3;
         }
         NPC[numNPCs].Effect2 = 0;
-        NPCReduceWidth(numNPCs);
         syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
     }
@@ -1182,7 +1174,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
             NPC[numNPCs].Effect = 3;
         }
         NPC[numNPCs].Effect2 = 0;
-        NPCReduceWidth(numNPCs);
         syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
     }
@@ -1235,7 +1226,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
             NPC[numNPCs].Effect = 3;
         }
         NPC[numNPCs].Effect2 = 0;
-        NPCReduceWidth(numNPCs);
         syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
     }
@@ -1255,7 +1245,6 @@ void BlockHit(int A, bool HitDown, int whatPlayer)
         NPC[numNPCs].Location.Y = NPC[numNPCs].Location.Y - 0.01;
         NPC[numNPCs].DefaultLocation = NPC[numNPCs].Location;
         NPC[numNPCs].DefaultType = NPC[numNPCs].Type;
-        NPCReduceWidth(numNPCs);
         syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
         b = blankBlock;
@@ -1983,7 +1972,6 @@ void PSwitch(bool Bool)
                     NPC[numNPCs].Location.X = NPC[numNPCs].Location.X + (Block[A].Location.Width - NPC[numNPCs].Location.Width) / 2.0;
                     NPC[numNPCs].DefaultLocation = NPC[numNPCs].Location;
                     NPC[numNPCs].DefaultType = NPC[numNPCs].Type;
-                    NPCReduceWidth(numNPCs);
                     syncLayers_NPC(numNPCs);
                     CheckSectionNPC(numNPCs);
                     Block[A] = Block[numBlock];
@@ -2049,7 +2037,6 @@ void PSwitch(bool Bool)
                     NPC[numNPCs].DefaultType = NPC[numNPCs].Type;
                     CheckSectionNPC(numNPCs);
                     NPC[numNPCs].Killed = 0;
-                    NPCReduceWidth(numNPCs);
                     syncLayers_NPC(numNPCs);
                     KillBlock(A, false);
                     Block[A].Layer = (HS_UsedPSwitch);

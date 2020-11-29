@@ -416,7 +416,6 @@ bool OpenLevelData(LevelData &lvl, const std::string FilePath)
         npc.Active = true;
         npc.JustActivated = 1;
 
-        NPCReduceWidth(numNPCs);
         syncLayers_NPC(numNPCs);
         CheckSectionNPC(numNPCs);
 

@@ -78,7 +78,6 @@ void DropBonus(int A)
                 NPC[numNPCs].Location.X = -vScreenX[A] + vScreen[A].Width / 2.0 - NPC[numNPCs].Location.Width / 2.0;
                 NPC[numNPCs].Location.Y = -vScreenY[A] + 16 + 12;
             }
-            NPCReduceWidth(numNPCs);
             NPC[numNPCs].Location.SpeedX = 0;
             NPC[numNPCs].Location.SpeedY = 0;
             NPC[numNPCs].Effect = 2;
