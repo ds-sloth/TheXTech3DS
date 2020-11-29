@@ -11,6 +11,9 @@ uint64_t graphics_times[17];
 char messageBufs[10][41];
 int currentMessage = 0;
 bool debugMode = true;
+unsigned int num_textures_loaded;
+unsigned int num_big_textures_loaded;
+unsigned int num_waves_loaded;
 
 void writeMessage(std::string message)
 {
@@ -19,6 +22,7 @@ void writeMessage(std::string message)
 
 void drawSecondScreen()
 {
+    if (!debugMode) return;
     char tempBuf[41];
     frmMain.initDraw(1);
 
@@ -56,11 +60,18 @@ void drawSecondScreen()
     snprintf(tempBuf, 41, "%6llu %6llu %6llu %6llu", (graphics_times[11]-graphics_times[10])/268,
         (graphics_times[12]-graphics_times[11])/268, (graphics_times[14]-graphics_times[13])/268,
         (graphics_times[15]-graphics_times[14])/268);
-    SuperPrint(tempBuf, 4, 16, 194);
+    SuperPrint(tempBuf, 4, 16, 192);
+
+    SuperPrint("Currently loaded:", 4, 16, 224);
+    snprintf(tempBuf, 41, "%u texs, %u big texs, %u waves", num_textures_loaded,
+        num_big_textures_loaded, num_waves_loaded);
+    SuperPrint(tempBuf, 4, 16, 240);
 }
 
 void drawSecondScreen2()
 {
+    if (!debugMode) return;
+
     char tempBuf[41];
     frmMain.initDraw(1);
 
@@ -74,5 +85,10 @@ void drawSecondScreen2()
     snprintf(tempBuf, 41, "%6llu %6llu %6llu %6llu", (graphics_times[11]-graphics_times[5])/268,
         (graphics_times[12]-graphics_times[11])/268, (graphics_times[14]-graphics_times[13])/268,
         (graphics_times[15]-graphics_times[14])/268);
-    SuperPrint(tempBuf, 4, 16, 194);
+    SuperPrint(tempBuf, 4, 16, 192);
+
+    SuperPrint("Currently loaded:", 4, 16, 224);
+    snprintf(tempBuf, 41, "%u texs, %u big texs, %u waves", num_textures_loaded,
+        num_big_textures_loaded, num_waves_loaded);
+    SuperPrint(tempBuf, 4, 16, 240);
 }

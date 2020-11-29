@@ -70,6 +70,8 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
     top = C2D_CreateScreenTarget(GFX_TOP, GFX_LEFT);
     right = C2D_CreateScreenTarget(GFX_TOP, GFX_RIGHT);
     bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
+    // bottom = right;
+    // debugMode = false;
 
     for (int i = 0; i < 4; i++)
     {
@@ -272,6 +274,8 @@ StdPicture FrmMain::LoadPicture(std::string path)
     sourceImage = C2D_SpriteSheetLoad(target.path.c_str());
     loadTexture(target, sourceImage);
 
+    num_textures_loaded ++;
+
     if(!target.texture)
         printf("FAILED TO LOAD!!! %s\n", path.c_str());
     return target;
@@ -430,8 +434,13 @@ void FrmMain::lazyLoad(StdPicture &target)
         if (sourceImage) loadTexture3(target, sourceImage);
     }
 
+    num_textures_loaded ++;
+
     if (target.w >= 256 || target.h >= 256)
+    {
         m_bigPictures.insert(&target);
+        num_big_textures_loaded ++;
+    }
 
     if (linearSpaceFree() < 4194304) freeTextureMem();
 }
@@ -491,10 +500,15 @@ void FrmMain::deleteTexture(StdPicture &tx, bool lazyUnload)
     if(!tx.inited)
         return;
 
-    if(m_bigPictures.find(&tx) != m_bigPictures.end()) m_bigPictures.erase(&tx);
+    if(m_bigPictures.find(&tx) != m_bigPictures.end())
+    {
+        m_bigPictures.erase(&tx);
+        num_big_textures_loaded --;
+    }
 
     if(tx.texture)
     {
+        num_textures_loaded --;
         if(m_textureBank.find(tx.texture) != m_textureBank.end())
             m_textureBank.erase(tx.texture);
         C2D_SpriteSheetFree(tx.texture);
@@ -569,12 +583,12 @@ inline int ROUNDDIV2(int x)
 
 inline float ROUNDDIV2(float x)
 {
-    return std::nearbyintf(x/2.f);
+    return std::nearbyintf(std::roundf(x)/2.f);
 }
 
 inline float ROUNDDIV2(double x)
 {
-    return std::nearbyintf(((float)x)/2.f);
+    return std::nearbyintf(std::roundf((float)x)/2.f);
 }
 
 inline float FLOORDIV2(float x)

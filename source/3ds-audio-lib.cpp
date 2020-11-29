@@ -4,6 +4,7 @@
 #include <tremor/ivorbisfile.h>
 #include <3ds.h>
 #include <cstdlib>
+#include "second_screen.h"
 
 volatile SimpleChannel channels[NUM_CHANNELS];
 char *audio_buffer = NULL;
@@ -520,7 +521,10 @@ WaveObject* audioLoadWave(const char* path)
     }
     fclose(f);
     if (!to_read)
+    {
+        num_waves_loaded ++;
         return wave;
+    }
     else
     {
         free((void*)wave->data);
@@ -531,6 +535,7 @@ WaveObject* audioLoadWave(const char* path)
 
 void audioFreeWave(WaveObject* wave)
 {
+    num_waves_loaded --;
     free((void*)wave->data);
     free(wave);
 }
