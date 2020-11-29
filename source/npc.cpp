@@ -136,6 +136,7 @@ void Deactivate(int A)
             NPC[A].Pinched4 = 0;
             NPC[A].Pinched = 0;
             NPC[A].MovingPinched = 0;
+            NPCReduceWidth(A);
         }
     }
     else if(NPCIsAnExit[NPC[A].Type])
@@ -276,6 +277,7 @@ void DropNPC(int A, int NPCType)
         NPC[numNPCs].Effect = 2;
         NPC[numNPCs].Active = true;
         NPC[numNPCs].TimeLeft = 200;
+        NPCReduceWidth(numNPCs);
         syncLayers_NPC(numNPCs);
     }
 }
@@ -432,6 +434,7 @@ void NPCSpecial(int A)
             NPC[numNPCs].DefaultType = NPC[numNPCs].Type;
             NPC[numNPCs].Layer = NPC[A].Layer;
             NPC[numNPCs].Shadow = NPC[A].Shadow;
+            NPCReduceWidth(numNPCs);
             syncLayers_NPC(numNPCs);
         }
         if(NPC[A].Special == 1.0)
@@ -658,6 +661,7 @@ void NPCSpecial(int A)
             NPC[A].Location.SpeedX = 0;
             NPC[A].Location.SpeedY = 0;
             NPC[A].Direction = NPC[A].DefaultDirection;
+            NPCReduceWidth(A);
 
             if(NPCIsACoin[NPC[A].Type])
             {
@@ -730,6 +734,7 @@ void NPCSpecial(int A)
                         NPC[numNPCs].Location.SpeedX = -NPC[numNPCs].Location.SpeedX;
                     NPC[numNPCs].Location.SpeedX = NPC[numNPCs].Location.SpeedX * 1.6;
                     NPC[numNPCs].Location.SpeedY = NPC[numNPCs].Location.SpeedY * 1.6;
+                    NPCReduceWidth(numNPCs);
                     syncLayers_NPC(numNPCs);
                 }
             }
@@ -968,6 +973,7 @@ void NPCSpecial(int A)
                 NPC[A].Location.Height = NPCHeight[NPC[A].Type];
                 NPC[A].Location.X = NPC[A].Location.X - NPC[A].Location.Width / 2.0;
                 NPC[A].Location.Y = NPC[A].Location.Y - NPC[A].Location.Height;
+                NPCReduceWidth(A);
             }
         }
         else
@@ -1206,6 +1212,7 @@ void NPCSpecial(int A)
                 NPC[A].Location.Height = NPCHeight[NPC[A].Type];
                 NPC[A].Location.X = NPC[A].Location.X - NPC[A].Location.Width / 2.0;
                 NPC[A].Location.Y = NPC[A].Location.Y - NPC[A].Location.Height;
+                NPCReduceWidth(A);
             }
             else
             {
@@ -1250,6 +1257,7 @@ void NPCSpecial(int A)
                     NPC[numNPCs].Location.SpeedY = 2;
                 else if(NPC[numNPCs].Location.SpeedY < -2)
                     NPC[numNPCs].Location.SpeedY = -2;
+                NPCReduceWidth(numNPCs);
                 syncLayers_NPC(numNPCs);
             }
             NPC[A].Special3 = NPC[A].Special3 + 1;
@@ -1383,6 +1391,7 @@ void NPCSpecial(int A)
                 NPC[numNPCs].Section = NPC[A].Section;
                 NPC[numNPCs].Location.SpeedX = (5 + dRand() * 3) * NPC[numNPCs].Direction;
                 NPC[numNPCs].Location.SpeedY = -5 - (dRand() * 3);
+                NPCReduceWidth(numNPCs);
                 syncLayers_NPC(numNPCs);
             }
             NPC[A].Location.SpeedX = 0;
@@ -1642,7 +1651,10 @@ void NPCSpecial(int A)
                 NPC[A].Special = 0;
         }
         else
+        {
             NPC[A].Location = NPC[A].DefaultLocation;
+            NPCReduceWidth(A);
+        }
     }
     else if(NPC[A].Type == 210) // O thing
     {
@@ -2076,6 +2088,7 @@ void NPCSpecial(int A)
                 NPC[numNPCs].Location.SpeedX = 7 * NPC[numNPCs].Direction;
                 NPC[numNPCs].Location.SpeedY = NPC[numNPCs].Location.SpeedY + dRand() * 6 - 3;
                 NPC[numNPCs].Location.SpeedX = NPC[numNPCs].Location.SpeedX * (1 - (NPC[A].Special3 / 140));
+                NPCReduceWidth(numNPCs);
                 syncLayers_NPC(numNPCs);
             }
             if(NPC[A].Special3 >= 120 + dRand() * 40)
@@ -2306,6 +2319,7 @@ void NPCSpecial(int A)
                 NPC[numNPCs].Layer = HS_SpawnedNPCs;
                 NPC[numNPCs].Location.SpeedY = -8;
                 NPC[numNPCs].Location.SpeedX = 3 * NPC[numNPCs].Direction;
+                NPCReduceWidth(numNPCs);
                 syncLayers_NPC(numNPCs);
             }
         }
@@ -3064,6 +3078,7 @@ void SpecialNPC(int A)
 
                     NPC[numNPCs].Location.X = NPC[numNPCs].Location.X + NPC[numNPCs].Location.SpeedX * 4;
                     NPC[numNPCs].Location.Y = NPC[numNPCs].Location.Y + NPC[numNPCs].Location.SpeedY * 4;
+                    NPCReduceWidth(numNPCs);
                     syncLayers_NPC(numNPCs);
                 }
             }
@@ -3443,7 +3458,7 @@ void SpecialNPC(int A)
                 NPC[A].Immune = 100;
             else
                 NPC[A].Immune = 0;
-
+            NPCReduceWidth(A);
         }
     // smb3 belt code
     }
@@ -3879,6 +3894,7 @@ void SpecialNPC(int A)
             if(NPC[numNPCs].Direction == 1)
                 NPC[numNPCs].Frame = 4;
             NPC[numNPCs].FrameCount = iRand() % 8;
+            NPCReduceWidth(numNPCs);
             syncLayers_NPC(numNPCs);
             PlaySound(42);
         }
@@ -3949,6 +3965,7 @@ void SpecialNPC(int A)
             NPC[numNPCs].TimeLeft = 50;
             NPC[numNPCs].Location.SpeedY = -8;
             NPC[numNPCs].Location.SpeedX = 3 * NPC[numNPCs].Direction;
+            NPCReduceWidth(numNPCs);
             syncLayers_NPC(numNPCs);
         }
     // leaf
@@ -4221,6 +4238,7 @@ void SpecialNPC(int A)
                 tempNPC = NPC[A];
                 NPC[A] = NPC[numNPCs];
                 NPC[numNPCs] = tempNPC;
+                NPCReduceWidth(A);
                 syncLayers_NPC(numNPCs);
                 syncLayers_NPC(A);
                 PlaySound(25);
@@ -4522,6 +4540,7 @@ void SpecialNPC(int A)
                     NPC[numNPCs].TimeLeft = 100;
                     NPC[numNPCs].Section = NPC[A].Section;
                     NPC[numNPCs].Location.SpeedX = 4 * NPC[numNPCs].Direction;
+                    NPCReduceWidth(numNPCs);
                     syncLayers_NPC(numNPCs);
                     PlaySound(38);
                 }
@@ -4741,6 +4760,7 @@ void SpecialNPC(int A)
                     NPC[numNPCs].Special = 1;
                     NPC[numNPCs].Location.SpeedX = NPC[numNPCs].Location.SpeedX * 0.5;
                 }
+                NPCReduceWidth(numNPCs);
                 syncLayers_NPC(numNPCs);
                 // tempNPC = NPC(A)
                 // NPC(A) = NPC(numNPCs)
@@ -4908,6 +4928,7 @@ void CharStuff(int WhatNPC, bool CheckEggs)
                     NPC[A].Location.Height = NPCHeight[NPC[A].Type];
                     NPC[A].Frame = 0;
                 }
+                NPCReduceWidth(A);
             }
             if(NPC[A].Type == 96 && NPC[A].Special > 0 && CheckEggs) // Check Eggs
             {
@@ -4941,4 +4962,31 @@ int RandomBonus()
         return 264;
     }
     return 0;
+}
+
+void NPCReduceWidth(int A)
+{
+    // TODO: determine whether this is ever relevant except for NPC creation
+    // THIS IS A HOTSPOT so I do think this is important to think through...
+    if(fEqual(NPC[A].Location.Width, 32.0))
+    {
+        // printf("32.0 was called for NPC %d type %d.\n", A, NPC[A].Type);
+        if(NPC[A].Type != 57 && NPC[A].Type != 84)
+        {
+            // If .Type = 58 Or .Type = 21 Then
+            // Default exits are: 11, 16, 41, 97, 196
+            if(!(NPCIsAnExit[NPC[A].Type] || NPC[A].Type == 8 || NPC[A].Type == 51 ||
+                 NPC[A].Type == 52 || NPC[A].Type == 74 || NPC[A].Type == 256 ||
+                 NPC[A].Type == 257 || NPC[A].Type == 93 || NPC[A].Type == 245))
+            {
+                NPC[A].Location.X = NPC[A].Location.X + 0.015;
+            }
+
+            NPC[A].Location.Width = NPC[A].Location.Width - 0.03;
+        }
+    }
+    else if(fEqual(NPC[A].Location.Width, 256.0))
+        NPC[A].Location.Width = 255.9;
+    else if(fEqual(NPC[A].Location.Width, 128.0))
+        NPC[A].Location.Width = 127.9;
 }

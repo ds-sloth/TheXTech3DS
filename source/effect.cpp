@@ -712,6 +712,7 @@ void UpdateEffects()
                         NPC[numNPCs].Location.X = NPC[numNPCs].Location.X - NPC[numNPCs].Location.Width / 2.0 + 16;
                         if(NPC[numNPCs].Type == 34)
                             NPC[numNPCs].Location.SpeedY = -6;
+                        NPCReduceWidth(numNPCs);
                         syncLayers_NPC(numNPCs);
                         CheckSectionNPC(numNPCs);
                     }
@@ -757,6 +758,7 @@ void UpdateEffects()
                 NPC[numNPCs].Type = e.NewNpc;
                 NPC[numNPCs].Location.Height = NPCHeight[NPC[numNPCs].Type];
                 NPC[numNPCs].Location.Width = NPCWidth[NPC[numNPCs].Type];
+                NPCReduceWidth(numNPCs);
                 syncLayers_NPC(numNPCs);
                 CheckSectionNPC(numNPCs);
             }

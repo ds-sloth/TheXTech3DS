@@ -373,6 +373,7 @@ void NPCHit(int A, int B, int C)
         }
         if(Player[C].StandingOnNPC == A)
             Player[C].StandingOnNPC = 0;
+        NPCReduceWidth(A);
         // bubble
     }
     else if(NPC[A].Type == 283)
@@ -433,6 +434,7 @@ void NPCHit(int A, int B, int C)
             NPC[A].Location.Y = NPC[A].Location.Y - NPC[A].Location.Height;
             NPC[A].Location.SpeedX = 0;
             NPC[A].Location.SpeedY = 0;
+            NPCReduceWidth(A);
             oldNPC = NPC[A];
         }
 
@@ -1289,6 +1291,7 @@ void NPCHit(int A, int B, int C)
                 NPC[numNPCs].Location.SpeedX = double(Physics.NPCShellSpeed * NPC[numNPCs].Direction);
                 NPC[numNPCs].Location.X = NPC[numNPCs].Location.X - 16.0 + NPC[numNPCs].Location.SpeedX;
                 CheckSectionNPC(numNPCs);
+                NPCReduceWidth(numNPCs);
                 NPC[numNPCs].CantHurtPlayer = C;
                 NPC[numNPCs].CantHurt = 6;
                 NPC[numNPCs].Active = true;
@@ -1305,6 +1308,7 @@ void NPCHit(int A, int B, int C)
             NPC[A].RealSpeedX = 0;
             NPC[A].Special = 0;
             NPC[A].Frame = 0;
+            NPCReduceWidth(A);
             printf("Shell stomp, X distance: [%g], Y=[%g]", std::abs(NPC[numNPCs].Location.X - NPC[A].Location.X), NPC[numNPCs].Location.Y);
             if(NPC[A].Type >= 109 && NPC[A].Type <= 120)
                 NewEffect(10, NPC[A].Location);
@@ -1364,6 +1368,7 @@ void NPCHit(int A, int B, int C)
                 NPC[numNPCs].Location.SpeedY = 0;
                 NPC[numNPCs].Location.SpeedX = double(Physics.NPCShellSpeed * NPC[numNPCs].Direction);
                 NPC[numNPCs].Location.X = NPC[numNPCs].Location.X - (16.0 + double(32.0f * NPC[numNPCs].Direction));
+                NPCReduceWidth(numNPCs);
                 CheckSectionNPC(numNPCs);
                 NPC[numNPCs].CantHurtPlayer = C;
                 NPC[numNPCs].CantHurt = 6;
@@ -1379,6 +1384,7 @@ void NPCHit(int A, int B, int C)
             NPC[A].Special = 0;
             NPC[A].Frame = 0;
             NPC[A].Location.SpeedY = -5;
+            NPCReduceWidth(A);
             if(B == 2)
                 NPC[A].Location.Y = Block[C].Location.Y - NPC[A].Location.Height - 0.01;
         }
@@ -1871,6 +1877,7 @@ void NPCHit(int A, int B, int C)
                     NPC[A].CantHurtPlayer = 0;
                     NPC[A].Reset[1] = false;
                     NPC[A].Reset[2] = false;
+                    NPCReduceWidth(A);
                 }
             }
         }
@@ -1972,6 +1979,7 @@ void NPCHit(int A, int B, int C)
             NewEffect(13, NPC[A].Location);
             PlaySound(16);
             NPC[A].Location = NPC[A].DefaultLocation;
+            NPCReduceWidth(A);
         }
         // Coins
     }
@@ -2204,6 +2212,7 @@ void NPCHit(int A, int B, int C)
         NPC[A].Location.X += (NPC[A].Location.Width / 2.0);
         NPC[A].Location.Width = NPCWidth[NPC[A].Type];
         NPC[A].Location.X -= (NPC[A].Location.Width / 2.0);
+        NPCReduceWidth(A);
     }
 
     StopHit = 0;

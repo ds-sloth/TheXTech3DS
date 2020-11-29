@@ -70,5 +70,7 @@ void SpecialNPC(int A);
 void CharStuff(int WhatNPC = 0, bool CheckEggs = false);
 // Public Function RandomBonus()
 int RandomBonus();
+// reduce the width of the NPC for Block purposes.
+void NPCReduceWidth(int A);
 
 #endif // NPC_H

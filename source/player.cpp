@@ -541,6 +541,7 @@ void PlayerHurt(int A)
                 NPC[numNPCs].Location.SpeedX = 0;
                 NPC[numNPCs].CantHurt = 10;
                 NPC[numNPCs].CantHurtPlayer = A;
+                NPCReduceWidth(numNPCs);
                 syncLayers_NPC(numNPCs);
                 Player[A].Location.Height = Physics.PlayerHeight[Player[A].Character][Player[A].State];
             }
@@ -635,6 +636,7 @@ void PlayerHurt(int A)
                         NPC[numNPCs].Location.SpeedX = 0;
                         NPC[numNPCs].CantHurt = 10;
                         NPC[numNPCs].CantHurtPlayer = A;
+                        NPCReduceWidth(numNPCs);
                         syncLayers_NPC(numNPCs);
                         Player[A].Location.Height = Physics.PlayerHeight[Player[A].Character][Player[A].State];
                         Player[A].Location.Width = Physics.PlayerWidth[Player[A].Character][Player[A].State];
@@ -734,6 +736,7 @@ void PlayerDead(int A)
         NPC[numNPCs].Location.SpeedX = 0;
         NPC[numNPCs].CantHurt = 10;
         NPC[numNPCs].CantHurtPlayer = A;
+        NPCReduceWidth(numNPCs);
         syncLayers_NPC(numNPCs);
         Player[A].Mount = 0;
         Player[A].Location.Y = Player[A].Location.Y - 32;
@@ -2333,6 +2336,7 @@ void YoshiEat(int A)
                         }
                         NPC[B].Location.Height = NPCHeight[NPC[B].Type];
                         NPC[B].Location.Width = NPCWidth[NPC[B].Type];
+                        NPCReduceWidth(B);
                         if(!(NPC[B].Type == 21 || NPC[B].Type == 22 || NPC[B].Type == 26 || NPC[B].Type == 31 || NPC[B].Type == 32 || NPC[B].Type == 35 || NPC[B].Type == 49 || NPCIsAnExit[NPC[B].Type]))
                             NPC[B].DefaultType = 0;
                         NPC[B].Effect = 5;
@@ -2362,6 +2366,7 @@ void YoshiEat(int A)
                     NPC[B].Location.Height = NPCHeight[NPC[B].Type];
                     NPC[B].Location.X = NPC[B].Location.X - NPC[B].Location.Width / 2.0;
                     NPC[B].Location.Y = NPC[B].Location.Y - NPC[B].Location.Height / 2.0;
+                    NPCReduceWidth(B);
                 }
                 break;
             }
@@ -2453,6 +2458,7 @@ void YoshiSpit(int A)
                     NPC[numNPCs].Location.SpeedY = 0.8;
                     NPC[numNPCs].Location.SpeedX = 5 * Player[A].Direction;
                 }
+                NPCReduceWidth(numNPCs);
                 syncLayers_NPC(numNPCs);
             }
         }
@@ -3087,6 +3093,7 @@ void YoshiEatCode(int A)
                     PlaySound(55);
                 }
             }
+            NPCReduceWidth(Player[A].YoshiNPC);
         }
         else if(Player[A].MountSpecial == 0 && Player[A].YoshiPlayer > 0)
         {
@@ -3247,6 +3254,7 @@ void ClownCar()
             NPC[numNPCs].Location.Y = NPC[numNPCs].Location.Y + NPC[numNPCs].Location.SpeedY;
             NPC[numNPCs].Location.X = NPC[numNPCs].Location.X + NPC[numNPCs].Location.SpeedX;
             NPC[numNPCs].Section = Player[A].Section;
+            NPCReduceWidth(numNPCs);
             syncLayers_NPC(numNPCs);
             for(B = 1; B <= numPlayers; B++)
             {
@@ -3637,6 +3645,7 @@ void PowerUps(int A)
                         }
                         if(Player[A].Character == 4)
                             NPC[numNPCs].Location.X = Player[A].Location.X + Player[A].Location.Width / 2.0 - NPC[numNPCs].Location.Width / 2.0;
+                        NPCReduceWidth(numNPCs);
                         syncLayers_NPC(numNPCs);
                         CheckSectionNPC(numNPCs);
                     }
@@ -3693,6 +3702,7 @@ void PowerUps(int A)
                             NPC[numNPCs].Frame = 8;
                         if(iEqual(NPC[numNPCs].Special, 4))
                             NPC[numNPCs].Frame = 12;
+                        NPCReduceWidth(numNPCs);
                         syncLayers_NPC(numNPCs);
                         CheckSectionNPC(numNPCs);
                         Player[A].FireBallCD = 30;
@@ -3824,6 +3834,7 @@ void PowerUps(int A)
                     Player[A].SwordPoke = -10;
                 PlaySound(75);
             }
+            NPCReduceWidth(numNPCs);
             syncLayers_NPC(numNPCs);
         }
         else if(Player[A].FireBallCD == 0 && Player[A].Controls.Run == true && Player[A].RunRelease == true)
@@ -4341,6 +4352,7 @@ void PlayerGrabCode(int A, bool DontResetGrabTime)
                             NPC[Player[A].StandingOnNPC].Location.Y = NPC[Player[A].StandingOnNPC].Location.Y - NPC[Player[A].StandingOnNPC].Location.Height / 2.0;
                         }
                         NPCFrames(Player[A].StandingOnNPC);
+                        NPCReduceWidth(Player[A].StandingOnNPC);
                         Player[A].StandingOnNPC = 0;
                     }
                 }
@@ -4450,6 +4462,7 @@ void PlayerGrabCode(int A, bool DontResetGrabTime)
 
                         NPC[numNPCs].Projectile = true;
                         NPC[numNPCs].Frame = EditorNPCFrame(NPC[numNPCs].Type, NPC[numNPCs].Direction);
+                        NPCReduceWidth(numNPCs);
                         syncLayers_NPC(numNPCs);
                     // Next B
                 }
