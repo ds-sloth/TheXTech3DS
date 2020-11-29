@@ -66,6 +66,13 @@ void drawSecondScreen()
     snprintf(tempBuf, 41, "%u texs, %u big texs, %u waves", num_textures_loaded,
         num_big_textures_loaded, num_waves_loaded);
     SuperPrint(tempBuf, 4, 16, 240);
+
+    SuperPrint("    Currently in level:", 4, 16, 272);
+    snprintf(tempBuf, 41, "%d NPCs, %d blocks, %d bgos", numNPCs,
+        numBlock, numBackground);
+    SuperPrint(tempBuf, 4, 16, 288);
+    snprintf(tempBuf, 41, "%d effects", numEffects);
+    SuperPrint(tempBuf, 4, 16, 304);
 }
 
 void drawSecondScreen2()
