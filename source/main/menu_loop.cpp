@@ -1337,7 +1337,7 @@ void FindWorlds()
 
     std::vector<std::string> worldRoots;
     worldRoots.push_back(AppPath + "worlds/");
-    worldRoots.push_back(AppPathManager::userWorldsRootDir() + "/");
+    // worldRoots.push_back(AppPathManager::userWorldsRootDir() + "/");
 
     SelectWorld.clear();
     SelectWorld.push_back(SelectWorld_t()); // Dummy entry
@@ -1386,7 +1386,7 @@ void FindLevels()
 {
     std::vector<std::string> battleRoots;
     battleRoots.push_back(AppPath + "battle/");
-    battleRoots.push_back(AppPathManager::userBattleRootDir() + "/");
+    // battleRoots.push_back(AppPathManager::userBattleRootDir() + "/");
 
     SelectWorld.clear();
     SelectWorld.push_back(SelectWorld_t()); // Dummy entry
@@ -1418,12 +1418,16 @@ void FindLevels()
     NumSelectWorld = (SelectWorld.size() - 1);
 }
 
+#include "../quick_read_save.h"
+
 void FindSaves()
 {
     std::string newInput = "";
 
     std::string episode = SelectWorld[selWorld].WorldPath;
     GamesaveData f;
+    int curActive;
+    int maxActive;
     for(auto A = 1; A <= maxSaveSlots; A++)
     {
         SaveSlot[A] = -1;
@@ -1435,12 +1439,15 @@ void FindSaves()
         std::string saveFileOld = episode + fmt::format_ne("save{0}.savx", A);
         std::string saveFileAncient = episode + fmt::format_ne("save{0}.sav", A);
 
-        if((Files::fileExists(saveFile) && FileFormats::ReadExtendedSaveFileF(saveFile, f)) ||
-           (Files::fileExists(saveFileOld) && FileFormats::ReadExtendedSaveFileF(saveFileOld, f)) ||
+        if (quick_read_save(saveFile.c_str(), curActive, maxActive, SaveStars[A]))
+        {
+            SaveSlot[A] = int((float(curActive) / float(maxActive)) * 100);
+        }
+        else if((Files::fileExists(saveFileOld) && FileFormats::ReadExtendedSaveFileF(saveFileOld, f)) ||
            (Files::fileExists(saveFileAncient) && FileFormats::ReadSMBX64SavFileF(saveFileAncient, f)))
         {
-            int curActive = 0;
-            int maxActive = 0;
+            curActive = 0;
+            maxActive = 0;
 
             // "game beat flag"
             maxActive++;
