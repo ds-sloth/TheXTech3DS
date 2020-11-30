@@ -14,46 +14,25 @@ SMBX Port to 3DS!
     - Skeleton death anim (Hyrule temple)
     - Hammer bro death anim
 
+- World selection back bug
+
 - Performance
-  - Saves
-    - Load all files in rw mode at game launch
-  - Load speeds (loading level)
+  - WORLD MAP
   - NPC load: painful playground
   - Slow draw speed with many tiles
-  - Lockup at beginning of world map??
-    - Happens after all of the "newpaths" have finished
-    - Seems to be saving
   - PGE_Delay??
-  - 30fps lock??
   - New 3DS RAM...?
-  - Allow user to disable sound?
+  - Allow user to disable sound
+  - Allow user to toggle debug mode / show something nice when debug mode is off
 
 - Sound
-  - Store P-Switch music in own track; pause & resume music
-  - Add play ID to channel, combine with channel # to get global ID for
-    individual sound plays
-  - Fix OGG looping
-  - Properly load and cache audio files...!
+  - Think about tongue effect for flying boot... Why does it cutoff a little too late?
+  - Music fadeins/fadeouts?
 
-- Quick save/load
-
-
-- Sound
-  - Music fadeins/fadeouts
-  - Bug when two sounds are played precisely at the same time
-  - Load WAVs into memory...
-  - Sound cutoff self
-    - Make a bank of sound id -> channel ptrs
-    - Make channels keep track of the currently playing sound id
-  - Don't load OGGs on the main thread??? (if possible!)
-    - Is there any way to speed up OGG loading?
-  - Don't loop the P-button music
 
 - Test screenshake...
   - Seems pretty good!
   - POW blocks
-
-- Debugging info on bottom screen
 
 - Shrink player spritesheets
 

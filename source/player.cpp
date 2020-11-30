@@ -26,7 +26,6 @@
 #include <cmath>
 #include <ctime>
 #include <fmt_format_ne.h>
-#include <pge_delay.h>
 
 #include "globals.h"
 #include "player.h"
@@ -42,6 +41,7 @@
 #include "main/level_file.h"
 
 #include "fastcalcs.h"
+#include "padded_sleep.h"
 
 
 
@@ -901,7 +901,8 @@ void EveryonesDead()
 //    if(MagicHand == true)
 //        BitBlt frmLevelWindow::vScreen[1].hdc, 0, 0, frmLevelWindow::vScreen[1].ScaleWidth, frmLevelWindow::vScreen[1].ScaleHeight, 0, 0, 0, vbWhiteness;
 
-    PGE_Delay(500);
+    // PGE_Delay(500);
+    PS_StartTimer();
 
     Lives--;
     if(Lives >= 0.f)
@@ -934,6 +935,7 @@ void EveryonesDead()
         MenuMode = 0;
         MenuCursor = 0;
     }
+    PS_SleepTill(500);
     DoEvents();
 }
 

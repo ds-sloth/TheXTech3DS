@@ -37,7 +37,7 @@
 #include "level_file.h"
 
 #include "../pseudo_vb.h"
-
+#include "../padded_sleep.h"
 
 void WorldLoop()
 {
@@ -359,8 +359,9 @@ void WorldLoop()
                             curWorldLevel = A;
                             LevelSelect = false;
                             GameThing();
+                            PS_StartTimer();
                             ClearLevel();
-                            PGE_Delay(1000);
+                            // PGE_Delay(1000);
                             std::string levelPath = SelectWorld[selWorld].WorldPath + WorldLevel[A].FileName;
                             if(!OpenLevel(levelPath))
                             {
@@ -368,6 +369,7 @@ void WorldLoop()
                                 PauseGame(1);
                                 ErrorQuit = true;
                             }
+                            PS_SleepTill(1000);
                             break;
                         }
                     }

@@ -43,6 +43,7 @@
 #include "../collision.h"
 #include "level_file.h"
 
+#include "../padded_sleep.h"
 #include "../pseudo_vb.h"
 #include "../n3ds-clock.h"
 
@@ -230,7 +231,7 @@ void MenuLoop()
                 }
             }
 
-            if(MenuMode > 0)
+            if(MenuMode >= 100)
             {
                 if(MenuCursor > numCharacters - 1)
                 {
@@ -250,16 +251,13 @@ void MenuLoop()
                         MenuCursor = MenuCursor - 1;
                     }
                 }
-            }
 
-            while(((MenuMode == 300 || MenuMode == 500) && MenuCursor == PlayerCharacter - 1) ||
-                   blockCharacter[MenuCursor + 1])
-            {
-                MenuCursor = MenuCursor + 1;
-            }
+                while(((MenuMode == 300 || MenuMode == 500) && MenuCursor == PlayerCharacter - 1) ||
+                       blockCharacter[MenuCursor + 1])
+                {
+                    MenuCursor = MenuCursor + 1;
+                }
 
-            if(MenuMode >= 100)
-            {
                 if(MenuCursor >= numCharacters)
                 {
                     MenuCursor = 0;
@@ -396,7 +394,8 @@ void MenuLoop()
                     frmMain.repaint();
                     StopMusic();
                     DoEvents();
-                    PGE_Delay(500);
+                    PS_StartTimer();
+                    // PGE_Delay(500);
 
                     ClearGame();
                     OpenWorld(SelectWorld[selWorld].WorldPath + SelectWorld[selWorld].WorldFile);
@@ -442,9 +441,10 @@ void MenuLoop()
                         LevelSelect = false;
 
                         GameThing();
+                        PS_StartTimer();
                         ClearLevel();
 
-                        PGE_Delay(1000);
+                        // PGE_Delay(1000);
                         std::string levelPath = SelectWorld[selWorld].WorldPath + StartLevel;
                         if(!OpenLevel(levelPath))
                         {
@@ -452,6 +452,11 @@ void MenuLoop()
                             PauseGame(1);
                             ErrorQuit = true;
                         }
+                        PS_SleepTill(1000);
+                    }
+                    else
+                    {
+                        PS_SleepTill(500);
                     }
                     return;
                 }

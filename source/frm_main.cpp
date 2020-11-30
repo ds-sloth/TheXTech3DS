@@ -86,7 +86,7 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
 
     // LoadLogSettings(setup.interprocess, setup.verboseLogging);
     //Write into log the application start event
-    printf("<Application started>");
+    // printf("<Application started>\n");
 
     updateViewport();
 
