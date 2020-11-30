@@ -71,7 +71,7 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
     right = C2D_CreateScreenTarget(GFX_TOP, GFX_RIGHT);
     bottom = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
     // bottom = right;
-    // debugMode = false;
+    debugMode = false;
 
     for (int i = 0; i < 4; i++)
     {
@@ -111,7 +111,7 @@ void FrmMain::freeSDL()
     gfxExit();
     aptExit();
 
-    printf("<Application closed>");
+    // printf("<Application closed>");
     // CloseLog();
 }
 
@@ -552,6 +552,13 @@ void FrmMain::clearAllTextures()
 
 void FrmMain::clearBuffer()
 {
+    // printf("Clearing that buffer...\n");
+    C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+    C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+    C2D_SceneBegin(top);
+    C2D_TargetClear(right, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+    C2D_SceneBegin(right);
+    C3D_FrameEnd(0);
     // SDL_SetRenderDrawColor(m_gRenderer, 0, 0, 0, 255);
     // SDL_RenderClear(m_gRenderer);
 }

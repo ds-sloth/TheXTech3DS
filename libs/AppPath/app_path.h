@@ -21,6 +21,8 @@
 #define APP_PATH_H
 
 #include <string>
+#include <DirManager/dirman.h>
+#include <vector>
 
 extern std::string  ApplicationPathSTD;
 
@@ -35,7 +37,7 @@ public:
     static std::string screenshotsDir();
     static std::string gifRecordsDir();
     static std::string gameSaveRootDir();
-    static std::string userWorldsRootDir();
+    static const std::vector<std::string>& worldRootDirs();
     static std::string userBattleRootDir();
     static void install();
     static bool checkPortable();
@@ -50,9 +52,12 @@ private:
      * @brief Makes settings path if not exists
      */
     static void initSettingsPath();
+    // load any user worlds from .romfs files in the userDir.
+    static void findUserWorlds(DirMan userDir);
     //! Full path to settings INI file
     static std::string m_settingsPath;
     static std::string m_userPath;
+    static std::vector<std::string> m_worldRootDirs;
 #ifdef __APPLE__
     static std::string m_userDataRoot; // A game media root at home directory
 #endif

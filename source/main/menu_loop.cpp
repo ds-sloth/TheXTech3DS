@@ -141,21 +141,21 @@ void MenuLoop()
                 {
                     PlaySound(29);
                     MenuMode = 1;
-                    FindWorlds();
+                    // FindWorlds();
                     MenuCursor = 0;
                 }
                 else if(MenuCursor == 1)
                 {
                     PlaySound(29);
                     MenuMode = 2;
-                    FindWorlds();
+                    // FindWorlds();
                     MenuCursor = 0;
                 }
                 else if(MenuCursor == 2)
                 {
                     PlaySound(29);
                     MenuMode = 4;
-                    FindLevels();
+                    // FindLevels();
                     MenuCursor = 0;
                 }
                 else if(MenuCursor == 3)
@@ -195,6 +195,7 @@ void MenuLoop()
                         MenuCursor = PlayerCharacter - 1;
                     } else {
                         MenuCursor = selWorld - 1;
+                        worldCurs = selWorld - 2;
                         MenuMode = MenuMode / 100;
                     }
                     MenuCursorCanMove = false;
@@ -294,7 +295,8 @@ void MenuLoop()
                 {
                     PlaySound(29);
                     selWorld = MenuCursor + 1;
-                    FindSaves();
+                    if (MenuMode != 4)
+                        FindSaves();
                     For(A, 1, numCharacters)
                     {
                         if(MenuMode == 4) {
@@ -313,10 +315,20 @@ void MenuLoop()
             // if we didn't just pick a world
             if(MenuMode < 100)
             {
-                if(MenuCursor >= NumSelectWorld)
-                    MenuCursor = 0;
-                if(MenuCursor < 0)
-                    MenuCursor = NumSelectWorld - 1;
+                if (MenuMode != 4)
+                {
+                    if(MenuCursor >= NumSelectWorld)
+                        MenuCursor = 0;
+                    if(MenuCursor < 0)
+                        MenuCursor = NumSelectWorld - 1;
+                }
+                else
+                {
+                    if(MenuCursor >= NumSelectBattle)
+                        MenuCursor = 0;
+                    if(MenuCursor < 0)
+                        MenuCursor = NumSelectBattle - 1;
+                }
             }
         }
 
@@ -1340,14 +1352,14 @@ void FindWorlds()
 {
     NumSelectWorld = 0;
 
-    std::vector<std::string> worldRoots;
-    worldRoots.push_back(AppPath + "worlds/");
+    const std::vector<std::string>& worldRoots = AppPathManager::worldRootDirs();
+    // worldRoots.push_back(AppPath + "worlds/");
     // worldRoots.push_back(AppPathManager::userWorldsRootDir() + "/");
 
     SelectWorld.clear();
     SelectWorld.push_back(SelectWorld_t()); // Dummy entry
 
-    for(auto worldsRoot : worldRoots)
+    for(const std::string& worldsRoot : worldRoots)
     {
         DirMan episodes(worldsRoot);
 
@@ -1356,7 +1368,7 @@ void FindWorlds()
         episodes.getListOfFolders(dirs);
         WorldData head;
 
-        for(auto &dir : dirs)
+        for(const std::string& dir : dirs)
         {
             std::string epDir = worldsRoot + dir + "/";
             DirMan episode(epDir);
@@ -1393,12 +1405,12 @@ void FindLevels()
     battleRoots.push_back(AppPath + "battle/");
     // battleRoots.push_back(AppPathManager::userBattleRootDir() + "/");
 
-    SelectWorld.clear();
-    SelectWorld.push_back(SelectWorld_t()); // Dummy entry
+    SelectBattle.clear();
+    SelectBattle.push_back(SelectWorld_t()); // Dummy entry
 
-    NumSelectWorld = 1;
-    SelectWorld.push_back(SelectWorld_t()); // "random level" entry
-    SelectWorld[1].WorldName = "Random Level";
+    NumSelectBattle = 1;
+    SelectBattle.push_back(SelectWorld_t()); // "random level" entry
+    SelectBattle[1].WorldName = "Random Level";
     LevelData head;
 
     for(auto battleRoot : battleRoots)
@@ -1415,12 +1427,12 @@ void FindLevels()
                 w.WorldPath = battleRoot;
                 w.WorldFile = fName;
                 w.WorldName = head.LevelName;
-                SelectWorld.push_back(w);
+                SelectBattle.push_back(w);
             }
         }
     }
 
-    NumSelectWorld = (SelectWorld.size() - 1);
+    NumSelectBattle = (SelectBattle.size() - 1);
 }
 
 #include "../quick_read_save.h"

@@ -1401,9 +1401,8 @@ void UpdateGraphics(bool skipRepaint)
         frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[2].w / 2, 50,
                 GFX.MenuGFX[2].w, GFX.MenuGFX[2].h, GFX.MenuGFX[2], 0, 0);
 
-        if (MenuMode != 31 && MenuMode != 32)
-            frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[3].w / 2, ScreenH - 34,
-                GFX.MenuGFX[3].w, GFX.MenuGFX[3].h, GFX.MenuGFX[3], 0, 0);
+        frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[3].w / 2, ScreenH - 20,
+            GFX.MenuGFX[3].w, GFX.MenuGFX[3].h, GFX.MenuGFX[3], 0, 0);
 
         int MenuX = ScreenW / 2 - 100;
         int MenuY = ScreenH - 175;
@@ -1494,8 +1493,8 @@ void UpdateGraphics(bool skipRepaint)
         {
             std::string tempStr = "";
             minShow = 1;
-            maxShow = NumSelectWorld;
-            if(NumSelectWorld > 5)
+            maxShow = (MenuMode != 4) ? NumSelectWorld : NumSelectBattle;
+            if(maxShow > 5)
             {
                 minShow = worldCurs;
                 maxShow = minShow + 4;
@@ -1507,13 +1506,27 @@ void UpdateGraphics(bool skipRepaint)
 
                 if(worldCurs < 1)
                     worldCurs = 1;
-                if(worldCurs > NumSelectWorld - 4)
-                    worldCurs = NumSelectWorld - 4;
-
-                if(maxShow >= NumSelectWorld)
+                if (MenuMode != 4)
                 {
-                    maxShow = NumSelectWorld;
-                    minShow = NumSelectWorld - 4;
+                    if(worldCurs > NumSelectWorld - 4)
+                        worldCurs = NumSelectWorld - 4;
+
+                    if(maxShow >= NumSelectWorld)
+                    {
+                        maxShow = NumSelectWorld;
+                        minShow = NumSelectWorld - 4;
+                    }
+                }
+                else
+                {
+                    if(worldCurs > NumSelectBattle - 4)
+                        worldCurs = NumSelectBattle - 4;
+
+                    if(maxShow >= NumSelectBattle)
+                    {
+                        maxShow = NumSelectBattle;
+                        minShow = NumSelectBattle - 4;
+                    }
                 }
 
                 minShow = worldCurs;
@@ -1523,7 +1536,7 @@ void UpdateGraphics(bool skipRepaint)
             for(auto A = minShow; A <= maxShow; A++)
             {
                 B = A - minShow + 1;
-                tempStr = SelectWorld[A].WorldName;
+                tempStr = (MenuMode != 4) ? SelectWorld[A].WorldName : SelectBattle[A].WorldName;
                 SuperPrint(tempStr, 3, MenuX, MenuY - 30 + (B * 30));
             }
 
@@ -1531,7 +1544,7 @@ void UpdateGraphics(bool skipRepaint)
             {
                 frmMain.renderTexture(ScreenW/2 - 8, MenuY - 20, GFX.MCursor[1]);
             }
-            if(maxShow < NumSelectWorld)
+            if(maxShow < ((MenuMode != 4) ? NumSelectWorld : NumSelectBattle))
             {
                 frmMain.renderTexture(ScreenW/2 - 8, MenuY + 140, GFX.MCursor[2]);
             }

@@ -1,5 +1,12 @@
 SMBX Port to 3DS!
 
+- Custom episodes in .romfs files
+
+- Update credits
+  - Person with 3DS OS thread (Mario 64) (see sound file for credit)
+  - People who made opus tutorial
+  - People who made citra, devkitpro
+
 - Crashes
   - Think through exceptions in standard library / PGE stuff
 
@@ -14,12 +21,10 @@ SMBX Port to 3DS!
     - Skeleton death anim (Hyrule temple)
     - Hammer bro death anim
 
-- World selection back bug
-
 - Performance
   - WORLD MAP
+  - Slow draw speed with many items
   - NPC load: painful playground
-  - Slow draw speed with many tiles
   - PGE_Delay??
   - New 3DS RAM...?
   - Allow user to disable sound
@@ -37,6 +42,3 @@ SMBX Port to 3DS!
 - Shrink player spritesheets
 
 - Alternative multiplayer controls
-- Update credits
-  - Person with 3DS OS thread (Mario 64) (see sound file for credit)
-  - People who made opus tutorial

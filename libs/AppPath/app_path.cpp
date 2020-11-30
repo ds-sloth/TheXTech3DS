@@ -30,6 +30,7 @@
 #endif
 
 #include "app_path.h"
+#include <3ds.h>
 // #include "../version.h"
 
 // #include <SDL2/SDL.h>
@@ -38,6 +39,7 @@ std::string  ApplicationPathSTD;
 
 std::string AppPathManager::m_settingsPath;
 std::string AppPathManager::m_userPath;
+std::vector<std::string> AppPathManager::m_worldRootDirs;
 bool AppPathManager::m_isPortable = false;
 
 #define UserDirName "/3ds/thextech"
@@ -62,11 +64,12 @@ void AppPathManager::initAppPath()
     if(!userDirPath.empty())
     {
         DirMan appDir(userDirPath);
-        if(appDir.exists() || appDir.mkpath(userDirPath))
+        if(appDir.exists() || appDir.mkpath(""))
         {
             m_userPath = appDir.absolutePath();
             m_userPath.append("/");
             initSettingsPath();
+            findUserWorlds(appDir);
             return;
         }
     }
@@ -75,6 +78,52 @@ void AppPathManager::initAppPath()
     std::printf("== App Path is %s\n", ApplicationPathSTD.c_str());
     std::printf("== User Path is %s\n", m_userPath.c_str());
     fflush(stdout);
+}
+
+void AppPathManager::findUserWorlds(DirMan userDir)
+{
+    m_worldRootDirs.push_back(assetsRoot() + "worlds/");
+    std::vector<std::string> romfsFiles;
+    static const std::vector<std::string> romfsExt = {".romfs"};
+    userDir.getListOfFiles(romfsFiles, romfsExt);
+    // for some reason dirent returns a very strange format that appears to be
+    // utf-8 expressed as utf-16 and then converted back to utf-8.
+    uint16_t utf16_buf[4096+1];
+    uint8_t utf8_buf[4096+1];
+    std::string fullPath;
+    char mount_label[9] = "romfsA:/";
+    for (std::string& s : romfsFiles)
+    {
+        fullPath = userDir.absolutePath() + "/" + s;
+        ssize_t units = utf8_to_utf16(utf16_buf, (const uint8_t*)fullPath.c_str(), 4096);
+        if (units < 0 || units > 4096) continue;
+        utf16_buf[units] = 0;
+        for (int i = 0; i < units; i++)
+        {
+            utf8_buf[i] = (uint8_t) (0xff & utf16_buf[i]);
+        }
+        utf8_buf[units] = 0;
+
+        Handle fd = 0;
+        FS_Path archPath = { PATH_EMPTY, 1, "" };
+        FS_Path filePath = { PATH_ASCII, units+1, utf8_buf };
+        Result rc = FSUSER_OpenFileDirectly(&fd, ARCHIVE_SDMC, archPath, filePath, FS_OPEN_READ, 0);
+        if (R_FAILED(rc))
+            continue;
+        mount_label[6] = '\0';
+        rc = romfsMountFromFile(fd, 0, mount_label);
+        if (R_FAILED(rc))
+            continue;
+        mount_label[6] = ':';
+        m_worldRootDirs.push_back(std::string(mount_label));
+        mount_label[5] ++;
+        // from Z to a.
+        if (mount_label[5] == 91)
+            mount_label[5] = 97;
+        // max of 52 mounts.
+        if (mount_label[5] == 123)
+            break;
+    }
 }
 
 std::string AppPathManager::settingsFileSTD()
@@ -112,9 +161,9 @@ std::string AppPathManager::gameSaveRootDir()
     return m_settingsPath + "gamesaves";
 }
 
-std::string AppPathManager::userWorldsRootDir()
+const std::vector<std::string>& AppPathManager::worldRootDirs()
 {
-    return m_userPath + "worlds";
+    return m_worldRootDirs;
 }
 
 std::string AppPathManager::userBattleRootDir()
