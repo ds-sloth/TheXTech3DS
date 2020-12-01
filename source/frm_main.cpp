@@ -553,14 +553,25 @@ void FrmMain::clearAllTextures()
 void FrmMain::clearBuffer()
 {
     // printf("Clearing that buffer...\n");
-    C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+    C3D_FrameBegin(0);
     C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
     C2D_SceneBegin(top);
     C2D_TargetClear(right, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
     C2D_SceneBegin(right);
     C3D_FrameEnd(0);
-    // SDL_SetRenderDrawColor(m_gRenderer, 0, 0, 0, 255);
-    // SDL_RenderClear(m_gRenderer);
+}
+
+void FrmMain::toggleDebug()
+{
+    // printf("Clearing that buffer...\n");
+    if (debugMode)
+    {
+        C3D_FrameBegin(0);
+        C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+        C2D_SceneBegin(bottom);
+        C3D_FrameEnd(0);
+    }
+    debugMode = !debugMode;
 }
 
 void FrmMain::renderRect(int x, int y, int w, int h, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, bool filled)

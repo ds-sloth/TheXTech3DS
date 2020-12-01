@@ -487,6 +487,7 @@ void MenuLoop()
             if(MenuCursorCanMove) {
                 if(menuBackPress)
                 {
+                    SaveConfig();
                     MenuMode = 0;
                     MenuCursor = 3;
                     MenuCursorCanMove = false;
@@ -503,10 +504,15 @@ void MenuLoop()
                         MenuCursor = 1;
                         MenuMode = 32;
                         PlaySound(26);
-                    } else if(MenuCursor == 2) {
+                    } else if(MenuCursor == 2 && n3ds_clocked != -1) {
                         PlaySound(29);
                         SwapClockSpeed();
-                    } else if(MenuCursor == 3) {
+                    } else if((MenuCursor == 2 && n3ds_clocked == -1) ||
+                              (MenuCursor == 3 && n3ds_clocked != -1)) {
+                        PlaySound(29);
+                        frmMain.toggleDebug();
+                    } else if((MenuCursor == 3 && n3ds_clocked == -1) ||
+                              (MenuCursor == 4)) {
                         PlaySound(29);
                         GameMenu = false;
                         GameOutro = true;
@@ -517,10 +523,12 @@ void MenuLoop()
                 }
             }
             if(MenuMode == 3) {
-                if(MenuCursor > 3)
+                // max cursor pos is 4 when you can toggle clock speed and 3 otherwise
+                B = ((n3ds_clocked == -1) ? 3 : 4);
+                if(MenuCursor > B)
                     MenuCursor = 0;
                 if(MenuCursor < 0)
-                    MenuCursor = 3;
+                    MenuCursor = B;
             }
 
         }
@@ -590,7 +598,6 @@ void MenuLoop()
             {
                 if(menuBackPress)
                 {
-                    SaveConfig();
                     MenuCursor = MenuMode - 31;
                     MenuMode = 3;
                     MenuCursorCanMove = false;
@@ -1318,34 +1325,25 @@ void MenuLoop()
         }
     }
 
-    // printf("Updating macro...\n");
-//    If LevelMacro > 0 Then UpdateMacro
     if(LevelMacro > 0) UpdateMacro();
-//    UpdateLayers
-    // printf("Layer...\n");
+    perf_times[0] = svcGetSystemTick();
     UpdateLayers();
-//    UpdateNPCs
-    // printf("NPCs...\n");
+    perf_times[1] = svcGetSystemTick();
     UpdateNPCs();
-//    UpdateBlocks
-    // printf("Blokes...\n");
+    perf_times[2] = svcGetSystemTick();
     UpdateBlocks();
-//    UpdateEffects
-    // printf("Effects...\n");
+    perf_times[3] = svcGetSystemTick();
     UpdateEffects();
-//    UpdatePlayer
-    // printf("Player...\n");
+    perf_times[4] = svcGetSystemTick();
     UpdatePlayer();
-//    UpdateGraphics
-    // printf("Graphics!\n");
+    perf_times[5] = svcGetSystemTick();
     UpdateGraphics();
-//    UpdateSound
-    // printf("Sound...\n");
+    perf_times[6] = perf_times[5]; // so we can report it next frame
+    perf_times[7] = svcGetSystemTick();
     UpdateSound();
-//    UpdateEvents
-    // printf("Events...\n");
+    perf_times[8] = svcGetSystemTick();
     UpdateEvents();
-    // printf("Exiting main...\n");
+    perf_times[9] = svcGetSystemTick();
 }
 
 void FindWorlds()

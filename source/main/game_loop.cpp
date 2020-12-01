@@ -125,9 +125,6 @@ void GameLoop()
         perf_times[8] = svcGetSystemTick();
         UpdateEvents();
         perf_times[9] = svcGetSystemTick();
-//        If MagicHand = True Then UpdateEditor
-        if(MagicHand)
-            UpdateEditor();
 
         bool pausePress = Player[1].Controls.Start;
 

@@ -1,11 +1,17 @@
 SMBX Port to 3DS!
 
-- Custom episodes in .romfs files
+- Fix height of intro level and width of curtain
+
+- Check remaining PGE_Delays
 
 - Update credits
   - Person with 3DS OS thread (Mario 64) (see sound file for credit)
   - People who made opus tutorial
   - People who made citra, devkitpro
+
+- Make it easier to build builds
+  - Bundle tools for Windows / Linux?
+  - Somehow put it in a Jupyter notebook or in javascript?
 
 - Crashes
   - Think through exceptions in standard library / PGE stuff
@@ -34,11 +40,6 @@ SMBX Port to 3DS!
   - Think about tongue effect for flying boot... Why does it cutoff a little too late?
   - Music fadeins/fadeouts?
 
-
-- Test screenshake...
-  - Seems pretty good!
-  - POW blocks
-
-- Shrink player spritesheets
-
 - Alternative multiplayer controls
+
+- Quick save / quick load

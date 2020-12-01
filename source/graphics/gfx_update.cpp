@@ -1587,13 +1587,26 @@ void UpdateGraphics(bool skipRepaint)
         {
             SuperPrint("PLAYER 1 CONTROLS", 3, MenuX, MenuY);
             SuperPrint("PLAYER 2 CONTROLS", 3, MenuX, MenuY+30);
-            if(n3ds_clocked == -1)
-                SuperPrint("---", 3, MenuX, MenuY+60);
-            else if (n3ds_clocked)
-                SuperPrint("USE O3DS CLOCK SPEED", 3, MenuX, MenuY+60);
+            if (n3ds_clocked == -1)
+            {
+                if (debugMode)
+                    SuperPrint("HIDE DEBUG SCREEN", 3, MenuX, MenuY+60);
+                else
+                    SuperPrint("SHOW DEBUG SCREEN", 3, MenuX, MenuY+60);
+                SuperPrint("VIEW CREDITS", 3, MenuX, MenuY+90);
+            }
             else
-                SuperPrint("USE N3DS CLOCK SPEED", 3, MenuX, MenuY+60);
-            SuperPrint("VIEW CREDITS", 3, MenuX, MenuY+90);
+            {
+                if (n3ds_clocked)
+                    SuperPrint("USE O3DS CLOCK SPEED", 3, MenuX, MenuY+60);
+                else
+                    SuperPrint("USE N3DS CLOCK SPEED", 3, MenuX, MenuY+60);
+                if (debugMode)
+                    SuperPrint("HIDE DEBUG SCREEN", 3, MenuX, MenuY+90);
+                else
+                    SuperPrint("SHOW DEBUG SCREEN", 3, MenuX, MenuY+90);
+                SuperPrint("VIEW CREDITS", 3, MenuX, MenuY+120);
+            }
             frmMain.renderTexture(MenuX - 20, MenuY + (MenuCursor * 30),
                                   GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
         }

@@ -26,6 +26,7 @@
 #include "../globals.h"
 #include "../game_main.h"
 #include "../graphics.h"
+#include "../n3ds-clock.h"
 
 #include <Utils/files.h>
 #include <IniProcessor/ini_processing.h>
@@ -66,7 +67,8 @@ static void writeJoyKey(IniProcessing &setup, const char *n, KM_Key &key)
 void OpenConfig()
 {
     int FileRelease = 0;
-    bool resBool = false;
+    bool l_debugMode;
+    int l_n3ds_clocked;
     std::string configPath = AppPathManager::settingsFileSTD();
 
     if(Files::fileExists(configPath))
@@ -74,7 +76,9 @@ void OpenConfig()
         IniProcessing config(configPath);
         config.beginGroup("main");
         config.read("release", FileRelease, curRelease);
-        config.read("full-screen", resBool, false);
+        config.read("show-debug-screen", l_debugMode, false);
+        if (n3ds_clocked != -1)
+            config.read("use-n3ds-clock", l_n3ds_clocked, 1);
         config.endGroup();
 
         For(A, 1, 2)
@@ -108,8 +112,12 @@ void OpenConfig()
         }
     }
 //    If resBool = True And resChanged = False And LevelEditor = False Then ChangeScreen
-    if(resBool && !resChanged)
-        ChangeScreen();
+    if (n3ds_clocked != -1 && l_n3ds_clocked != n3ds_clocked)
+        SwapClockSpeed();
+    if (debugMode != l_debugMode)
+    {
+        frmMain.toggleDebug();
+    }
 
     printf("Loaded config: %s", configPath.c_str());
 }
@@ -121,9 +129,9 @@ void SaveConfig()
     IniProcessing config(configPath);
     config.beginGroup("main");
     config.setValue("release", curRelease);
-#ifndef __EMSCRIPTEN__ // Don't remember fullscreen state for Emscripten!
-    config.setValue("full-screen", resChanged);
-#endif
+    config.setValue("show-debug-screen", debugMode);
+    if (n3ds_clocked != -1)
+        config.setValue("use-n3ds-clock", n3ds_clocked);
     config.endGroup();
 
     For(A, 1, 2)

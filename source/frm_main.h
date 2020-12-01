@@ -83,6 +83,8 @@ public:
     int setFullScreen(bool fs);
     bool isSdlError();
 
+    void toggleDebug();
+
     void initDraw(int screen = 0);
     void setLayer(int layer);
     void finalizeDraw();
