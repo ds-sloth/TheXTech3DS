@@ -1400,11 +1400,10 @@ void KillBlock(int A, bool Splode)
             }
         }
         Block[A].Hidden = true;
-        Block[A].Layer = (HS_DestroyedBlocks);
+        Block[A].Layer = (DestroyedBlocks);
         Block[A].Kill = false;
         // the ONLY case where Splode is not set is when the P-switch turns off
-        if (Splode)
-            syncLayers_Block(A);
+        syncLayers_Block(A);
     }
 
 }
@@ -1662,7 +1661,7 @@ void UpdateBlocks()
                 Block[A].RespawnDelay = Block[A].RespawnDelay + 1;
                 if(Block[A].RespawnDelay >= 65 * 60)
                 {
-                    if(Block[A].DefaultType > 0 || Block[A].DefaultSpecial > 0 || Block[A].Layer == HS_DestroyedBlocks)
+                    if(Block[A].DefaultType > 0 || Block[A].DefaultSpecial > 0 || Block[A].Layer == DestroyedBlocks)
                     {
                         for(B = 1; B <= numPlayers; B++)
                         {
@@ -1674,8 +1673,8 @@ void UpdateBlocks()
                         }
                         if(B > 0)
                         {
-                            if(Block[A].Layer == HS_DestroyedBlocks)
-                                Block[A].Layer = HS_Default;
+                            if(Block[A].Layer == DestroyedBlocks)
+                                Block[A].Layer = Default;
                             if(Block[A].Hidden == true)
                             {
                                 syncLayers_Block_SetHidden(A);
@@ -1980,7 +1979,7 @@ void PSwitch(bool Bool)
                 }
             }
         }
-        ProcEvent(HS_PSwitchStart, true);
+        ProcEvent(PSwitchStart, true);
     }
     else
     {
@@ -2039,12 +2038,12 @@ void PSwitch(bool Bool)
                     NPC[numNPCs].Killed = 0;
                     syncLayers_NPC(numNPCs);
                     KillBlock(A, false);
-                    Block[A].Layer = (HS_UsedPSwitch);
+                    Block[A].Layer = (UsedPSwitch);
                 }
             }
         }
 
-        ProcEvent(HS_PSwitchEnd, true);
+        ProcEvent(PSwitchEnd, true);
     }
     qSortBlocksX(1, numBlock);
     B = 1;

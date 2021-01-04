@@ -46,6 +46,7 @@
 #include "../padded_sleep.h"
 #include "../pseudo_vb.h"
 #include "../n3ds-clock.h"
+#include "../editor_screen.h"
 
 //Dim ScrollDelay As Integer
 static int ScrollDelay = 0;
@@ -161,10 +162,17 @@ void MenuLoop()
                 else if(MenuCursor == 3)
                 {
                     PlaySound(29);
-                    MenuMode = 3;
+                    MenuMode = 9;
+                    // FindWorlds();
                     MenuCursor = 0;
                 }
                 else if(MenuCursor == 4)
+                {
+                    PlaySound(29);
+                    MenuMode = 3;
+                    MenuCursor = 0;
+                }
+                else if(MenuCursor == 5)
                 {
                     PlaySound(29);
                     frmMain.clearBuffer();
@@ -175,8 +183,8 @@ void MenuLoop()
                     KillIt();
                 }
             }
-            if(MenuCursor > 4) MenuCursor = 0;
-            if(MenuCursor < 0) MenuCursor = 4;
+            if(MenuCursor > 5) MenuCursor = 0;
+            if(MenuCursor < 0) MenuCursor = 5;
         }
 
         // Character Select
@@ -278,7 +286,7 @@ void MenuLoop()
         }
 
         // World Select
-        else if(MenuMode == 1 || MenuMode == 2 || MenuMode == 4)
+        else if(MenuMode == 1 || MenuMode == 2 || MenuMode == 4 || MenuMode == 9)
         {
             if(MenuCursorCanMove)
             {
@@ -287,6 +295,8 @@ void MenuLoop()
                     MenuCursor = MenuMode - 1;
                     if(MenuMode == 4)
                         MenuCursor = 2;
+                    else if(MenuMode == 9)
+                        MenuCursor = 3;
                     MenuMode = 0;
                     PlaySound(26);
                     MenuCursorCanMove = false;
@@ -295,25 +305,42 @@ void MenuLoop()
                 {
                     PlaySound(29);
                     selWorld = MenuCursor + 1;
-                    if (MenuMode != 4)
-                        FindSaves();
-                    For(A, 1, numCharacters)
+
+                    // level editor
+                    if (MenuMode == 9)
                     {
-                        if(MenuMode == 4) {
-                            blockCharacter[A] = false;
-                        } else {
-                            blockCharacter[A] = SelectWorld[selWorld].blockChar[A];
-                        }
+                        GameMenu = false;
+                        LevelSelect = false;
+                        BattleMode = false;
+                        LevelEditor = true;
+                        WorldEditor = true;
+                        OpenWorld(SelectWorld[selWorld].WorldPath + SelectWorld[selWorld].WorldFile);
+                        ClearLevel();
+                        ClearGame();
+                        editorScreen.ResetCursor();
+                        return;
                     }
-                    MenuMode = MenuMode * 100;
-                    MenuCursor = 0;
-                    if(MenuMode == 400 && PlayerCharacter != 0) MenuCursor = PlayerCharacter - 1;
+                    else
+                    {
+                        FindSaves();
+                        For(A, 1, numCharacters)
+                        {
+                            if(MenuMode == 4) {
+                                blockCharacter[A] = false;
+                            } else {
+                                blockCharacter[A] = SelectWorld[selWorld].blockChar[A];
+                            }
+                        }
+                        MenuMode = MenuMode * 100;
+                        MenuCursor = 0;
+                        if(MenuMode == 400 && PlayerCharacter != 0) MenuCursor = PlayerCharacter - 1;
+                    }
                     MenuCursorCanMove = false;
                 }
             }
 
             // if we didn't just pick a world
-            if(MenuMode < 100)
+            if(MenuMode > 0 && MenuMode < 100)
             {
                 if (MenuMode != 4)
                 {
@@ -489,7 +516,7 @@ void MenuLoop()
                 {
                     SaveConfig();
                     MenuMode = 0;
-                    MenuCursor = 3;
+                    MenuCursor = 4;
                     MenuCursorCanMove = false;
                     PlaySound(26);
                 }
@@ -741,8 +768,8 @@ void MenuLoop()
 //    If CheckLiving = 0 Then
     if(CheckLiving() == 0)
     {
-//        ShowLayer HS_DestroyedBlocks
-        ShowLayer(HS_DestroyedBlocks);
+//        ShowLayer DestroyedBlocks
+        ShowLayer(DestroyedBlocks);
 //        For A = 1 To numNPCs
         For(A, 1, numNPCs)
         {

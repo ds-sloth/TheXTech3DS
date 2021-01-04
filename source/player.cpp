@@ -936,7 +936,6 @@ void EveryonesDead()
         MenuCursor = 0;
     }
     PS_SleepTill(500);
-    DoEvents();
 }
 
 void UnDuck(int A)
@@ -2153,7 +2152,7 @@ void TailSwipe(int plr, bool boo, bool Stab, int StabDir)
                             {
                                 PlaySound(88);
                                 Block[A].Hidden = true;
-                                Block[A].Layer = (HS_DestroyedBlocks);
+                                Block[A].Layer = (DestroyedBlocks);
                                 NewEffect(10, Block[A].Location);
                                 Effect[numEffects].Location.SpeedY = -2;
                                 syncLayers_Block(A);
@@ -4429,7 +4428,7 @@ void PlayerGrabCode(int A, bool DontResetGrabTime)
                         NPC[numNPCs].Location.Height = NPCHeight[108];
                         NPC[numNPCs].Active = true;
                         NPC[numNPCs].TimeLeft = NPC[Player[A].HoldingNPC].TimeLeft;
-                        NPC[numNPCs].Layer = HS_SpawnedNPCs;
+                        NPC[numNPCs].Layer = SpawnedNPCs;
                         NPC[numNPCs].Location.Y = NPC[Player[A].HoldingNPC].Location.Y + NPC[Player[A].HoldingNPC].Location.Height - NPC[numNPCs].Location.Height;
                         NPC[numNPCs].Direction = Player[A].Direction;
                         if(NPC[numNPCs].Direction == 1)

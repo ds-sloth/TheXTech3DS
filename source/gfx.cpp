@@ -57,8 +57,8 @@ bool GFX_t::load()
     For(i, 0, 2)
         loadImage(Container[i], uiPath + fmt::format_ne("Container{0}.png", i));
 
-    // For(i, 1, 3)
-    //     loadImage(ECursor[i], uiPath + fmt::format_ne("ECursor{0}.png", i));
+    For(i, 1, 3)
+        loadImage(ECursor[i], uiPath + fmt::format_ne("ECursor{0}.png", i));
 
     For(i, 0, 9)
         loadImage(Font1[i], uiPath + fmt::format_ne("Font1_{0}.png", i));
@@ -96,6 +96,8 @@ bool GFX_t::load()
     loadImage(Warp, uiPath + "Warp.png");
 
     loadImage(YoshiWings, uiPath + "YoshiWings.png");
+
+    loadImage(NPC_modes, uiPath + "NPC_modes.png");
 
     if(m_loadErrors > 0)
     {

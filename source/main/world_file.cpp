@@ -175,8 +175,8 @@ void OpenWorld(std::string FilePath)
         pp.Location.Width = 32;
         pp.Location.Height = 32;
         pp.Active = false;
-//        if(LevelEditor == true)
-//            pp.Active = true;
+        if(LevelEditor == true)
+            pp.Active = true;
 
         if(pp.Type > maxPathType) // Drop ID to 1 for Path of out of range IDs
         {
@@ -253,7 +253,7 @@ void OpenWorld(std::string FilePath)
     LoadCustomGFX();
     LoadCustomSound();
 
-//    if(LevelEditor == false)
+    if(LevelEditor == false)
     {
         for(A = 1; A <= numWorldLevels; A++)
         {
@@ -276,29 +276,12 @@ void OpenWorld(std::string FilePath)
             }
         }
     }
-//    else
-//    {
-//        for(A = 1; A <= numCharacters; A++)
-//        {
-//            if(blockCharacter[A] == true)
-//                frmWorld::chkChar(A).Value = 1;
-//            else
-//                frmWorld::chkChar(A).Value = 0;
-//        }
-//        frmWorld.txtWorldName = WorldName;
-//        frmWorld.txtStartLevel = StartLevel;
-//        if(NoMap == true)
-//            frmWorld::chkNoMap.Value = 1;
-//        else
-//            frmWorld::chkNoMap.Value = 0;
-//        if(RestartLevel == true)
-//            frmWorld::chkRestartLevel.Value = 1;
-//        else
-//            frmWorld::chkRestartLevel.Value = 0;
-//        for(A = 1; A <= 5; A++)
-//            frmWorld::txtCredits(A).Text = WorldCredits[A];
-//        frmWorld.txtStars = MaxWorldStars;
-//    }
+    else
+    {
+        vScreenX[1] = 0;
+        vScreenY[1] = 0;
+    }
+
     overTime = 0;
     GoalTime = SDL_GetTicks() + 1000;
     fpsCount = 0;
@@ -314,8 +297,6 @@ void ClearWorld()
     for(A = 1; A <= numCharacters; A++)
     {
         blockCharacter[A] = false;
-//        if(LevelEditor == true)
-//            frmWorld::chkChar(A).Value = 0;
     }
 
     for(A = 1; A <= numTiles; A++)
@@ -346,18 +327,18 @@ void ClearWorld()
     UnloadCustomGFX();
     UnloadWorldCustomGFX();
     UnloadCustomSound();
-//    if(LevelEditor == true)
-//    {
+    if(LevelEditor == true)
+    {
 //        frmLevelEditor::optCursor(14).Value = true;
 //        frmWorld.txtWorldName = "";
 //        frmWorld.txtStartLevel = "";
 //        frmWorld::chkNoMap.Value = false;
 //        frmWorld.chkRestartLevel = false;
-//        vScreenX[1] = 0;
-//        vScreenY[1] = 0;
+        vScreenX[1] = 0;
+        vScreenY[1] = 0;
 //        for(A = 1; A <= 5; A++)
 //            frmWorld::txtCredits(A).Text = "";
 //        frmWorld.txtStars = "";
-//        MaxWorldStars = 0;
-//    }
+        MaxWorldStars = 0;
+    }
 }

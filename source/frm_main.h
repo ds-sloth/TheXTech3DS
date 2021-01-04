@@ -101,7 +101,7 @@ public:
     void clearAllTextures();
 
     void clearBuffer();
-    void renderRect(int x, int y, int w, int h, uint8_t red = 255, uint8_t green = 255, uint8_t blue = 255, uint8_t alpha = 255, bool filled = true);
+    void renderRect(int x, int y, int w, int h, float red, float green, float blue, float alpha = 1.f, bool filled = true);
     void renderRectBR(int _left, int _top, int _right, int _bottom, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
 
     void renderCircle(int cx, int cy, int radius, float red = 1.f, float green = 1.f, float blue = 1.f, float alpha = 1.f, bool filled = true);
@@ -117,6 +117,11 @@ public:
                        StdPicture &tx,
                        unsigned int xSrc, unsigned int ySrc,
                        bool shadow = false);
+
+    void renderTextureScale(float xDst, float yDst, float wDst, float hDst,
+                        StdPicture &tx,
+                        float xSrc, float ySrc, float wSrc, float hSrc,
+                        bool shadow = false);
 
     void renderTexture(double xDst, double yDst, int wDst, int hDst,
                        StdPicture &tx,

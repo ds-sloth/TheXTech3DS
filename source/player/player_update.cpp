@@ -2900,7 +2900,7 @@ void UpdatePlayer()
                                 Player[A].Location.SpeedX = Player[A].GrabSpeed;
                                 Player[A].GrabSpeed = 0;
                                 Block[B].Hidden = true;
-                                Block[B].Layer = HS_DestroyedBlocks;
+                                Block[B].Layer = DestroyedBlocks;
                                 syncLayers_Block(B);
                                 NewEffect(10, Block[B].Location);
                                 Effect[numEffects].Location.SpeedY = -2;

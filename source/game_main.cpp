@@ -43,6 +43,7 @@
 #include "sound.h"
 #include "editor.h"
 #include "main/level_file.h"
+#include "editor_screen.h"
 
 #include "pseudo_vb.h"
 
@@ -160,11 +161,95 @@ int GameMain(const CmdLineSetup_t &setup)
             showCursor(1);
         }
 
-//        If LevelEditor = True Then 'Load the level editor
-//            [USELESS!]
+        if(LevelEditor) // Load the level editor
+        {
+            if(resChanged)
+                ChangeScreen();
+            BattleMode = false;
+            SingleCoop = 0;
+            numPlayers = 0;
+            // frmMain.Hide();
+            // frmLevelEditor.Show
+            ScreenType = 0;
+            DoEvents();
+            SetupEditorGraphics(); //Set up the editor graphics
+            SetupScreens();
+            MagicHand = false;
+            // frmLevelEditor.menuFile.Enabled = false;
+            // frmLevelEditor.MenuTest.Enabled = false;
+            // frmLevelEditor.mnuOnline.Enabled = false;
+            // frmLevelEditor.mnuMode.Enabled = false;
+            // frmLevelEditor.optCursor(5).Enabled = false;
+            // frmLevelEditor.optCursor(15).Enabled = false;
+            // frmLevelEditor.optCursor(2).Enabled = false;
+            // for (A = 0; A < frmLevelSettings.optLevel.Count; A++)
+            //     frmLevelSettings.optLevel[A].Enabled = true;
+            // For A = 0 To frmLevelSettings.optSection.Count - 1
+            //     frmLevelSettings.optSection(A).Enabled = True
+            // With EditorCursor
+            //     .Location.Height = 32
+            //     .Location.Width = 32
+            // End With
+            overTime = 0;
+            GoalTime = SDL_GetTicks() + 1000;
+            fpsCount = 0;
+            fpsTime = 0;
+            cycleCount = 0;
+            gameTime = 0;
+            do
+            {
+                DoEvents();
+                tempTime = SDL_GetTicks();
+                ScreenType = 0;
+                if(tempTime >= gameTime + frameRate || tempTime < gameTime || true)
+                {
+                    CheckActive();
+                    EditorLoop();
+
+                    if(fpsCount >= 32000)
+                        fpsCount = 0; // Fixes Overflow bug
+
+                    if(cycleCount >= 32000)
+                        cycleCount = 0; // Fixes Overflow bug
+
+                    overTime = overTime + (tempTime - (gameTime + frameRate));
+
+                    if(gameTime == 0.0)
+                        overTime = 0;
+
+                    if(overTime <= 1)
+                        overTime = 0;
+                    else if(overTime > 1000)
+                        overTime = 1000;
+
+                    gameTime = tempTime - overTime;
+                    overTime = (overTime - (tempTime - gameTime));
+                    if(SDL_GetTicks() > fpsTime)
+                    {
+                        if(cycleCount >= 65)
+                        {
+                            overTime = 0;
+                            gameTime = 0;
+                        }
+
+                        cycleCount = 0;
+                        fpsTime = SDL_GetTicks() + 1000;
+                        GoalTime = fpsTime;
+
+                        if(ShowFPS)
+                        {
+                            PrintFPS = fpsCount;
+                        }
+                        fpsCount = 0;
+                    }
+                }
+
+                // PGE_Delay(1);
+            } while(LevelEditor);
+        }
 
         // TheXTech Credits
-        if(GameOutro)
+        else if(GameOutro)
         {
             ShadowMode = false;
             GodMode = false;
@@ -273,7 +358,6 @@ int GameMain(const CmdLineSetup_t &setup)
 
                     gameTime = tempTime - overTime;
                     overTime = (overTime - (tempTime - gameTime));
-                    DoEvents();
                     if(SDL_GetTicks() > fpsTime)
                     {
                         if(cycleCount >= 65)
@@ -409,7 +493,7 @@ int GameMain(const CmdLineSetup_t &setup)
 
             // printf("Um, now?");
 
-            ProcEvent(HS_LevelStart, true);
+            ProcEvent(LevelStart, true);
             For(A, 2, maxEvents)
             {
                 if(Events[A].AutoStart)
@@ -456,8 +540,6 @@ int GameMain(const CmdLineSetup_t &setup)
 
                     gameTime = tempTime - overTime;
                     overTime = (overTime - (tempTime - gameTime));
-
-                    DoEvents();
 
                     if(SDL_GetTicks() > fpsTime)
                     {
@@ -602,7 +684,6 @@ int GameMain(const CmdLineSetup_t &setup)
 
                         CheckActive();
                         WorldLoop();
-                        DoEvents();
 
                         if(SDL_GetTicks() > fpsTime)
                         {
@@ -736,7 +817,7 @@ int GameMain(const CmdLineSetup_t &setup)
                     ReturnWarp = 0;
             }
 //'--------------------------------------------
-            ProcEvent(HS_LevelStart, true);
+            ProcEvent(LevelStart, true);
 
             for(int A = 2; A <= maxEvents; ++A)
             {
@@ -778,7 +859,6 @@ int GameMain(const CmdLineSetup_t &setup)
                     overTime = (overTime - (tempTime - gameTime));
 
                     GameLoop(); // Run the game loop
-                    DoEvents();
 
                     if(SDL_GetTicks() > fpsTime)
                     {
@@ -817,38 +897,18 @@ int GameMain(const CmdLineSetup_t &setup)
 //            If TestLevel = True Then
             if(TestLevel)
             {
-//                TestLevel = False
-//                TestLevel = false;
-//                LevelEditor = True
-//                LevelEditor = true;
-//                LevelEditor = true; //FIXME: Restart level testing or quit a game instead of THIS
+                TestLevel = false;
+                LevelSelect = false;
+                LevelEditor = true;
 
-                GameThing();
-                PGE_Delay(500);
-
-//                If nPlay.Online = False Then
-//                    OpenLevel FullFileName
-//                OpenLevel(FullFileName);
-//                Else
-//                    If nPlay.Mode = 1 Then
-//                        Netplay.sendData "H0" & LB
-//                        If Len(FullFileName) > 4 Then
-//                            If LCase(Right(FullFileName, 4)) = ".lvl" Then
-//                                OpenLevel FullFileName
-//                            Else
-//                                For A = 1 To 15
-//                                    If nPlay.ClientCon(A) = True Then Netplay.InitSync A
-//                                Next A
-//                            End If
-//                        Else
-//                            For A = 1 To 15
-//                                If nPlay.ClientCon(A) = True Then Netplay.InitSync A
-//                            Next A
-//                        End If
-//                    End If
-//                End If
-
-//                LevelSelect = False
+                OpenLevel(FullFileName);
+                // delete FullFileName if this is a temporary file
+                if (!Backup_FullFileName.empty())
+                {
+                    Files::deleteFile(FullFileName);
+                    FullFileName = Backup_FullFileName;
+                    Backup_FullFileName = "";
+                }
                 LevelSelect = false;
             }
 //            Else
@@ -872,7 +932,16 @@ int GameMain(const CmdLineSetup_t &setup)
 
 void EditorLoop()
 {
-    // DUMMY
+    UpdateEditor();
+    UpdateBlocks();
+    UpdateEffects();
+    if (WorldEditor == true)
+    {
+        UpdateGraphics2();
+    }
+    else
+        UpdateGraphics();
+    UpdateSound();
 }
 
 void KillIt()

@@ -47,7 +47,7 @@ public:
     RangeArr<StdPicture, 1, 5> CharacterName;
     StdPicture Chat;
     RangeArr<StdPicture, 0, 2> Container;
-    // RangeArr<StdPicture, 1, 3> ECursor;
+    RangeArr<StdPicture, 1, 3> ECursor;
     RangeArr<StdPicture, 0, 9> Font1;
     RangeArr<StdPicture, 1, 3> Font2;
     StdPicture Font2S;
@@ -63,6 +63,7 @@ public:
     RangeArr<StdPicture, 1, 2> Tongue;
     StdPicture Warp;
     StdPicture YoshiWings;
+    StdPicture NPC_modes;
 };
 
 #endif // GFX_H

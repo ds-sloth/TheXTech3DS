@@ -57,8 +57,6 @@ static bool bindJoystickKey(uint32_t keys, KM_Key &k)
 
 void UpdateControls()
 {
-    hidScanInput();
-
     uint32_t keys = hidKeysHeld();
 
     int A = 0;
@@ -153,5 +151,5 @@ bool JoyIsKeyDown(const KM_Key &key)
 
 bool getKeyState(KEYCODE kc)
 {
-    return kc & hidKeysDown();
+    return kc & hidKeysDownRepeat();
 }

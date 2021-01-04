@@ -44,8 +44,6 @@
 #include "global_constants.h"
 #include "controls.h"
 
-#include "hashed_string.h"
-
 //Option Explicit
 //Public Declare Sub Sleep Lib "kernel32" (ByVal dwMilliseconds As Long)
 //Public Declare Function BitBlt Lib "gdi32" (ByVal hDestDC As Long, ByVal X As Long, ByVal Y As Long, ByVal nWidth As Long, ByVal nHeight As Long, ByVal hSrcDC As Long, ByVal xSrc As Long, ByVal ySrc As Long, ByVal dwRop As Long) As Long
@@ -130,7 +128,7 @@ extern double vb6Round(double x, int decimals);
 //Public numSavedEvents As Integer
 extern int numSavedEvents;
 //Public SavedEvents(1 To MaxSavedEvents) As String
-extern RangeArr<HashedString, 1, MaxSavedEvents> SavedEvents;
+extern RangeArr<std::string, 1, MaxSavedEvents> SavedEvents;
 //Public BlockSwitch(1 To 4) As Boolean
 extern RangeArrI<bool, 1, 4, false> BlockSwitch;
 //'Public PowerUpUnlock(2 To 7) As Boolean
@@ -316,7 +314,7 @@ extern RangeArrI<int, 1, 2, 0> useJoystick;
 struct NPC_t
 {
 //    AttLayer As String
-    HashedString AttLayer;
+    std::string AttLayer;
 //    Quicksand As Integer
     int Quicksand = 0;
 //    RespawnDelay As Integeri
@@ -352,15 +350,15 @@ struct NPC_t
 //    Shadow As Boolean 'if true turn the NPC black and allow it to pass through walls.  only used for a cheat code
     bool Shadow = false;
 //    TriggerActivate As String 'for events - triggers when NPC gets activated
-    HashedString TriggerActivate;
+    std::string TriggerActivate;
 //    TriggerDeath As String 'triggers when NPC dies
-    HashedString TriggerDeath;
+    std::string TriggerDeath;
 //    TriggerTalk As String 'triggers when you talk to the NPC
-    HashedString TriggerTalk;
+    std::string TriggerTalk;
 //    TriggerLast As String 'trigger when this is the last NPC in a layer to die
-    HashedString TriggerLast;
+    std::string TriggerLast;
 //    Layer As String 'the layer name that the NPC is in
-    HashedString Layer;
+    std::string Layer;
 //    Hidden As Boolean 'if the layer is hidden or not
     bool Hidden = false;
 //    Legacy As Boolean 'Legacy Boss
@@ -741,7 +739,7 @@ struct Player_t
 struct Background_t
 {
 //    Layer As String
-    HashedString Layer;
+    std::string Layer;
 //    Hidden As Boolean
     bool Hidden = false;
 //    Type As Integer
@@ -761,7 +759,7 @@ struct Background_t
 struct Water_t
 {
 //    Layer As String
-    HashedString Layer;
+    std::string Layer;
 //    Hidden As Boolean
     bool Hidden = false;
 //    Buoy As Single 'not used
@@ -788,13 +786,13 @@ struct Block_t
     int DefaultSpecial = 0;
 //'for event triggers
 //    TriggerHit As String
-    HashedString TriggerHit;
+    std::string TriggerHit;
 //    TriggerDeath As String
-    HashedString TriggerDeath;
+    std::string TriggerDeath;
 //    TriggerLast As String
-    HashedString TriggerLast;
+    std::string TriggerLast;
 //    Layer As String
-    HashedString Layer;
+    std::string Layer;
 //    Hidden As Boolean
     bool Hidden = false;
 //    Type As Integer 'the block's type
@@ -915,7 +913,7 @@ struct Warp_t
 //    NoYoshi As Boolean 'don't allow yoshi
     bool NoYoshi = false;
 //    Layer As String 'the name of the layer
-    HashedString Layer;
+    std::string Layer;
 //    Hidden As Boolean 'if the layer is hidden
     bool Hidden = false;
 //    PlacedEnt As Boolean 'for the editor, flags the entranced as placed
@@ -955,7 +953,7 @@ struct Warp_t
     bool noEntranceScene = false;
     bool cannonExit = false;
     double cannonExitSpeed = 10.0;
-    HashedString eventEnter;
+    std::string eventEnter;
     std::string StarsMsg;
 //End Type
 };
@@ -1020,9 +1018,10 @@ struct EditorCursor_t
 //    Location As Location
     Location_t Location;
 //    Layer As String 'current layer
-    HashedString Layer;
+    std::string Layer;
 //    Mode As Integer
     int Mode = 0;
+    int SubMode = 0;
 //    Block As Block
     Block_t Block;
 //    Water As Water
@@ -2141,6 +2140,14 @@ const int ScreenW = 820;
 const int ScreenH = 480;
 
 extern void Set_Screen(int sw, int sh);
+
+const std::string LevelStart = "Level - Start";
+const std::string SpawnedNPCs = "Spawned NPCs";
+const std::string DestroyedBlocks = "Destroyed Blocks";
+const std::string Default = "Default";
+const std::string PSwitchStart = "P Switch - Start";
+const std::string UsedPSwitch = "Used P Switch";
+const std::string PSwitchEnd = "P Switch - End";
 
 #endif // GLOBALS_H
 

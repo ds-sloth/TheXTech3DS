@@ -1,5 +1,7 @@
 SMBX Port to 3DS!
 
+- Work out CIA
+
 - Fix height of intro level and width of curtain
 
 - Check remaining PGE_Delays
@@ -8,8 +10,10 @@ SMBX Port to 3DS!
   - Person with 3DS OS thread (Mario 64) (see sound file for credit)
   - People who made opus tutorial
   - People who made citra, devkitpro
+  - Fix credits music fadeout
+  - Fix credits -> normal screen transition
 
-- Make it easier to build builds
+- Make it easier to build episodes
   - Bundle tools for Windows / Linux?
   - Somehow put it in a Jupyter notebook or in javascript?
 
@@ -39,6 +43,11 @@ SMBX Port to 3DS!
 - Sound
   - Think about tongue effect for flying boot... Why does it cutoff a little too late?
   - Music fadeins/fadeouts?
+  - Make OGGs loop properly
+  - Consider implementing SPCs: libgme seems pretty nice,
+    hopefully not too resource-intensive
+  - Fix P-Switch music second play
+  - Fix credits music fadeout
 
 - Alternative multiplayer controls
 

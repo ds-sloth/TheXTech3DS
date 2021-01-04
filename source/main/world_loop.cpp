@@ -676,7 +676,6 @@ void PathWait()
                 overTime = 1000;
             gameTime = tempTime - overTime;
             overTime = (overTime - (tempTime - gameTime));
-            DoEvents();
             if(SDL_GetTicks() > fpsTime)
             {
                 if(cycleCount >= 65)

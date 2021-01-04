@@ -1371,7 +1371,7 @@ void NPCSpecial(int A)
                 NPC[A].Special = 20;
                 numNPCs++;
                 NPC[numNPCs] = NPC_t();
-                NPC[numNPCs].Layer = HS_SpawnedNPCs;
+                NPC[numNPCs].Layer = SpawnedNPCs;
                 NPC[numNPCs].Active = true;
                 NPC[numNPCs].Direction = NPC[A].Direction;
                 NPC[numNPCs].Type = 134;
@@ -1690,7 +1690,7 @@ void NPCSpecial(int A)
             NPC[numNPCs].Location.X = NPC[A].Location.X + 2;
             NPC[numNPCs].Location.Y = NPC[A].Location.Y;
             NPC[numNPCs].Section = NPC[A].Section;
-            NPC[numNPCs].Layer = HS_SpawnedNPCs;
+            NPC[numNPCs].Layer = SpawnedNPCs;
             NPC[numNPCs].Type = 210;
             NPC[numNPCs].Active = true;
             NPC[numNPCs].TimeLeft = 50;
@@ -2303,7 +2303,7 @@ void NPCSpecial(int A)
                 NPC[numNPCs].Type = 30;
                 NPC[numNPCs].Active = true;
                 NPC[numNPCs].TimeLeft = 50;
-                NPC[numNPCs].Layer = HS_SpawnedNPCs;
+                NPC[numNPCs].Layer = SpawnedNPCs;
                 NPC[numNPCs].Location.SpeedY = -8;
                 NPC[numNPCs].Location.SpeedX = 3 * NPC[numNPCs].Direction;
                 syncLayers_NPC(numNPCs);
@@ -2328,7 +2328,7 @@ void NPCSpecial(int A)
                     NPC[numNPCs].TimeLeft = 100;
                     NPC[numNPCs].Direction = NPC[A].Direction;
                     NPC[numNPCs].Section = NPC[A].Section;
-                    NPC[numNPCs].Layer = HS_SpawnedNPCs;
+                    NPC[numNPCs].Layer = SpawnedNPCs;
                     NPC[numNPCs].Type = 87;
                     if(NPC[numNPCs].Direction == 1)
                         NPC[numNPCs].Frame = 4;
@@ -2445,7 +2445,7 @@ void NPCSpecial(int A)
                                 }
                             }
                             StopMusic();
-                            DoEvents();
+                            // DoEvents();
                             PlaySound(60);
                             break;
                         }

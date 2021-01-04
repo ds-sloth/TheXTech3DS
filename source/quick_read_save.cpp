@@ -63,7 +63,7 @@ bool read_levels_paths(const char* buffer, int n_chars, int& current_char, int& 
         // level/path (regardless of visibility)
         else if (buffer[current_char] == '\n')
             maxActive ++;
-        // VIZ_LEVELS_END / VIZ_PATHS_END
+        // VIZ_LEVELS_END / VIZ_PATEND
         else if (buffer[current_char] == 'D')
         {
             if (buffer[current_char+1] == '\r')

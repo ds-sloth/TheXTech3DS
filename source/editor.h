@@ -28,6 +28,8 @@
 
 #include "location.h"
 
+extern std::string Backup_FullFileName;
+
 struct Point_t
 {
     int X = 0;
@@ -52,12 +54,21 @@ struct OptCursor_t
         LVL_NPCS = 4,
         LVL_SETTINGS = 2,
         LVL_WARPS = 5,
-        LVL_WATER = 15
+        LVL_WATER = 15,
+        WLD_PATHS = 10,
+        WLD_MUSIC = 11,
+        WLD_SCENES = 8,
+        WLD_LEVELS = 9,
+        WLD_TILES = 7,
     };
     int current = LVL_SELECT;
 };
 
 extern OptCursor_t optCursor;
+
+void ResetSectionScrolls();
+
+void SetSection(int i);
 
 // this sub handles the level editor
 // it is still called when the player is testing a level in the editor in windowed mode

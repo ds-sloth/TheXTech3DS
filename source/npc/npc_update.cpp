@@ -331,7 +331,7 @@ void UpdateNPCs()
                             }
                             else if(NPC[A].GeneratorEffect == 2) // projectile
                             {
-                                NPC[numNPCs].Layer = HS_SpawnedNPCs;
+                                NPC[numNPCs].Layer = SpawnedNPCs;
                                 PlaySound(22);
                                 NPC[numNPCs].Projectile = true;
                                 if(NPC[numNPCs].Type == 17) // Normal Bullet Bills
@@ -2012,7 +2012,7 @@ void UpdateNPCs()
                                                                     Block[B].Type = 109;
                                                                 else
                                                                 {
-                                                                    Block[B].Layer = (HS_DestroyedBlocks);
+                                                                    Block[B].Layer = (DestroyedBlocks);
                                                                     Block[B].Hidden = true;
                                                                     syncLayers_Block(B);
                                                                     numNPCs++;
@@ -4756,7 +4756,7 @@ void UpdateNPCs()
                 NPCFrames(A);
 
                 if(NPC[A].Effect == 0 && NPC[A].Type != 91)
-                    NPC[A].Layer = HS_SpawnedNPCs;
+                    NPC[A].Layer = SpawnedNPCs;
                 syncLayers_NPC(A);
 
             }

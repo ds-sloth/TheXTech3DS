@@ -39,6 +39,9 @@
 #include <DirManager/dirman.h>
 #include <chrono>
 #include <fmt_format_ne.h>
+#include "editor_screen.h"
+
+#include <3ds.h>
 
 #include "frm_main.h"
 
@@ -125,10 +128,40 @@ void FrmMain::hide()
 
 void FrmMain::doEvents()
 {
+    hidScanInput();
+
     depthSlider = osGet3DSliderState();
     if (depthSlider > 0.05) numEyes = 2;
     else numEyes = 1;
     if (!aptMainLoop()) KillIt(); // could add panic save of some sort here...
+
+    if (!LevelEditor)
+        return;
+
+    touchPosition touch;
+    hidTouchRead(&touch);
+
+    if (!editorScreen.active)
+    {
+        EditorControls.Mouse1 |= hidKeysDown() & KEY_TOUCH;
+        EditorControls.Mouse1 &= !(hidKeysUp() & KEY_TOUCH);
+        MouseMove(EditorCursor.X, EditorCursor.Y, true);
+        if (hidKeysHeld() & KEY_TOUCH)
+        {
+            EditorCursor.X = 80 + touch.px * 2;
+            EditorCursor.Y = touch.py * 2;
+        }
+    }
+    else
+    {
+        MenuMouseDown = hidKeysHeld() & KEY_TOUCH;
+        MenuMouseRelease = hidKeysUp() & KEY_TOUCH;
+        if (hidKeysHeld() & KEY_TOUCH)
+        {
+            MenuMouseX = touch.px * 2;
+            MenuMouseY = touch.py * 2;
+        }
+    }
 }
 
 void FrmMain::processEvent()
@@ -177,11 +210,17 @@ void FrmMain::initDraw(int screen)
         {
             C2D_TargetClear(layer_targets[layer], C2D_Color32f(0.0f, 0.0f, 0.0f, 0.0f));
         }
-        C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 1.0f, 1.0f));
         C2D_SceneBegin(layer_targets[2]); // screen plane target
+    }
+    else if (!editorScreen.active)
+    {
+        // with some sort of repositioning...???
+        C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 1.0f, 1.0f));
+        C2D_SceneBegin(top);
     }
     else
     {
+        C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 1.0f, 1.0f));
         C2D_SceneBegin(bottom);
     }
 }
@@ -194,7 +233,17 @@ void FrmMain::setLayer(int layer)
 void FrmMain::finalizeDraw()
 {
     // leave the draw context and wait for vblank...
-    if (numEyes == 1)
+    if (!editorScreen.active)
+    {
+        C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+        C2D_SceneBegin(bottom);
+        // can be a bigger offset than this...
+        C2D_DrawImageAt(layer_ims[0], -45, 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -45, 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -45, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -45, 0, 0);
+    }
+    else if (numEyes == 1)
     {
         C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(top);
@@ -558,6 +607,8 @@ void FrmMain::clearBuffer()
     C2D_SceneBegin(top);
     C2D_TargetClear(right, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
     C2D_SceneBegin(right);
+    C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+    C2D_SceneBegin(bottom);
     C3D_FrameEnd(0);
 }
 
@@ -574,9 +625,9 @@ void FrmMain::toggleDebug()
     debugMode = !debugMode;
 }
 
-void FrmMain::renderRect(int x, int y, int w, int h, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha, bool filled)
+void FrmMain::renderRect(int x, int y, int w, int h, float red, float green, float blue, float alpha, bool filled)
 {
-    uint32_t clr = C2D_Color32(red, green, blue, alpha);
+    uint32_t clr = C2D_Color32f(red, green, blue, alpha);
 
     // Filled is always True in this game
     C2D_DrawRectSolid(x/2+viewport_offset_x,
@@ -684,6 +735,95 @@ void FrmMain::renderTexturePrivate(float xDst, float yDst, float wDst, float hDs
     if(ySrc + hDst > 1024.f)
     {
         if(ySrc + hDst > 2048.f)
+        {
+            if(tx.texture3)
+                to_draw = &tx.image3;
+            if(ySrc < 2048.f && tx.texture2)
+                to_draw_2 = &tx.image2;
+            ySrc -= 1024.f;
+        }
+        else
+        {
+            if(tx.texture2)
+                to_draw = &tx.image2;
+            if(ySrc < 1024.f)
+                to_draw_2 = &tx.image;
+        }
+        // draw the top pic
+        if(to_draw_2 != nullptr)
+        {
+            C2D_DrawImage_Custom(*to_draw_2, xDst+viewport_offset_x, yDst+viewport_offset_y,
+                                 xSrc, ySrc, wDst, 1024.f-ySrc, shadow);
+            yDst += (1024.f - ySrc);
+            hDst -= (1024.f - ySrc);
+            ySrc = 0.f;
+        }
+        else
+            ySrc -= 1024.f;
+    }
+    else to_draw = &tx.image;
+
+    if (to_draw == nullptr) return;
+
+    C2D_DrawImage_Custom(*to_draw, xDst+viewport_offset_x, yDst+viewport_offset_y,
+                         xSrc, ySrc, wDst, hDst, shadow);
+}
+
+void FrmMain::renderTextureScale(float xDst, float yDst, float wDst, float hDst,
+                             StdPicture &tx,
+                             float xSrc, float ySrc, float wSrc, float hSrc,
+                             bool shadow)
+{
+    renderTexturePrivate(ROUNDDIV2(xDst),
+                   ROUNDDIV2(yDst),
+                   ROUNDDIV2(wDst),
+                   ROUNDDIV2(hDst),
+                   tx,
+                   xSrc/2,
+                   ySrc/2,
+                   shadow);
+    return;
+    // dead code, for now...
+    if(!tx.inited)
+        return;
+
+    if(!tx.texture && tx.lazyLoaded)
+        lazyLoad(tx);
+
+    tx.lastDrawFrame = currentFrame;
+
+    if(!tx.texture)
+        return;
+    if(xDst > viewport_w || yDst > viewport_h)
+        return;
+
+    // texture boundaries
+    // this never happens unless there was an invalid input
+    // if((xSrc < 0.f) || (ySrc < 0.f)) return;
+
+    // don't check viewport boundaries because they interact with scaling
+
+    C2D_Image* to_draw = nullptr;
+    C2D_Image* to_draw_2 = nullptr;
+
+    // Don't go more than size of texture
+    // Failure conditions should only happen if texture is smaller than expected
+    if(xSrc + wSrc > tx.w/2)
+    {
+        wSrc = tx.w/2 - xSrc;
+        if(wSrc < 0.f)
+            return;
+    }
+    if(ySrc + hSrc > tx.h/2)
+    {
+        hSrc = tx.h/2 - ySrc;
+        if(hSrc < 0.f)
+            return;
+    }
+
+    if(ySrc + hSrc > 1024.f)
+    {
+        if(ySrc + hSrc > 2048.f)
         {
             if(tx.texture3)
                 to_draw = &tx.image3;

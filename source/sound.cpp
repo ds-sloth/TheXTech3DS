@@ -320,7 +320,7 @@ void StartMusic(int A, int fadeInMs)
         return;
 
     StopMusic();
-    if(LevelSelect && !GameMenu && !GameOutro) // music on the world map
+    if(WorldEditor || LevelSelect && !GameMenu && !GameOutro) // music on the world map
     {
         curWorldMusic = A;
         std::string mus = fmt::format_ne("wmusic{0}", A);

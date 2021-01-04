@@ -108,6 +108,8 @@ int main(int argc, char**argv)
     setup.renderType = CmdLineSetup_t::RenderType(RenderMode);
 
     testPlayer.fill(Player_t());
+    testPlayer[1].Character = 1;
+    testPlayer[2].Character = 2;
 
     // set this flag before SDL initialization to allow game be quit when closing a window before a loading process will be completed
     GameIsActive = true;

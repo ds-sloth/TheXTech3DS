@@ -35,7 +35,7 @@ bool GameIsActive = false;
 std::string AppPath;
 
 int numSavedEvents = 0;
-RangeArr<HashedString, 1, MaxSavedEvents> SavedEvents;
+RangeArr<std::string, 1, MaxSavedEvents> SavedEvents;
 RangeArrI<bool, 1, 4, false> BlockSwitch;
 RangeArrI<bool, 2, 7, false> PowerUpUnlock;
 long myBackBuffer = 0;
@@ -515,7 +515,7 @@ std::string getJoyKeyName(const KM_Key &key)
 
 void initAll()
 {
-    SavedEvents.fill(HashedString());
+    SavedEvents.fill(std::string());
     BlockSwitch.fill(false);
     PowerUpUnlock.fill(false);
     conJoystick.fill(ConJoystick_t());
