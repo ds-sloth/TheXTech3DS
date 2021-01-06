@@ -80,7 +80,7 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
     {
         C3D_TexInitVRAM(&layer_texs[i], 512, 256, GPU_RGBA8);
         layer_targets[i] = C3D_RenderTargetCreateFromTex(&layer_texs[i], GPU_TEXFACE_2D, 0, GPU_RB_DEPTH24_STENCIL8);
-        layer_subtexs[i] = {410, 240, 0., 1., 410./512., 1-(240./256.)};
+        layer_subtexs[i] = {420, 240, 0., 1., 420./512., 1-(240./256.)};
         layer_ims[i].tex = &layer_texs[i];
         layer_ims[i].subtex = &layer_subtexs[i];
     }
@@ -130,6 +130,10 @@ void FrmMain::doEvents()
 {
     hidScanInput();
 
+    keys_held = hidKeysHeld();
+    keys_pressed = hidKeysDown();
+    keys_released = hidKeysUp();
+
     depthSlider = osGet3DSliderState();
     if (depthSlider > 0.05) numEyes = 2;
     else numEyes = 1;
@@ -143,20 +147,35 @@ void FrmMain::doEvents()
 
     if (!editorScreen.active)
     {
-        EditorControls.Mouse1 |= hidKeysDown() & KEY_TOUCH;
-        EditorControls.Mouse1 &= !(hidKeysUp() & KEY_TOUCH);
-        MouseMove(EditorCursor.X, EditorCursor.Y, true);
-        if (hidKeysHeld() & KEY_TOUCH)
+        if ((keys_pressed & KEY_TOUCH) && (currentFrame - m_lastMousePress) < 40)
+            EditorControls.Mouse1 = true;
+        if (keys_released & KEY_TOUCH)
         {
-            EditorCursor.X = 80 + touch.px * 2;
-            EditorCursor.Y = touch.py * 2;
+            EditorControls.Mouse1 = false;
+            m_lastMousePress = currentFrame;
         }
+        if (keys_held & KEY_TOUCH)
+        {
+            // not selector bar
+            if (touch.py > 20)
+            {
+                EditorCursor.X = 100 + touch.px * 2;
+                EditorCursor.Y = touch.py * 2;
+            }
+            // selector bar
+            else
+            {
+                MenuMouseX = 100 + touch.px * 2;
+                MenuMouseY = touch.py * 2;
+            }
+        }
+        MouseMove(EditorCursor.X, EditorCursor.Y, true);
     }
     else
     {
-        MenuMouseDown = hidKeysHeld() & KEY_TOUCH;
-        MenuMouseRelease = hidKeysUp() & KEY_TOUCH;
-        if (hidKeysHeld() & KEY_TOUCH)
+        MenuMouseRelease = keys_released & KEY_TOUCH;
+        MenuMouseDown = keys_held & KEY_TOUCH;
+        if (MenuMouseDown)
         {
             MenuMouseX = touch.px * 2;
             MenuMouseY = touch.py * 2;
@@ -203,26 +222,38 @@ bool FrmMain::isSdlError()
 void FrmMain::initDraw(int screen)
 {
     // enter the draw context!
+    // FILE* log = fopen("/initdraw.txt", "wb");
+    // fputs("open\n", log); fflush(log);
+    // fprintf(log, "stack: %p\n", &log); fflush(log);
     if (screen == 0)
     {
+        // fputs("hello\n", log); fflush(log);
         C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+        // fputs("hello2\n", log); fflush(log);
         for (int layer = 0; layer < 4; layer++)
         {
+            // fputs("hello3\n", log); fflush(log);
             C2D_TargetClear(layer_targets[layer], C2D_Color32f(0.0f, 0.0f, 0.0f, 0.0f));
         }
+        // fputs("hello4\n", log); fflush(log);
         C2D_SceneBegin(layer_targets[2]); // screen plane target
     }
-    else if (!editorScreen.active)
+    else if (LevelEditor && !editorScreen.active)
     {
-        // with some sort of repositioning...???
-        C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 1.0f, 1.0f));
+        setViewport(80, 0, 640, 480);
+        // fputs("morp\n", log); fflush(log);
+        C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
+        // fputs("merp\n", log); fflush(log);
         C2D_SceneBegin(top);
     }
     else
     {
+        // fputs("meep\n", log); fflush(log);
         C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 1.0f, 1.0f));
+        // fputs("morp\n", log); fflush(log);
         C2D_SceneBegin(bottom);
     }
+    // fputs("goodbue\n", log); fclose(log);
 }
 
 void FrmMain::setLayer(int layer)
@@ -232,41 +263,42 @@ void FrmMain::setLayer(int layer)
 
 void FrmMain::finalizeDraw()
 {
+    resetViewport();
     // leave the draw context and wait for vblank...
-    if (!editorScreen.active)
+    if (LevelEditor && !editorScreen.active)
     {
         C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(bottom);
         // can be a bigger offset than this...
-        C2D_DrawImageAt(layer_ims[0], -45, 0, 0);
-        C2D_DrawImageAt(layer_ims[1], -45, 0, 0);
-        C2D_DrawImageAt(layer_ims[2], -45, 0, 0);
-        C2D_DrawImageAt(layer_ims[3], -45, 0, 0);
+        C2D_DrawImageAt(layer_ims[0], -50, 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -50, 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -50, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -50, 0, 0);
     }
     else if (numEyes == 1)
     {
         C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(top);
-        C2D_DrawImageAt(layer_ims[0], -5, 0, 0);
-        C2D_DrawImageAt(layer_ims[1], -5, 0, 0);
-        C2D_DrawImageAt(layer_ims[2], -5, 0, 0);
-        C2D_DrawImageAt(layer_ims[3], -5, 0, 0);
+        C2D_DrawImageAt(layer_ims[0], -10, 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -10, 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -10, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -10, 0, 0);
     }
     else
     {
         C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(top);
-        C2D_DrawImageAt(layer_ims[0], -5 - (int)(5. * depthSlider), 0, 0);
-        C2D_DrawImageAt(layer_ims[1], -5 - (int)(2. * depthSlider), 0, 0);
-        C2D_DrawImageAt(layer_ims[2], -5, 0, 0);
-        C2D_DrawImageAt(layer_ims[3], -5 + (int)(2. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[0], -10 - (int)(10. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -10 - (int)(4. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -10, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -10 + (int)(4. * depthSlider), 0, 0);
 
         C2D_TargetClear(right, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(right);
-        C2D_DrawImageAt(layer_ims[0], -5 + (int)(5. * depthSlider), 0, 0);
-        C2D_DrawImageAt(layer_ims[1], -5 + (int)(2. * depthSlider), 0, 0);
-        C2D_DrawImageAt(layer_ims[2], -5, 0, 0);
-        C2D_DrawImageAt(layer_ims[3], -5 - (int)(2. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[0], -10 + (int)(10. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -10 + (int)(4. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -10, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -10 - (int)(4. * depthSlider), 0, 0);
     }
     currentFrame ++;
     C3D_FrameEnd(0);
@@ -462,7 +494,7 @@ void FrmMain::lazyLoad(StdPicture &target)
         if (!sourceImage) {
             for (i = 0; i < 10; i ++)
             {
-                if (linearSpaceFree() > 10000000) break;
+                if (linearSpaceFree() > 16000000) break;
                 if (!freeTextureMem()) break;
             }
             sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
@@ -475,7 +507,7 @@ void FrmMain::lazyLoad(StdPicture &target)
         if (!sourceImage) {
             for (i = 0; i < 10; i ++)
             {
-                if (linearSpaceFree() > 10000000) break;
+                if (linearSpaceFree() > 16000000) break;
                 if (!freeTextureMem()) break;
             }
             sourceImage = C2D_SpriteSheetLoad(suppPath.c_str());
@@ -605,10 +637,13 @@ void FrmMain::clearBuffer()
     C3D_FrameBegin(0);
     C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
     C2D_SceneBegin(top);
+    renderRect(0,0,ScreenW,ScreenH,0.f,0.f,0.f,1.f,true);
     C2D_TargetClear(right, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
     C2D_SceneBegin(right);
+    renderRect(0,0,ScreenW,ScreenH,0.f,0.f,0.f,1.f,true);
     C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
     C2D_SceneBegin(bottom);
+    renderRect(0,0,ScreenW,ScreenH,0.f,0.f,0.f,1.f,true);
     C3D_FrameEnd(0);
 }
 
@@ -620,6 +655,7 @@ void FrmMain::toggleDebug()
         C3D_FrameBegin(0);
         C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(bottom);
+        renderRect(0,0,ScreenW,ScreenH,0.f,0.f,0.f,1.f,true);
         C3D_FrameEnd(0);
     }
     debugMode = !debugMode;

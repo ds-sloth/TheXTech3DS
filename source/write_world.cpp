@@ -8,6 +8,8 @@ void SaveWorld(std::string FilePath)   // Saves the world!
     int B = 0;
 
     FILE* f = fopen(FilePath.c_str(), "wb");
+    if (!f)
+        return;
     fwritenum(f, curRelease);
     fwritestr(f, WorldName);
     for (A = 1; A <= 5; A++)

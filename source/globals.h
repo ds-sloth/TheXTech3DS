@@ -92,10 +92,6 @@ extern void DoEvents();
  */
 extern int showCursor(int show);
 
-extern uint8_t getKeyState(int key);
-
-extern uint8_t getKeyStateI(int key);
-
 //Public Const KEY_PRESSED As Integer = &H1000    'For control information
 const int KEY_PRESSED = 1;
 
@@ -2136,7 +2132,7 @@ const int curRelease = 64;
 // extern int ScreenW;
 // //Public Const ScreenH As Integer = 600  'Game Screen Height
 // extern int ScreenH;
-const int ScreenW = 820;
+const int ScreenW = 840;
 const int ScreenH = 480;
 
 extern void Set_Screen(int sw, int sh);

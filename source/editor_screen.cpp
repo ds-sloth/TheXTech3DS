@@ -269,23 +269,13 @@ bool EditorScreen::UpdateButton(int x, int y, StdPicture &im, bool sel,
     // outline:
     if (sel)
     {
-        if (coll)
-        {
-            if (MenuMouseDown)
-                frmMain.renderRect(x - 2, y - 2, 36, 36, 0.f, 0.5f, 0.f, 1.0f, true);
-            else
-                frmMain.renderRect(x - 2, y - 2, 36, 36, 0.8f, 1.0f, 0.8f, 1.0f, true);
-        }
+        if (coll && MenuMouseDown)
+            frmMain.renderRect(x - 2, y - 2, 36, 36, 0.f, 0.5f, 0.f, 1.0f, true);
         else
             frmMain.renderRect(x - 2, y - 2, 36, 36, 0.f, 1.0f, 0.f, 1.0f, true);
     }
-    else if (coll)
-    {
-        if (MenuMouseDown)
-            frmMain.renderRect(x - 2, y - 2, 36, 36, 0.f, 0.f, 0.f, 1.0f, true);
-        else
-            frmMain.renderRect(x - 2, y - 2, 36, 36, 1.0f, 1.0f, 1.0f, 1.0f, true);
-    }
+    else if (coll && MenuMouseDown)
+        frmMain.renderRect(x - 2, y - 2, 36, 36, 0.f, 0.f, 0.f, 1.0f, true);
     // background:
     if (MenuMouseDown && coll)
         frmMain.renderRect(x, y, 32, 32, 0.2f, 0.2f, 0.2f, true);
@@ -524,6 +514,7 @@ void EditorScreen::UpdateNPCScreen()
         // Text
         if (EditorCursor.NPC.Inert)
         {
+            MessageText = EditorCursor.NPC.Text;
             SuperPrint("TEXT", 3, e_ScreenW - 200, 160);
             if (UpdateButton(e_ScreenW - 160 + 4, 180 + 4, GFX.NPC_modes, !EditorCursor.NPC.Text.empty(), 0, 32*17, 32, 32))
                 EditorCursor.NPC.Text = GetTextInput("NPC text", EditorCursor.NPC.Text);
@@ -1373,6 +1364,7 @@ void EditorScreen::UpdateEventSettingsScreen()
     if (UpdateButton(210 + 4, 120 + 4, GFX.ECursor[1], controls_set, 0, 0, 32, 32))
         m_special_page = SPECIAL_PAGE_EVENT_CONTROLS;
     // message
+    MessageText = Events[m_current_event].Text;
     SuperPrint("TEXT", 3, 54, 170);
     if (UpdateButton(10 + 4, 160 + 4, GFX.NPC_modes, !Events[m_current_event].Text.empty(), 0, 32*17, 32, 32))
         Events[m_current_event].Text = GetTextInput("Event text", Events[m_current_event].Text);
@@ -2807,7 +2799,7 @@ void EditorScreen::UpdateWarpScreen()
     // placement selection
     if (EditorCursor.Warp.level == "" && !EditorCursor.Warp.LevelEnt && !EditorCursor.Warp.MapWarp)
     {
-        if (EditorCursor.SubMode == 0)
+        if (EditorCursor.SubMode != 1 && EditorCursor.SubMode != 2)
             EditorCursor.SubMode = 1;
         SuperPrint("PLACING IN", 3, 118, 90);
         if (UpdateButton(300 + 4, 80 + 4, GFX.ECursor[1], EditorCursor.SubMode == 1, 0, 0, 32, 32))
@@ -3008,7 +3000,7 @@ void EditorScreen::UpdateTileGrid(int x, int y, const int* types, int n_tiles, i
 void EditorScreen::UpdateTileScreen()
 {
     // Block GUI
-    frmMain.renderRect(e_ScreenW - 120, 40, 240, ScreenH - 40, 0.7f, 0.7f, 0.9f, 1.0f, true);
+    frmMain.renderRect(e_ScreenW - 120, 40, 120, ScreenH - 40, 0.7f, 0.7f, 0.9f, 1.0f, true);
     // Page selector
     if (UpdateButton(e_ScreenW - 120 + 4, 40 + 4, GFXTileBMP[11], m_tile_page == 1, 0, 0, 32, 32))
         m_tile_page = 1;
@@ -3110,7 +3102,6 @@ void EditorScreen::UpdateSceneGrid(int x, int y, const int* types, int n_scenes,
 void EditorScreen::UpdateSceneScreen()
 {
     // Scene GUI (none)
-    frmMain.renderRect(e_ScreenW - 240, 40, 240, ScreenH - 40, 0.7f, 0.7f, 0.9f, 1.0f, true);
 
     SuperPrint("SCENERY", 3, 10, 40);
     static const int scenes[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 48, 49, 42, 47, 46, 43, 45, 64, 65, 44, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63};
@@ -3317,7 +3308,6 @@ void EditorScreen::UpdatePathGrid(int x, int y, const int* types, int n_paths, i
 void EditorScreen::UpdatePathScreen()
 {
     // Path GUI (none)
-    frmMain.renderRect(e_ScreenW - 240, 40, 240, ScreenH - 40, 0.7f, 0.7f, 0.9f, 1.0f, true);
 
     SuperPrint("PATH GRAPHIC", 3, 10, 40);
     static const int paths[] = { 2, 1, 18, 19, 31, 22, 32,
@@ -3822,9 +3812,22 @@ void EditorScreen::UpdateBrowserScreen()
     }
 }
 
-void EditorScreen::UpdateSelectorBar()
+void EditorScreen::UpdateSelectorBar(bool level_screen)
 {
-    frmMain.renderRect(0, 0, e_ScreenW, 40, 0.8f, 0.8f, 0.8f, 1.0f, true);
+    // limited and temporary editor screen functionality for the level screen
+    if (level_screen && active)
+        return;
+
+    int sx;
+    if (level_screen)
+    {
+        sx = 100;
+        MenuMouseRelease = frmMain.keys_released & KEY_TOUCH;
+        MenuMouseDown = frmMain.keys_held & KEY_TOUCH;
+    }
+    else
+        sx = 0;
+    frmMain.renderRect(sx+0, 0, e_ScreenW, 40, 0.8f, 0.8f, 0.8f, 1.0f, true);
     bool in_layers = (m_special_page == SPECIAL_PAGE_LAYERS || m_special_page == SPECIAL_PAGE_LAYER_DELETION);
     bool in_events = (m_special_page == SPECIAL_PAGE_EVENTS || m_special_page == SPECIAL_PAGE_EVENT_LAYERS
         || m_special_page == SPECIAL_PAGE_EVENT_TRIGGER || m_special_page == SPECIAL_PAGE_EVENT_SETTINGS
@@ -3835,13 +3838,13 @@ void EditorScreen::UpdateSelectorBar()
     bool in_world_settings = (m_special_page == SPECIAL_PAGE_WORLD_SETTINGS);
     bool in_excl_special = in_layers || in_events || in_world_settings || in_file;
     bool exit_special = false;
-    if (UpdateButton(0*40+4, 4, GFX.ECursor[2], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_SELECT, 0, 0, 32, 32))
+    if (UpdateButton(sx+0*40+4, 4, GFX.ECursor[2], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_SELECT, 0, 0, 32, 32))
     {
         EditorCursor.Mode = OptCursor_t::LVL_SELECT;
         if (in_excl_special)
             exit_special = true;
     }
-    if (UpdateButton(1*40+4, 4, GFX.ECursor[3], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_ERASER0, 0, 0, 32, 32))
+    if (UpdateButton(sx+1*40+4, 4, GFX.ECursor[3], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_ERASER0, 0, 0, 32, 32))
     {
         EditorCursor.Mode = OptCursor_t::LVL_ERASER0;
         if (in_excl_special)
@@ -3851,50 +3854,50 @@ void EditorScreen::UpdateSelectorBar()
     // level editor tabs
     if (!WorldEditor)
     {
-        if (UpdateButton(3*40+4, 4, GFXBlock[1], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_BLOCKS, 0, 0, 32, 32))
+        if (UpdateButton(sx+3*40+4, 4, GFXBlock[1], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_BLOCKS, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::LVL_BLOCKS;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(4*40+4, 4, GFXBackgroundBMP[1], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_BGOS, 0, 0, 32, 32))
+        if (UpdateButton(sx+4*40+4, 4, GFXBackgroundBMP[1], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_BGOS, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::LVL_BGOS;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(5*40+4, 4, GFXNPC[1], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_NPCS, 0, 0, 32, 32))
+        if (UpdateButton(sx+5*40+4, 4, GFXNPC[1], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_NPCS, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::LVL_NPCS;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(6*40+4, 4, GFXBackgroundBMP[26], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_WATER, 0, 0, 32, 32))
+        if (UpdateButton(sx+6*40+4, 4, GFXBackgroundBMP[26], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_WATER, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::LVL_WATER;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(7*40+4, 4, GFXBlock[294], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_WARPS, 0, 0, 32, 32))
+        if (UpdateButton(sx+7*40+4, 4, GFXBlock[294], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_WARPS, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::LVL_WARPS;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(9*40+4, 4, GFXBlock[60], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_SETTINGS, 0, 0, 32, 32))
+        if (UpdateButton(sx+9*40+4, 4, GFXBlock[60], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_SETTINGS, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::LVL_SETTINGS;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(10*40+4, 4, GFXBlock[447], in_layers, 0, 0, 32, 32) && !in_layers)
+        if (UpdateButton(sx+10*40+4, 4, GFXBlock[447], in_layers, 0, 0, 32, 32) && !in_layers)
         {
             EditorCursor.Mode = OptCursor_t::LVL_SELECT;
             optCursor.current = OptCursor_t::LVL_SELECT;
             m_last_mode = OptCursor_t::LVL_SELECT;
             m_special_page = SPECIAL_PAGE_LAYERS;
         }
-        if (UpdateButton(11*40+4, 4, GFXBlock[169], in_events, 0, 0, 32, 32) && !in_events)
+        if (UpdateButton(sx+11*40+4, 4, GFXBlock[169], in_events, 0, 0, 32, 32) && !in_events)
         {
             EditorCursor.Mode = OptCursor_t::LVL_SELECT;
             optCursor.current = OptCursor_t::LVL_SELECT;
@@ -3906,37 +3909,37 @@ void EditorScreen::UpdateSelectorBar()
     // world editor tabs
     if (WorldEditor)
     {
-        if (UpdateButton(3*40+4, 4, GFXTileBMP[1], !in_excl_special && EditorCursor.Mode == OptCursor_t::WLD_TILES, 0, 0, 32, 32))
+        if (UpdateButton(sx+3*40+4, 4, GFXTileBMP[1], !in_excl_special && EditorCursor.Mode == OptCursor_t::WLD_TILES, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::WLD_TILES;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(4*40+4, 4, GFXSceneBMP[1], !in_excl_special && EditorCursor.Mode == OptCursor_t::WLD_SCENES, 0, 0, 32, 32))
+        if (UpdateButton(sx+4*40+4, 4, GFXSceneBMP[1], !in_excl_special && EditorCursor.Mode == OptCursor_t::WLD_SCENES, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::WLD_SCENES;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(5*40+4, 4, GFXLevelBMP[2], !in_excl_special && EditorCursor.Mode == OptCursor_t::WLD_LEVELS, 0, 0, 32, 32))
+        if (UpdateButton(sx+5*40+4, 4, GFXLevelBMP[2], !in_excl_special && EditorCursor.Mode == OptCursor_t::WLD_LEVELS, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::WLD_LEVELS;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(6*40+4, 4, GFXPathBMP[4], !in_excl_special && EditorCursor.Mode == OptCursor_t::WLD_PATHS, 0, 0, 32, 32))
+        if (UpdateButton(sx+6*40+4, 4, GFXPathBMP[4], !in_excl_special && EditorCursor.Mode == OptCursor_t::WLD_PATHS, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::WLD_PATHS;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(7*40+4, 4, GFX.NPC_modes, !in_excl_special && EditorCursor.Mode == OptCursor_t::WLD_MUSIC, 0, 32*26, 32, 32))
+        if (UpdateButton(sx+7*40+4, 4, GFX.NPC_modes, !in_excl_special && EditorCursor.Mode == OptCursor_t::WLD_MUSIC, 0, 32*26, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::WLD_MUSIC;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(9*40+4, 4, GFXLevelBMP[15], in_world_settings, 0, 0, 32, 32) && !in_world_settings)
+        if (UpdateButton(sx+9*40+4, 4, GFXLevelBMP[15], in_world_settings, 0, 0, 32, 32) && !in_world_settings)
         {
             EditorCursor.Mode = OptCursor_t::LVL_SELECT;
             optCursor.current = OptCursor_t::LVL_SELECT;
@@ -3945,37 +3948,40 @@ void EditorScreen::UpdateSelectorBar()
         }
     }
 
-    if (UpdateButton(13*40+4, 4, GFX.NPC_modes, in_file, 0, 32*25, 32, 32) && !in_file)
+    if (!level_screen)
     {
-        EditorCursor.Mode = OptCursor_t::LVL_SELECT;
-        optCursor.current = OptCursor_t::LVL_SELECT;
-        m_last_mode = OptCursor_t::LVL_SELECT;
-        m_special_page = SPECIAL_PAGE_FILE;
+        if (UpdateButton(13*40+4, 4, GFX.NPC_modes, in_file, 0, 32*25, 32, 32) && !in_file)
+        {
+            EditorCursor.Mode = OptCursor_t::LVL_SELECT;
+            optCursor.current = OptCursor_t::LVL_SELECT;
+            m_last_mode = OptCursor_t::LVL_SELECT;
+            m_special_page = SPECIAL_PAGE_FILE;
+        }
+
+        if (!WorldEditor && UpdateButton(14*40 + 4, 4, GFX.NPC_modes, false, 0, 32*21, 32, 32))
+        {
+            // turn this into a routine...?!
+            Backup_FullFileName = FullFileName;
+            // how does this interact with cross-level warps?
+            FullFileName = FullFileName + "tst";
+            SaveLevel(FullFileName);
+            HasCursor = false;
+            zTestLevel();
+        }
     }
 
-    // if (UpdateButton(14*40 + 4, 4, GFX.NPC_modes, false, 0, 32*22, 32, 32))
-    // {
-    //     if (WorldEditor)
-    //         SaveWorld(FullFileName);
-    //     else
-    //         SaveLevel(FullFileName);
-    // }
-    if (!WorldEditor && UpdateButton(14*40 + 4, 4, GFX.NPC_modes, false, 0, 32*21, 32, 32))
-    {
-        // turn this into a routine...?!
-        Backup_FullFileName = FullFileName;
-        // how does this interact with cross-level warps?
-        FullFileName = FullFileName + "tst";
-        SaveLevel(FullFileName);
-        HasCursor = false;
-        zTestLevel();
-    }
-    if (UpdateButton(15*40 + 4, 4, GFX.NPC_modes, false, 0, 32*31, 32, 32))
+    if (UpdateButton(sx+15*40 + 4, 4, GFX.NPC_modes, false, 0, 32*31, 32, 32))
     {
         editorScreen.active = !editorScreen.active;
         HasCursor = false;
         MouseRelease = false;
         MenuMouseRelease = false;
+    }
+
+    if (level_screen)
+    {
+        MenuMouseRelease = false;
+        MenuMouseDown = false;
     }
 
     // if mode has been updated for any reason, close any special dialogue boxes
@@ -3993,9 +3999,16 @@ void EditorScreen::UpdateSelectorBar()
 
 void EditorScreen::UpdateEditorScreen()
 {
+    MessageText.clear();
+    // FILE* log = fopen("/eds.txt", "wb");
+    // fprintf(log, "stack: %p\n", &log); fflush(log);
+    // fputs("init\n",log); fflush(log);
     frmMain.initDraw(1);
+    // fputs("base\n",log); fflush(log);
     frmMain.renderRect(0, 0, e_ScreenW, ScreenH, 0.4f, 0.4f, 0.8f, 1.0f, true);
+    // fputs("selector\n",log); fflush(log);
     UpdateSelectorBar();
+    // fputs("main screen\n",log); fflush(log);
     if (m_special_page == SPECIAL_PAGE_BROWSER || m_special_page == SPECIAL_PAGE_BROWSER_CONFIRM)
         UpdateBrowserScreen();
     else if (m_special_page == SPECIAL_PAGE_FILE || m_special_page == SPECIAL_PAGE_FILE_CONFIRM)
@@ -4051,6 +4064,7 @@ void EditorScreen::UpdateEditorScreen()
     }
     // frmMain.renderTexture(MenuMouseX, MenuMouseY, GFX.ECursor[2]);
     MenuMouseRelease = false;
+    // fputs("goodbyte\n",log); fclose(log);
 }
 
 EditorScreen editorScreen;

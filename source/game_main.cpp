@@ -932,16 +932,29 @@ int GameMain(const CmdLineSetup_t &setup)
 
 void EditorLoop()
 {
+    // FILE* log = fopen("/frame.txt", "wb");
+    // fprintf(log, "stack: %p\n", &log); fflush(log);
+    // fputs("editor\n",log); fflush(log);
     UpdateEditor();
+    // fputs("blokes\n",log); fflush(log);
     UpdateBlocks();
+    // fputs("FX\n",log); fflush(log);
     UpdateEffects();
+    // fputs("gfx\n",log); fflush(log);
     if (WorldEditor == true)
-    {
-        UpdateGraphics2();
-    }
+        UpdateGraphics2(true);
     else
-        UpdateGraphics();
+        UpdateGraphics(true);
+    // fputs("ed screen\n",log); fflush(log);
+    // render the level screen selector
+    editorScreen.UpdateSelectorBar(true);
+    // render the editor screen
+    editorScreen.UpdateEditorScreen();
+    // fputs("finalize\n",log); fflush(log);
+    frmMain.finalizeDraw();
+    // fputs("sound\n",log); fflush(log);
     UpdateSound();
+    // fputs("done!\n",log); fclose(log);
 }
 
 void KillIt()

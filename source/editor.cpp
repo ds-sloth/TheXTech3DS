@@ -44,6 +44,7 @@
 #include "write_level.h"
 #include "write_world.h"
 #include "editor_screen.h"
+#include "joystick.h"
 
 #include "pseudo_vb.h"
 
@@ -146,7 +147,7 @@ void UpdateEditor()
 
     if(!MagicHand)
     {
-        if(getKeyState(KEYCODE_ZR))
+        if(getKeyState(KEYCODE_ZL) && !WorldEditor)
         {
             if(ScrollRelease == true)
             {
@@ -158,7 +159,7 @@ void UpdateEditor()
 //                    frmLevelSettings::optSection(curSection).Value = true;
             }
         }
-        else if(getKeyState(KEYCODE_ZL))
+        else if(getKeyState(KEYCODE_ZR) && !WorldEditor)
         {
             if(ScrollRelease == true)
             {
@@ -1490,7 +1491,17 @@ void GetEditorControls()
             EditorControls.Right = true;
         else
             EditorControls.Right = false;
-        if(!WorldEditor && getKeyState(KEYCODE_START))
+        if(KEYCODE_B & frmMain.keys_pressed)
+        {
+            optCursor.current = 13;
+            SetCursor();
+        }
+        if(KEYCODE_X & frmMain.keys_pressed)
+        {
+            optCursor.current = 0;
+            SetCursor();
+        }
+        if(!WorldEditor && (KEYCODE_START & frmMain.keys_pressed))
         {
             Backup_FullFileName = FullFileName;
             // how does this interact with cross-level warps?
@@ -1499,7 +1510,7 @@ void GetEditorControls()
             HasCursor = false;
             zTestLevel();
         }
-        if(getKeyState(KEYCODE_SELECT))
+        if(KEYCODE_SELECT & frmMain.keys_pressed)
         {
             editorScreen.active = !editorScreen.active;
             HasCursor = false;
@@ -2065,6 +2076,9 @@ void zTestLevel(bool magicHand, bool interProcess)
 void MouseMove(float X, float Y, bool /*nCur*/)
 {
     if (editorScreen.active) return;
+
+    // this is new. not sure of implications
+    MouseRelease = true;
 
     int A = 0;
     HasCursor = true;

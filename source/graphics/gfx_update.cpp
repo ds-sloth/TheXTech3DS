@@ -44,6 +44,9 @@ void UpdateGraphics(bool skipRepaint)
     std::string timeStr;
     int Z = 0;
     int numScreens = 0;
+    // FILE* log = fopen("/gfx.txt", "wb");
+    // fprintf(log, "stack: %p\n", &log); fflush(log);
+    // fputs("time 0\n",log); fflush(log);
     graphics_times[0] = svcGetSystemTick();
 
     if(!GameIsActive)
@@ -231,7 +234,7 @@ void UpdateGraphics(bool skipRepaint)
             Z = 2;
 
         if(LevelEditor)
-           S = curSection;
+            S = curSection;
         else
             S = Player[Z].Section;
 
@@ -279,7 +282,7 @@ void UpdateGraphics(bool skipRepaint)
         }
 
         // noturningback
-        if(NoTurnBack[Player[Z].Section])
+        if(!LevelEditor && NoTurnBack[Player[Z].Section])
         {
             A = Z;
             if(numScreens > 1)
@@ -413,14 +416,19 @@ void UpdateGraphics(bool skipRepaint)
     }
 
     // printf("drawing... \n");
+    // fputs("time 1\n",log); fflush(log);
     graphics_times[1] = svcGetSystemTick();
     frmMain.initDraw(0);
+    // fputs("time 1.5\n",log); fflush(log);
     For(Z, 1, numScreens)
     {
         if(SingleCoop == 2)
             Z = 2;
 
-        S = Player[Z].Section;
+        if (LevelEditor)
+            S = curSection;
+        else
+            S = Player[Z].Section;
 
         if(numScreens > 1) // To separate drawing of screens
             frmMain.setViewport(vScreen[Z].Left, vScreen[Z].Top, vScreen[Z].Width, vScreen[Z].Height);
@@ -428,27 +436,29 @@ void UpdateGraphics(bool skipRepaint)
         // printf("background... \n");
         // try instead doing this one twice with the camera in different places.......
         frmMain.setLayer(0);
+        // fputs("time 1.8\n",log); fflush(log);
         DrawBackground(S, Z);
         if(LevelEditor)
         {
             if (vScreenX[Z] + level[S].X > 0) {
                 frmMain.renderRect(0, 0,
-                                   vScreenX[Z] + level[S].X, ScreenH, 0.f, 0.f, 0.f, 1.f, true);
+                                   vScreenX[Z] + level[S].X, ScreenH, 0.2f, 0.2f, 0.2f, 1.f, true);
             }
             if (ScreenW > level[S].Width + vScreenX[Z]) {
                 frmMain.renderRect(level[S].Width + vScreenX[Z], 0,
-                                   ScreenW - (level[S].Width + vScreenX[Z]), ScreenH, 0.f, 0.f, 0.f, 1.f, true);
+                                   ScreenW - (level[S].Width + vScreenX[Z]), ScreenH, 0.2f, 0.2f, 0.2f, 1.f, true);
             }
             if (vScreenY[Z] + level[S].Y > 0) {
                 frmMain.renderRect(0, 0,
-                                   ScreenW, vScreenY[Z] + level[S].Y, 0.f, 0.f, 0.f, 1.f, true);
+                                   ScreenW, vScreenY[Z] + level[S].Y, 0.2f, 0.2f, 0.2f, 1.f, true);
             }
             if (ScreenH > level[S].Height + vScreenY[Z]) {
                 frmMain.renderRect(0, level[S].Height + vScreenY[Z],
-                                   ScreenW, ScreenH - (level[S].Height + vScreenY[Z]), 0.f, 0.f, 0.f, 1.f, true);
+                                   ScreenW, ScreenH - (level[S].Height + vScreenY[Z]), 0.2f, 0.2f, 0.2f, 1.f, true);
             }
         }
 
+        // fputs("time 2\n",log); fflush(log);
         graphics_times[2] = svcGetSystemTick();
 
         // printf("background tiles... \n");
@@ -588,6 +598,7 @@ void UpdateGraphics(bool skipRepaint)
             }
         }
 
+        // fputs("time 3\n",log); fflush(log);
         graphics_times[3] = svcGetSystemTick();
         frmMain.setLayer(2);
         // printf("some NPCs... \n");
@@ -919,6 +930,7 @@ void UpdateGraphics(bool skipRepaint)
             lBlock = LastBlock[int((-vScreenX[Z] + vScreen[Z].Width) / 32) + 1];
         }
 
+        // fputs("time 4\n",log); fflush(log);
         graphics_times[4] = svcGetSystemTick();
         // printf("more blocks... \n");
         For(A, fBlock, lBlock)
@@ -983,6 +995,7 @@ void UpdateGraphics(bool skipRepaint)
             }
         }
 
+        // fputs("time 5\n",log); fflush(log);
         graphics_times[5] = svcGetSystemTick();
 
         For(A, 1, numNPCs) // Display NPCs that should be in front of blocks
@@ -1233,12 +1246,14 @@ void UpdateGraphics(bool skipRepaint)
         }
 
 
+        // fputs("player\n",log); fflush(log);
         graphics_times[6] = svcGetSystemTick();
         for(int A = numPlayers; A >= 1; A--)// Players in front of blocks
         {
             DrawPlayer(A, Z);
         }
 
+        // fputs("time 7\n",log); fflush(log);
         graphics_times[7] = svcGetSystemTick();
         if (LevelEditor)
         {
@@ -1310,6 +1325,7 @@ void UpdateGraphics(bool skipRepaint)
             }
         }
 
+        // fputs("time 8\n",log); fflush(log);
         graphics_times[8] = svcGetSystemTick();
         // effects on top
         For(A, 1, numEffects)
@@ -1340,12 +1356,13 @@ void UpdateGraphics(bool skipRepaint)
             }
         }
 
+        // fputs("time 9\n",log); fflush(log);
         graphics_times[9] = svcGetSystemTick();
         frmMain.setLayer(3);
         // per-screen interface
         B = 0;
         C = 0;
-        if(!GameMenu && !GameOutro)
+        if(!GameMenu && !GameOutro && !LevelEditor)
         {
             For(A, 1, numPlayers)
             {
@@ -1391,6 +1408,448 @@ void UpdateGraphics(bool skipRepaint)
                 }
             }
         }
+
+        if(LevelEditor || (MagicHand && !GamePaused))
+        {
+            if(LevelEditor)
+            {
+                BlockFlash += 1;
+
+                if(BlockFlash > 45)
+                    BlockFlash = 0;
+
+                if(BlockFlash <= 30)
+                {
+                    for (A = 1; A <= numBlock; A++)
+                    {
+                        if(Block[A].Special > 0 && !Block[A].Hidden)
+                        {
+                            if(vScreenCollision(Z, Block[A].Location))
+                            {
+                                if (Block[A].Special > 1000)
+                                    C = Block[A].Special - 1000;
+                                else
+                                    C = 10;
+                                if(NPCWidthGFX[C] == 0)
+                                {
+                                    tempLocation.X = Block[A].Location.X + Block[A].Location.Width / 2 - NPCWidth[C] / 2;
+                                    tempLocation.Y = Block[A].Location.Y + Block[A].Location.Height / 2 - NPCHeight[C] / 2;
+                                    tempLocation.Height = NPCHeight[C];
+                                    tempLocation.Width = NPCWidth[C];
+                                }
+                                else
+                                {
+                                    tempLocation.X = Block[A].Location.X + Block[A].Location.Width / 2 - NPCWidthGFX[C] / 2;
+                                    tempLocation.Y = Block[A].Location.Y + Block[A].Location.Height / 2 - NPCHeightGFX[C] / 2;
+                                    tempLocation.Height = NPCHeightGFX[C];
+                                    tempLocation.Width = NPCWidthGFX[C];
+                                }
+                                frmMain.renderTexture(vScreenX[Z] + tempLocation.X + NPCFrameOffsetX[C],
+                                    vScreenY[Z] + tempLocation.Y + NPCFrameOffsetY[C],
+                                    tempLocation.Width, tempLocation.Height,
+                                    GFXNPC[C], 0, EditorNPCFrame(C, -1) * tempLocation.Height);
+                            }
+                        }
+                    }
+
+                    for (A = 1; A <= numNPCs; A++)
+                    {
+                        if(!NPC[A].Hidden && (NPC[A].Type == 91 || NPC[A].Type == 96)
+                            && (NPC[A].Special > 0))
+                        {
+                            if (vScreenCollision(Z, NPC[A].Location))
+                            {
+                                C = NPC[A].Special;
+                                if (NPCWidthGFX[C] == 0)
+                                {
+                                    tempLocation.Height = NPCHeight[C];
+                                    tempLocation.Width = NPCWidth[C];
+                                }
+                                else
+                                {
+                                    tempLocation.Height = NPCHeightGFX[C];
+                                    tempLocation.Width = NPCWidthGFX[C];
+                                }
+                                if(NPC[A].Type == 96)
+                                    tempLocation.Y = NPC[A].Location.Y + NPC[A].Location.Height - tempLocation.Height;
+                                else
+                                    tempLocation.Y = NPC[A].Location.Y;
+                                tempLocation.X = NPC[A].Location.X + NPC[A].Location.Width / 2 - tempLocation.Width / 2;
+                                frmMain.renderTexture(vScreenX[Z] + tempLocation.X + NPCFrameOffsetX[C],
+                                    vScreenY[Z] + tempLocation.Y + NPCFrameOffsetY[C],
+                                    tempLocation.Width, tempLocation.Height,
+                                    GFXNPC[C], 0, EditorNPCFrame(C, -1) * tempLocation.Height);
+                            }
+                        }
+                    }
+                }
+
+
+                for(A = 1; A <= 2; A++)
+                {
+                    if (!(PlayerStart[A].Width > 0)) continue;
+                    if (vScreenCollision(Z, PlayerStart[A]))
+                    {
+                        C = Physics.PlayerHeight[testPlayer[A].Character][2] - Physics.PlayerHeight[A][2];
+                        switch (testPlayer[A].Character)
+                        {
+                        case 1:
+                            frmMain.renderTexture(vScreenX[Z] + PlayerStart[A].X + MarioFrameX[201],
+                                    vScreenY[Z] + PlayerStart[A].Y + MarioFrameY[201] - C,
+                                    99, 99, GFXMario[2], 500, 0);
+                            break;
+                        case 2:
+                            frmMain.renderTexture(vScreenX[Z] + PlayerStart[A].X + LuigiFrameX[201],
+                                    vScreenY[Z] + PlayerStart[A].Y + LuigiFrameY[201] - C,
+                                    99, 99, GFXLuigi[2], 500, 0);
+                            break;
+                        case 3:
+                            frmMain.renderTexture(vScreenX[Z] + PlayerStart[A].X + PeachFrameX[201],
+                                    vScreenY[Z] + PlayerStart[A].Y + PeachFrameY[201] - C,
+                                    99, 99, GFXPeach[2], 500, 0);
+                            break;
+                        case 4:
+                            frmMain.renderTexture(vScreenX[Z] + PlayerStart[A].X + ToadFrameX[201],
+                                    vScreenY[Z] + PlayerStart[A].Y + ToadFrameY[201] - C,
+                                    99, 99, GFXToad[2], 500, 0);
+                            break;
+                        case 5:
+                            frmMain.renderTexture(vScreenX[Z] + PlayerStart[A].X + LinkFrameX[201],
+                                    vScreenY[Z] + PlayerStart[A].Y + LinkFrameY[201] - C,
+                                    99, 99, GFXLink[2], 500, 0);
+                            break;
+                        }
+                    }
+                }
+
+                for(A = 1; A <= numWarps; A++)
+                {
+                    if(Warp[A].Direction > 0 && !Warp[A].Hidden)
+                    {
+                        if(Warp[A].PlacedEnt)
+                        {
+                            frmMain.renderTexture(vScreenX[Z] + Warp[A].Entrance.X,
+                                    vScreenY[Z] + Warp[A].Entrance.Y,
+                                    Warp[A].Entrance.Width, Warp[A].Entrance.Height, GFX.Warp, 0, 0);
+                            SuperPrint(std::to_string(A), 1, vScreenX[Z] + Warp[A].Entrance.X + 2, vScreenY[Z] + Warp[A].Entrance.Y + 2);
+                        }
+                        if(Warp[A].PlacedExit)
+                        {
+                            frmMain.renderTexture(vScreenX[Z] + Warp[A].Exit.X,
+                                    vScreenY[Z] + Warp[A].Exit.Y,
+                                    Warp[A].Exit.Width, Warp[A].Exit.Height, GFX.Warp, 0, 0);
+                            SuperPrint(std::to_string(A), 1, vScreenX[Z] + Warp[A].Exit.X + Warp[A].Exit.Width - 16 - 2,
+                                vScreenY[Z] + Warp[A].Exit.Y + Warp[A].Exit.Height - 14 - 2);
+                        }
+                    }
+                }
+            }
+
+            frmMain.setLayer(0);
+            if(LevelEditor)
+            {
+                if (BlockFlash > 30 || BlockFlash == 0)
+                {
+                    if (vScreenX[Z] + level[S].X > 0) {
+                        frmMain.renderRect(0, 0,
+                                           vScreenX[Z] + level[S].X, ScreenH, 0.f, 0.f, 0.f, 1.f, true);
+                    }
+                    if (ScreenW > level[S].Width + vScreenX[Z]) {
+                        frmMain.renderRect(level[S].Width + vScreenX[Z], 0,
+                                           ScreenW - (level[S].Width + vScreenX[Z]), ScreenH, 0.f, 0.f, 0.f, 1.f, true);
+                    }
+                    if (vScreenY[Z] + level[S].Y > 0) {
+                        frmMain.renderRect(0, 0,
+                                           ScreenW, vScreenY[Z] + level[S].Y, 0.f, 0.f, 0.f, 1.f, true);
+                    }
+                    if (ScreenH > level[S].Height + vScreenY[Z]) {
+                        frmMain.renderRect(0, level[S].Height + vScreenY[Z],
+                                           ScreenW, ScreenH - (level[S].Height + vScreenY[Z]), 0.f, 0.f, 0.f, 1.f, true);
+                    }
+                }
+            }
+
+
+            frmMain.setLayer(3);
+            if(editorScreen.active && !MessageText.empty()) // In-Editor message box preview
+            {
+                SuperText = MessageText;
+                const int BoxY_Start = ScreenH/2 - 150;
+                const int TextBoxW = 500;
+                // Draw background all at once:
+                // how many lines are there?
+                // A is the proposed start of the next line
+                B = 0; // start of current line
+                C = 0; // planned start of next line
+                D = 1; // n lines
+                for(A = 1; A <= int(SuperText.size()); A++)
+                {
+                    if(SuperText[size_t(A) - 1] == ' ' || A == int(SuperText.size()))
+                    {
+                        if(A-B < 28)
+                            C = A;
+                        else {
+                            B = C;
+                            D ++;
+                        }
+                    }
+                }
+                frmMain.renderRect(ScreenW/2 - TextBoxW / 2 ,
+                                      BoxY_Start,
+                                      TextBoxW, D*16 + 20, 0.f, 0.f, 0.f, 1.f);
+                frmMain.renderRect(ScreenW/2 - TextBoxW / 2 + 2,
+                                      BoxY_Start + 2,
+                                      TextBoxW - 4, D*16 + 20 - 4, 1.f, 1.f, 1.f, 1.f);
+                frmMain.renderRect(ScreenW/2 - TextBoxW / 2 + 4,
+                                      BoxY_Start + 4,
+                                      TextBoxW - 8, D*16 + 20 - 8, 8.f/255.f, 96.f/255.f, 168.f/255.f, 1.f);
+                tempBool = false; // multi-line
+                BoxY = BoxY_Start + 10;
+                do
+                {
+                    // find last word break
+                    B = 0;
+                    for(A = 1; A <= int(SuperText.size()); A++)
+                    {
+                        if(SuperText[size_t(A) - 1] == ' ' || A == int(SuperText.size()))
+                        {
+                            if(A < 28)
+                                B = A;
+                            else
+                                break;
+                        }
+                    }
+
+                    if(B == 0)
+                        B = A;
+
+                    tempText = SuperText.substr(0, size_t(B));
+                    SuperText = SuperText.substr(size_t(B), SuperText.length());
+                    if(SuperText.length() == 0 && !tempBool)
+                    {
+                        SuperPrint(tempText,
+                                   4,
+                                   ScreenW/2 - TextBoxW / 2 + 12 + (27 * 9) - (tempText.length() * 9),
+                                   BoxY);
+                    }
+                    else
+                    {
+                        SuperPrint(tempText, 4, ScreenW/2 - TextBoxW / 2 + 12, BoxY);
+                    }
+                    BoxY += 16;
+                    tempBool = true;
+                } while(!SuperText.empty());
+            }
+
+            // Display the cursor
+            {
+                auto &e = EditorCursor;
+                int curX = int(double(e.X) - vScreen[Z].Left);
+                int curY = int(double(e.Y) - vScreen[Z].Top);
+
+                if (BlockFlash < 15)
+                {
+                    // don't draw the currently held object
+                }
+                else if(e.Mode == OptCursor_t::LVL_BLOCKS) // Blocks
+                {
+                    auto &b = e.Block;
+                    if(BlockIsSizable[b.Type])
+                    {
+                        if(vScreenCollision(Z, b.Location))
+                        {
+                            for(B = 0; B <= (b.Location.Height / 32) - 1; B++)
+                            {
+                                for(C = 0; C <= (b.Location.Width / 32) - 1; C++)
+                                {
+                                    D = C;
+                                    E = B;
+
+                                    if(D != 0)
+                                    {
+                                        if(fEqual(D, (b.Location.Width / 32) - 1))
+                                            D = 2;
+                                        else
+                                        {
+                                            D = 1;
+                                            d2 = 0.5;
+                                        }
+                                    }
+
+                                    if(E != 0)
+                                    {
+                                        if(fEqual(E, (b.Location.Height / 32) - 1))
+                                            E = 2;
+                                        else
+                                            E = 1;
+                                    }
+
+                                    frmMain.renderTexture(vScreenX[Z] + b.Location.X + C * 32,
+                                                          vScreenY[Z] + b.Location.Y + B * 32,
+                                                          32, 32, GFXBlock[b.Type], D * 32, E * 32);
+//                                    if((D == 0 || D == 2) || (E == 0 || E == 2))
+//                                    {
+//                                        frmMain.renderTexture(vScreenX(Z) + .Location.X + C * 32, vScreenY(Z) + .Location.Y + B * 32, 32, 32, GFXBlock(.Type), D * 32, E * 32)
+//                                    }
+//                                    else
+//                                        frmMain.renderTexture(vScreenX(Z) + .Location.X + C * 32, vScreenY(Z) + .Location.Y + B * 32, 32, 32, GFXBlock(.Type), D * 32, E * 32)
+
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if(vScreenCollision(Z, b.Location))
+                        {
+                            frmMain.renderTexture(vScreenX[Z] + b.Location.X,
+                                                  vScreenY[Z] + b.Location.Y + b.ShakeY3,
+                                                  b.Location.Width,
+                                                  b.Location.Height,
+                                                  GFXBlock[b.Type], 0, BlockFrame[b.Type] * 32);
+                        }
+                    }
+                }
+
+                else if(e.Mode == OptCursor_t::LVL_SETTINGS) // Player start points
+                {
+                    // TODO: determine what is going on here
+                    if(e.SubMode == 4 || e.SubMode == 5)
+                    {
+                        A = e.SubMode - 3;
+                        C = Physics.PlayerHeight[testPlayer[A].Character][2] - Physics.PlayerHeight[A][2];
+                        switch (testPlayer[A].Character)
+                        {
+                        case 1:
+                            frmMain.renderTexture(vScreenX[Z] + e.Location.X + MarioFrameX[201],
+                                    vScreenY[Z] + e.Location.Y + MarioFrameY[201] - C,
+                                    99, 99, GFXMario[2], 500, 0);
+                            break;
+                        case 2:
+                            frmMain.renderTexture(vScreenX[Z] + e.Location.X + LuigiFrameX[201],
+                                    vScreenY[Z] + e.Location.Y + LuigiFrameY[201] - C,
+                                    99, 99, GFXLuigi[2], 500, 0);
+                            break;
+                        case 3:
+                            frmMain.renderTexture(vScreenX[Z] + e.Location.X + PeachFrameX[201],
+                                    vScreenY[Z] + e.Location.Y + PeachFrameY[201] - C,
+                                    99, 99, GFXPeach[2], 500, 0);
+                            break;
+                        case 4:
+                            frmMain.renderTexture(vScreenX[Z] + e.Location.X + ToadFrameX[201],
+                                    vScreenY[Z] + e.Location.Y + ToadFrameY[201] - C,
+                                    99, 99, GFXToad[2], 500, 0);
+                            break;
+                        case 5:
+                            frmMain.renderTexture(vScreenX[Z] + e.Location.X + LinkFrameX[201],
+                                    vScreenY[Z] + e.Location.Y + LinkFrameY[201] - C,
+                                    99, 99, GFXLink[2], 500, 0);
+                            break;
+                        }
+                    }
+                }
+
+                else if(e.Mode == OptCursor_t::LVL_BGOS) // BGOs
+                {
+                    auto &b = e.Background;
+                    if(vScreenCollision(Z, b.Location))
+                    {
+                        frmMain.renderTexture(vScreenX[Z] + b.Location.X,
+                                              vScreenY[Z] + b.Location.Y,
+                                              BackgroundWidth[b.Type],
+                                              BackgroundHeight[b.Type],
+                                              GFXBackground[b.Type], 0,
+                                              BackgroundHeight[b.Type] * BackgroundFrame[b.Type]);
+                    }
+                }
+
+                else if(e.Mode == OptCursor_t::LVL_NPCS) // NPCs
+                {
+                    e.NPC.Frame = NPC[0].Frame;
+                    e.NPC.FrameCount = NPC[0].FrameCount;
+                    NPC[0] = e.NPC;
+                    NPCFrames(0);
+                    e.NPC = NPC[0];
+
+                    auto &n = e.NPC;
+                    if(NPCWidthGFX[n.Type] == 0)
+                    {
+                        frmMain.renderTexture(vScreenX[Z] + n.Location.X + NPCFrameOffsetX[n.Type],
+                                              vScreenY[Z] + n.Location.Y + NPCFrameOffsetY[n.Type],
+                                              n.Location.Width,
+                                              n.Location.Height,
+                                              GFXNPC[n.Type], 0, n.Frame * n.Location.Height);
+                    }
+                    else
+                    {
+                        if(n.Type == 283 && n.Special > 0)
+                        {
+                            if(NPCWidthGFX[n.Special] == 0)
+                            {
+                                tempLocation.Width = NPCWidth[n.Special];
+                                tempLocation.Height = NPCHeight[n.Special];
+                            }
+                            else
+                            {
+                                tempLocation.Width = NPCWidthGFX[n.Special];
+                                tempLocation.Height = NPCHeightGFX[n.Special];
+                            }
+                            tempLocation.X = n.Location.X + n.Location.Width / 2 - tempLocation.Width / 2;
+                            tempLocation.Y = n.Location.Y + n.Location.Height / 2 - tempLocation.Height / 2;
+                            B = EditorNPCFrame(int(n.Special), n.Direction);
+
+                            frmMain.renderTexture(vScreenX[Z] + tempLocation.X + NPCFrameOffsetX[n.Type],
+                                                  vScreenY[Z] + tempLocation.Y,
+                                                  tempLocation.Width, tempLocation.Height,
+                                                  GFXNPC[n.Special], 0, B * tempLocation.Height);
+                        }
+
+                        frmMain.renderTexture(vScreenX[Z] + n.Location.X + NPCFrameOffsetX[n.Type] - NPCWidthGFX[n.Type] / 2 + n.Location.Width / 2,
+                                              vScreenY[Z] + n.Location.Y + NPCFrameOffsetY[n.Type] - NPCHeightGFX[n.Type] + n.Location.Height,
+                                              NPCWidthGFX[n.Type], NPCHeightGFX[n.Type], GFXNPC[n.Type],
+                                              0, n.Frame * NPCHeightGFX[n.Type]);
+                    }
+                }
+                else if(EditorCursor.Mode == OptCursor_t::LVL_WATER) // Water
+                {
+                    frmMain.renderRect(vScreenX[Z] + EditorCursor.Location.X, vScreenY[Z] + EditorCursor.Location.Y, EditorCursor.Location.Width, EditorCursor.Location.Height,
+                        0.f, 1.f, 0.f, 1.f, false);
+                }
+                else if(EditorCursor.Mode == OptCursor_t::LVL_WARPS)
+                {
+                    frmMain.renderTexture(vScreenX[Z] + EditorCursor.Location.X,
+                            vScreenY[Z] + EditorCursor.Location.Y,
+                            EditorCursor.Location.Width, EditorCursor.Location.Height, GFX.Warp, 0, 0);
+                }
+
+                if(EditorCursor.Mode == 0 || EditorCursor.Mode == 6) // Eraser
+                {
+                    frmMain.renderTexture(curX - 2, curY, GFX.ECursor[3]);
+                }
+
+                else if(EditorCursor.Mode == 13 || EditorCursor.Mode == 14) // Selector
+                {
+                    frmMain.renderTexture(curX, curY, GFX.ECursor[2]);
+                }
+
+                // Section Resize
+                else if(EditorCursor.Mode == 2 && EditorCursor.SubMode < 4)
+                {
+                    frmMain.renderTexture(curX, curY, GFX.ECursor[1]);
+                }
+
+//                Else
+                else
+                {
+//                    If .Mode = 5 Then
+                    frmMain.renderTexture(curX, curY, GFX.ECursor[2]);
+                    if(!e.Layer.empty() && strcasecmp(e.Layer.c_str(), "Default") != 0)
+                        SuperPrint(EditorCursor.Layer, 3, curX + 28 , curY + 34);
+                }
+
+//            End With
+            }
+        }
         if(numScreens > 1) // for multiple screens
             frmMain.resetViewport();
     }
@@ -1402,8 +1861,9 @@ void UpdateGraphics(bool skipRepaint)
         else
             frmMain.renderRect(ScreenW/2-2, 0, 4, vScreen[2].Height, 0, 0, 0);
     }
+    // fputs("time 10\n",log); fflush(log);
     graphics_times[10] = svcGetSystemTick();
-    if(!GameMenu && !GameOutro)
+    if(!GameMenu && !GameOutro && !LevelEditor)
     {
         if(GamePaused)
         {
@@ -1504,7 +1964,7 @@ void UpdateGraphics(bool skipRepaint)
         }
     }
 
-    else if(!GameOutro)
+    else if(GameMenu && !GameOutro)
     {
         if(MenuMode != 1 && MenuMode != 2 && MenuMode != 4 && MenuMode != 9)
             worldCurs = 0;
@@ -1519,7 +1979,7 @@ void UpdateGraphics(bool skipRepaint)
             GFX.MenuGFX[3].w, GFX.MenuGFX[3].h, GFX.MenuGFX[3], 0, 0);
 
         int MenuX = ScreenW / 2 - 100;
-        int MenuY = ScreenH - 175;
+        int MenuY = ScreenH - 195;
         if(MenuMode == 0)
         {
             SuperPrint("START GAME", 3, MenuX, MenuY);
@@ -1743,470 +2203,29 @@ void UpdateGraphics(bool skipRepaint)
             frmMain.renderTexture(MenuX - 20, MenuY - 120 + (MenuCursor * 30) + menuFix,
                                   GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
         }
-
-        if((LevelEditor || MagicHand) && !GamePaused)
-        {
-            if(LevelEditor)
-            {
-                BlockFlash += 1;
-
-                if(BlockFlash > 45)
-                    BlockFlash = 0;
-
-                if(BlockFlash <= 30)
-                {
-                    for (A = 1; A <= numBlock; A++)
-                    {
-                        if(Block[A].Special > 0 && !Block[A].Hidden)
-                        {
-                            if(vScreenCollision(Z, Block[A].Location))
-                            {
-                                if (Block[A].Special > 1000)
-                                    C = Block[A].Special - 1000;
-                                else
-                                    C = 10;
-                                if(NPCWidthGFX[C] == 0)
-                                {
-                                    tempLocation.X = Block[A].Location.X + Block[A].Location.Width / 2 - NPCWidth[C] / 2;
-                                    tempLocation.Y = Block[A].Location.Y + Block[A].Location.Height / 2 - NPCHeight[C] / 2;
-                                    tempLocation.Height = NPCHeight[C];
-                                    tempLocation.Width = NPCWidth[C];
-                                }
-                                else
-                                {
-                                    tempLocation.X = Block[A].Location.X + Block[A].Location.Width / 2 - NPCWidthGFX[C] / 2;
-                                    tempLocation.Y = Block[A].Location.Y + Block[A].Location.Height / 2 - NPCHeightGFX[C] / 2;
-                                    tempLocation.Height = NPCHeightGFX[C];
-                                    tempLocation.Width = NPCWidthGFX[C];
-                                }
-                                frmMain.renderTexture(vScreenX[Z] + tempLocation.X + NPCFrameOffsetX[C],
-                                    vScreenY[Z] + tempLocation.Y + NPCFrameOffsetY[C],
-                                    tempLocation.Width, tempLocation.Height,
-                                    GFXNPC[C], 0, EditorNPCFrame(C, -1) * tempLocation.Height);
-                            }
-                        }
-                    }
-
-                    for (A = 1; A <= numNPCs; A++)
-                    {
-                        if(!NPC[A].Hidden && (NPC[A].Type == 91 || NPC[A].Type == 96)
-                            && (NPC[A].Special > 0))
-                        {
-                            if (vScreenCollision(Z, NPC[A].Location))
-                            {
-                                C = NPC[A].Special;
-                                if (NPCWidthGFX[C] == 0)
-                                {
-                                    tempLocation.Height = NPCHeight[C];
-                                    tempLocation.Width = NPCWidth[C];
-                                }
-                                else
-                                {
-                                    tempLocation.Height = NPCHeightGFX[C];
-                                    tempLocation.Width = NPCWidthGFX[C];
-                                }
-                                if(NPC[A].Type == 96)
-                                    tempLocation.Y = NPC[A].Location.Y + NPC[A].Location.Height - tempLocation.Height;
-                                else
-                                    tempLocation.Y = NPC[A].Location.Y;
-                                tempLocation.X = NPC[A].Location.X + NPC[A].Location.Width / 2 - tempLocation.Width / 2;
-                                frmMain.renderTexture(vScreenX[Z] + tempLocation.X + NPCFrameOffsetX[C],
-                                    vScreenY[Z] + tempLocation.Y + NPCFrameOffsetY[C],
-                                    tempLocation.Width, tempLocation.Height,
-                                    GFXNPC[C], 0, EditorNPCFrame(C, -1) * tempLocation.Height);
-                            }
-                        }
-                    }
-                }
-
-
-                for(A = 1; A <= 2; A++)
-                {
-                    if (!(PlayerStart[A].Width > 0)) continue;
-                    if (vScreenCollision(Z, PlayerStart[A]))
-                    {
-                        C = Physics.PlayerHeight[testPlayer[A].Character][2] - Physics.PlayerHeight[A][2];
-                        switch (testPlayer[A].Character)
-                        {
-                        case 1:
-                            frmMain.renderTexture(vScreenX[Z] + PlayerStart[A].X + MarioFrameX[201],
-                                    vScreenY[Z] + PlayerStart[A].Y + MarioFrameY[201] - C,
-                                    99, 99, GFXMario[2], 500, 0);
-                            break;
-                        case 2:
-                            frmMain.renderTexture(vScreenX[Z] + PlayerStart[A].X + LuigiFrameX[201],
-                                    vScreenY[Z] + PlayerStart[A].Y + LuigiFrameY[201] - C,
-                                    99, 99, GFXLuigi[2], 500, 0);
-                            break;
-                        case 3:
-                            frmMain.renderTexture(vScreenX[Z] + PlayerStart[A].X + PeachFrameX[201],
-                                    vScreenY[Z] + PlayerStart[A].Y + PeachFrameY[201] - C,
-                                    99, 99, GFXPeach[2], 500, 0);
-                            break;
-                        case 4:
-                            frmMain.renderTexture(vScreenX[Z] + PlayerStart[A].X + ToadFrameX[201],
-                                    vScreenY[Z] + PlayerStart[A].Y + ToadFrameY[201] - C,
-                                    99, 99, GFXToad[2], 500, 0);
-                            break;
-                        case 5:
-                            frmMain.renderTexture(vScreenX[Z] + PlayerStart[A].X + LinkFrameX[201],
-                                    vScreenY[Z] + PlayerStart[A].Y + LinkFrameY[201] - C,
-                                    99, 99, GFXLink[2], 500, 0);
-                            break;
-                        }
-                    }
-                }
-
-                for(A = 1; A <= numWarps; A++)
-                {
-                    if(Warp[A].Direction > 0 && !Warp[A].Hidden)
-                    {
-                        if(Warp[A].PlacedEnt)
-                        {
-                            frmMain.renderTexture(vScreenX[Z] + Warp[A].Entrance.X,
-                                    vScreenY[Z] + Warp[A].Entrance.Y,
-                                    Warp[A].Entrance.Width, Warp[A].Entrance.Height, GFX.Warp, 0, 0);
-                            SuperPrint(std::to_string(A), 1, vScreenX[Z] + Warp[A].Entrance.X + 2, vScreenY[Z] + Warp[A].Entrance.Y + 2);
-                        }
-                        if(Warp[A].PlacedExit)
-                        {
-                            frmMain.renderTexture(vScreenX[Z] + Warp[A].Exit.X,
-                                    vScreenY[Z] + Warp[A].Exit.Y,
-                                    Warp[A].Exit.Width, Warp[A].Exit.Height, GFX.Warp, 0, 0);
-                            SuperPrint(std::to_string(A), 1, vScreenX[Z] + Warp[A].Exit.X + Warp[A].Exit.Width - 16 - 2,
-                                vScreenY[Z] + Warp[A].Exit.Y + Warp[A].Exit.Height - 14 - 2);
-                        }
-                    }
-                }
-            }
-
-            if(LevelEditor)
-            {
-                if (BlockFlash > 30 || BlockFlash == 0)
-                {
-                    if (vScreenX[Z] + level[S].X > 0) {
-                        frmMain.renderRect(0, 0,
-                                           vScreenX[Z] + level[S].X, ScreenH, 0.f, 0.f, 0.f, 1.f, true);
-                    }
-                    if (ScreenW > level[S].Width + vScreenX[Z]) {
-                        frmMain.renderRect(level[S].Width + vScreenX[Z], 0,
-                                           ScreenW - (level[S].Width + vScreenX[Z]), ScreenH, 0.f, 0.f, 0.f, 1.f, true);
-                    }
-                    if (vScreenY[Z] + level[S].Y > 0) {
-                        frmMain.renderRect(0, 0,
-                                           ScreenW, vScreenY[Z] + level[S].Y, 0.f, 0.f, 0.f, 1.f, true);
-                    }
-                    if (ScreenH > level[S].Height + vScreenY[Z]) {
-                        frmMain.renderRect(0, level[S].Height + vScreenY[Z],
-                                           ScreenW, ScreenH - (level[S].Height + vScreenY[Z]), 0.f, 0.f, 0.f, 1.f, true);
-                    }
-                }
-            }
-
-
-            if(!MessageText.empty()) // In-Editor message box preview
-            {
-                SuperText = MessageText;
-                const int BoxY_Start = ScreenH/2 - 150;
-                const int TextBoxW = 500;
-                // Draw background all at once:
-                // how many lines are there?
-                // A is the proposed start of the next line
-                B = 0; // start of current line
-                C = 0; // planned start of next line
-                D = 1; // n lines
-                for(A = 1; A <= int(SuperText.size()); A++)
-                {
-                    if(SuperText[size_t(A) - 1] == ' ' || A == int(SuperText.size()))
-                    {
-                        if(A-B < 28)
-                            C = A;
-                        else {
-                            B = C;
-                            D ++;
-                        }
-                    }
-                }
-                frmMain.renderRect(ScreenW/2 - TextBoxW / 2 ,
-                                      BoxY_Start,
-                                      TextBoxW, D*16 + 20, 0.f, 0.f, 0.f, 1.f);
-                frmMain.renderRect(ScreenW/2 - TextBoxW / 2 + 2,
-                                      BoxY_Start + 2,
-                                      TextBoxW - 4, D*16 + 20 - 4, 1.f, 1.f, 1.f, 1.f);
-                frmMain.renderRect(ScreenW/2 - TextBoxW / 2 + 4,
-                                      BoxY_Start + 4,
-                                      TextBoxW - 8, D*16 + 20 - 8, 8.f/255.f, 96.f/255.f, 168.f/255.f, 1.f);
-                tempBool = false; // multi-line
-                BoxY = BoxY_Start + 10;
-                do
-                {
-                    // find last word break
-                    B = 0;
-                    for(A = 1; A <= int(SuperText.size()); A++)
-                    {
-                        if(SuperText[size_t(A) - 1] == ' ' || A == int(SuperText.size()))
-                        {
-                            if(A < 28)
-                                B = A;
-                            else
-                                break;
-                        }
-                    }
-
-                    if(B == 0)
-                        B = A;
-
-                    tempText = SuperText.substr(0, size_t(B));
-                    SuperText = SuperText.substr(size_t(B), SuperText.length());
-                    if(SuperText.length() == 0 && !tempBool)
-                    {
-                        SuperPrint(tempText,
-                                   4,
-                                   ScreenW/2 - TextBoxW / 2 + 12 + (27 * 9) - (tempText.length() * 9),
-                                   BoxY);
-                    }
-                    else
-                    {
-                        SuperPrint(tempText, 4, ScreenW/2 - TextBoxW / 2 + 12, BoxY);
-                    }
-                    BoxY += 16;
-                    tempBool = true;
-                } while(!SuperText.empty());
-            }
-
-            // Display the cursor
-            {
-                auto &e = EditorCursor;
-                int curX = int(double(e.X) - vScreen[Z].Left);
-                int curY = int(double(e.Y) - vScreen[Z].Top);
-
-                if(e.Mode == OptCursor_t::LVL_BLOCKS) // Blocks
-                {
-                    auto &b = e.Block;
-                    if(BlockIsSizable[b.Type])
-                    {
-                        if(vScreenCollision(Z, b.Location))
-                        {
-                            for(B = 0; B <= (b.Location.Height / 32) - 1; B++)
-                            {
-                                for(C = 0; C <= (b.Location.Width / 32) - 1; C++)
-                                {
-                                    D = C;
-                                    E = B;
-
-                                    if(D != 0)
-                                    {
-                                        if(fEqual(D, (b.Location.Width / 32) - 1))
-                                            D = 2;
-                                        else
-                                        {
-                                            D = 1;
-                                            d2 = 0.5;
-                                        }
-                                    }
-
-                                    if(E != 0)
-                                    {
-                                        if(fEqual(E, (b.Location.Height / 32) - 1))
-                                            E = 2;
-                                        else
-                                            E = 1;
-                                    }
-
-                                    frmMain.renderTexture(vScreenX[Z] + b.Location.X + C * 32,
-                                                          vScreenY[Z] + b.Location.Y + B * 32,
-                                                          32, 32, GFXBlock[b.Type], D * 32, E * 32);
-//                                    if((D == 0 || D == 2) || (E == 0 || E == 2))
-//                                    {
-//                                        frmMain.renderTexture(vScreenX(Z) + .Location.X + C * 32, vScreenY(Z) + .Location.Y + B * 32, 32, 32, GFXBlock(.Type), D * 32, E * 32)
-//                                    }
-//                                    else
-//                                        frmMain.renderTexture(vScreenX(Z) + .Location.X + C * 32, vScreenY(Z) + .Location.Y + B * 32, 32, 32, GFXBlock(.Type), D * 32, E * 32)
-
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if(vScreenCollision(Z, b.Location))
-                        {
-                            frmMain.renderTexture(vScreenX[Z] + b.Location.X,
-                                                  vScreenY[Z] + b.Location.Y + b.ShakeY3,
-                                                  b.Location.Width,
-                                                  b.Location.Height,
-                                                  GFXBlock[b.Type], 0, BlockFrame[b.Type] * 32);
-                        }
-                    }
-                }
-
-                else if(e.Mode == OptCursor_t::LVL_SETTINGS) // Player start points
-                {
-                    // TODO: determine what is going on here
-                    if(e.SubMode == 4 || e.SubMode == 5)
-                    {
-                        A = e.SubMode - 3;
-                        C = Physics.PlayerHeight[testPlayer[A].Character][2] - Physics.PlayerHeight[A][2];
-                        switch (testPlayer[A].Character)
-                        {
-                        case 1:
-                            frmMain.renderTexture(vScreenX[Z] + e.Location.X + MarioFrameX[201],
-                                    vScreenY[Z] + e.Location.Y + MarioFrameY[201] - C,
-                                    99, 99, GFXMario[2], 500, 0);
-                            break;
-                        case 2:
-                            frmMain.renderTexture(vScreenX[Z] + e.Location.X + LuigiFrameX[201],
-                                    vScreenY[Z] + e.Location.Y + LuigiFrameY[201] - C,
-                                    99, 99, GFXLuigi[2], 500, 0);
-                            break;
-                        case 3:
-                            frmMain.renderTexture(vScreenX[Z] + e.Location.X + PeachFrameX[201],
-                                    vScreenY[Z] + e.Location.Y + PeachFrameY[201] - C,
-                                    99, 99, GFXPeach[2], 500, 0);
-                            break;
-                        case 4:
-                            frmMain.renderTexture(vScreenX[Z] + e.Location.X + ToadFrameX[201],
-                                    vScreenY[Z] + e.Location.Y + ToadFrameY[201] - C,
-                                    99, 99, GFXToad[2], 500, 0);
-                            break;
-                        case 5:
-                            frmMain.renderTexture(vScreenX[Z] + e.Location.X + LinkFrameX[201],
-                                    vScreenY[Z] + e.Location.Y + LinkFrameY[201] - C,
-                                    99, 99, GFXLink[2], 500, 0);
-                            break;
-                        }
-                    }
-                }
-
-                else if(e.Mode == OptCursor_t::LVL_BGOS) // BGOs
-                {
-                    auto &b = e.Background;
-                    if(vScreenCollision(Z, b.Location))
-                    {
-                        frmMain.renderTexture(vScreenX[Z] + b.Location.X,
-                                              vScreenY[Z] + b.Location.Y,
-                                              BackgroundWidth[b.Type],
-                                              BackgroundHeight[b.Type],
-                                              GFXBackground[b.Type], 0,
-                                              BackgroundHeight[b.Type] * BackgroundFrame[b.Type]);
-                    }
-                }
-
-                else if(e.Mode == OptCursor_t::LVL_NPCS) // NPCs
-                {
-                    e.NPC.Frame = NPC[0].Frame;
-                    e.NPC.FrameCount = NPC[0].FrameCount;
-                    NPC[0] = e.NPC;
-                    NPCFrames(0);
-                    e.NPC = NPC[0];
-
-                    auto &n = e.NPC;
-                    if(NPCWidthGFX[n.Type] == 0)
-                    {
-                        frmMain.renderTexture(vScreenX[Z] + n.Location.X + NPCFrameOffsetX[n.Type],
-                                              vScreenY[Z] + n.Location.Y + NPCFrameOffsetY[n.Type],
-                                              n.Location.Width,
-                                              n.Location.Height,
-                                              GFXNPC[n.Type], 0, n.Frame * n.Location.Height);
-                    }
-                    else
-                    {
-                        if(n.Type == 283 && n.Special > 0)
-                        {
-                            if(NPCWidthGFX[n.Special] == 0)
-                            {
-                                tempLocation.Width = NPCWidth[n.Special];
-                                tempLocation.Height = NPCHeight[n.Special];
-                            }
-                            else
-                            {
-                                tempLocation.Width = NPCWidthGFX[n.Special];
-                                tempLocation.Height = NPCHeightGFX[n.Special];
-                            }
-                            tempLocation.X = n.Location.X + n.Location.Width / 2 - tempLocation.Width / 2;
-                            tempLocation.Y = n.Location.Y + n.Location.Height / 2 - tempLocation.Height / 2;
-                            B = EditorNPCFrame(int(n.Special), n.Direction);
-
-                            frmMain.renderTexture(vScreenX[Z] + tempLocation.X + NPCFrameOffsetX[n.Type],
-                                                  vScreenY[Z] + tempLocation.Y,
-                                                  tempLocation.Width, tempLocation.Height,
-                                                  GFXNPC[n.Special], 0, B * tempLocation.Height);
-                        }
-
-                        frmMain.renderTexture(vScreenX[Z] + n.Location.X + NPCFrameOffsetX[n.Type] - NPCWidthGFX[n.Type] / 2 + n.Location.Width / 2,
-                                              vScreenY[Z] + n.Location.Y + NPCFrameOffsetY[n.Type] - NPCHeightGFX[n.Type] + n.Location.Height,
-                                              NPCWidthGFX[n.Type], NPCHeightGFX[n.Type], GFXNPC[n.Type],
-                                              0, n.Frame * NPCHeightGFX[n.Type]);
-                    }
-                }
-
-                if(EditorCursor.Mode == 0 || EditorCursor.Mode == 6) // Eraser
-                {
-                    frmMain.renderTexture(curX - 2, curY, GFX.ECursor[3]);
-                }
-
-                else if(EditorCursor.Mode == 13 || EditorCursor.Mode == 14) // Selector
-                {
-                    frmMain.renderTexture(curX, curY, GFX.ECursor[2]);
-                }
-
-                // Section Resize
-                else if(EditorCursor.Mode == 2 && EditorCursor.SubMode < 4)
-                {
-                    frmMain.renderTexture(curX, curY, GFX.ECursor[1]);
-                }
-
-                else if(EditorCursor.Mode == 15) // Water
-                {
-                    frmMain.renderRect(vScreenX[Z] + EditorCursor.Location.X, vScreenY[Z] + EditorCursor.Location.Y, EditorCursor.Location.Width, EditorCursor.Location.Height,
-                        0.f, 1.f, 0.f, 1.f, false);
-                    frmMain.renderTexture(curX, curY, GFX.ECursor[2]);
-                    if(!e.Layer.empty() && strcasecmp(e.Layer.c_str(), "Default") != 0)
-                        SuperPrint(e.Layer, 3, X + 28, Y + 34);
-                }
-//                Else
-                else
-                {
-//                    If .Mode = 5 Then
-                    if(EditorCursor.Mode == OptCursor_t::LVL_WARPS)
-                    {
-                        frmMain.renderTexture(vScreenX[Z] + EditorCursor.Location.X,
-                                vScreenY[Z] + EditorCursor.Location.Y,
-                                EditorCursor.Location.Width, EditorCursor.Location.Height, GFX.Warp, 0, 0);
-                    }
-                    frmMain.renderTexture(curX, curY, GFX.ECursor[2]);
-                    if(!e.Layer.empty() && strcasecmp(e.Layer.c_str(), "Default") != 0)
-                        SuperPrint(EditorCursor.Layer, 3, curX + 28 , curY + 34);
-                }
-
-//            End With
-            }
-//        End If
-        }
     }
 
     if(PrintFPS > 0) {
         SuperPrint(fmt::format_ne("{0}", int(PrintFPS)), 1, 8, 8);
     }
 
-    // There was code for magic hand mode here.
-
     if(GameOutro)
         DoCredits();
+    // fputs("time 11\n",log); fflush(log);
     graphics_times[11] = svcGetSystemTick();
 
     // if(!skipRepaint)
     //     frmMain.repaint();
+    // fputs("time 12\n",log); fflush(log);
     graphics_times[12] = svcGetSystemTick();
-    if (LevelEditor)
-        editorScreen.UpdateEditorScreen();
-    else
+    if (!LevelEditor)
         drawSecondScreen();
     graphics_times[13] = graphics_times[12]; // so we can report this frame's time to draw second screen next frame
     graphics_times[14] = svcGetSystemTick();
 
     if (!skipRepaint)
         frmMain.finalizeDraw();
+    // fputs("time 15\n",log); fflush(log);
     graphics_times[15] = svcGetSystemTick();
 
     // Update Coin Frames
@@ -2234,4 +2253,5 @@ void UpdateGraphics(bool skipRepaint)
         if(CoinFrame[3] >= 4)
             CoinFrame[3] = 0;
     }
+    // // fputs("done!\n",log); fclose(log);
 }

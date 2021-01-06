@@ -62,6 +62,10 @@ public:
 
     int numEyes = 2;
 
+    uint32_t keys_held = 0;
+    uint32_t keys_pressed = 0;
+    uint32_t keys_released = 0;
+
     FrmMain();
 
     void *getWindow(); // SDL_Window
@@ -153,7 +157,7 @@ private:
     float offset_x = 0.f;
     float offset_y = 0.f;
     //Offset to shake screen
-    int viewport_offset_x = -5;
+    int viewport_offset_x = 0;
     int viewport_offset_y = 0;
     //Need to calculate relative viewport position when screen was scaled
     float viewport_scale_x = 1.0f;

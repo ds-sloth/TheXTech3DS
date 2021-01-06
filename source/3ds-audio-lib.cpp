@@ -356,11 +356,12 @@ uint32_t playSoundOGG(const char* path, int loops) {
         priority = priority < 0x18 ? 0x18 : priority;
         priority = priority > 0x3F ? 0x3F : priority;
 
-        sound_thread = threadCreate(loadOGG_Thread, (void*)channel,
+        Thread load_thread;
+        load_thread = threadCreate(loadOGG_Thread, (void*)channel,
                                      THREAD_STACK_SZ, priority,
                                      0, false);
 
-        if (sound_thread)
+        if (load_thread)
             return uniquePlayId;
         else
         {

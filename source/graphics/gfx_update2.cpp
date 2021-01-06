@@ -330,8 +330,17 @@ void UpdateGraphics2(bool skipRedraw)
                 SuperPrint(std::to_string(WorldMusic[A].Type), 1, vScreenX[Z] + WorldMusic[A].Location.X + 2, vScreenY[Z] + WorldMusic[A].Location.Y + 2);
             }
         }
-        frmMain.setLayer(5);
-        if (EditorCursor.Mode == OptCursor_t::WLD_TILES)
+        frmMain.setLayer(3);
+        BlockFlash += 1;
+
+        if(BlockFlash > 45)
+            BlockFlash = 0;
+
+        if (BlockFlash >= 30)
+        {
+            // don't draw the currently held object
+        }
+        else if (EditorCursor.Mode == OptCursor_t::WLD_TILES)
         {
             frmMain.renderTexture(vScreenX[Z] + EditorCursor.Tile.Location.X,
                 vScreenY[Z] + EditorCursor.Tile.Location.Y,
@@ -341,7 +350,7 @@ void UpdateGraphics2(bool skipRedraw)
                 0,
                 TileHeight[EditorCursor.Tile.Type] * TileFrame[EditorCursor.Tile.Type]);
         }
-        if (EditorCursor.Mode == OptCursor_t::WLD_SCENES)
+        else if (EditorCursor.Mode == OptCursor_t::WLD_SCENES)
         {
             frmMain.renderTexture(vScreenX[Z] + EditorCursor.Scene.Location.X,
                 vScreenY[Z] + EditorCursor.Scene.Location.Y,
@@ -351,7 +360,7 @@ void UpdateGraphics2(bool skipRedraw)
                 0,
                 SceneHeight[EditorCursor.Scene.Type] * SceneFrame[EditorCursor.Scene.Type]);
         }
-        if (EditorCursor.Mode == OptCursor_t::WLD_LEVELS)
+        else if (EditorCursor.Mode == OptCursor_t::WLD_LEVELS)
         {
             if(EditorCursor.WorldLevel.Path == true)
             {
@@ -383,7 +392,7 @@ void UpdateGraphics2(bool skipRedraw)
                                       GFXLevelBMP[EditorCursor.WorldLevel.Type], 0, 32 * LevelFrame[EditorCursor.WorldLevel.Type]);
             }
         }
-        if (EditorCursor.Mode == OptCursor_t::WLD_PATHS)
+        else if (EditorCursor.Mode == OptCursor_t::WLD_PATHS)
         {
             frmMain.renderTexture(vScreenX[Z] + EditorCursor.WorldPath.Location.X,
                 vScreenY[Z] + EditorCursor.WorldPath.Location.Y,
@@ -392,7 +401,7 @@ void UpdateGraphics2(bool skipRedraw)
                 GFXPath[EditorCursor.WorldPath.Type],
                 0, 0);
         }
-        if (EditorCursor.Mode == OptCursor_t::WLD_MUSIC)
+        else if (EditorCursor.Mode == OptCursor_t::WLD_MUSIC)
         {
             frmMain.renderTexture(vScreenX[Z] + EditorCursor.WorldMusic.Location.X,
                 vScreenY[Z] + EditorCursor.WorldMusic.Location.Y,
@@ -414,8 +423,6 @@ void UpdateGraphics2(bool skipRedraw)
                 32, 32,
                 GFX.ECursor[2], 0, 0);
         }
-
-        editorScreen.UpdateEditorScreen();
     }
     else
     {

@@ -1352,25 +1352,36 @@ void MenuLoop()
         }
     }
 
+    // FILE* log = fopen("/frame.txt", "wb");
+    // fprintf(log, "stack: %p\n", &log); fflush(log);
     if(LevelMacro > 0) UpdateMacro();
     perf_times[0] = svcGetSystemTick();
+    // fputs("layers\n",log); fflush(log);
     UpdateLayers();
     perf_times[1] = svcGetSystemTick();
+    // fputs("NPCs\n",log); fflush(log);
     UpdateNPCs();
     perf_times[2] = svcGetSystemTick();
+    // fputs("Bloacks\n",log); fflush(log);
     UpdateBlocks();
     perf_times[3] = svcGetSystemTick();
+    // fputs("Effects\n",log); fflush(log);
     UpdateEffects();
     perf_times[4] = svcGetSystemTick();
+    // fputs("Players\n",log); fflush(log);
     UpdatePlayer();
     perf_times[5] = svcGetSystemTick();
+    // fputs("Graphics\n",log); fflush(log);
     UpdateGraphics();
     perf_times[6] = perf_times[5]; // so we can report it next frame
     perf_times[7] = svcGetSystemTick();
+    // fputs("Sound\n",log); fflush(log);
     UpdateSound();
     perf_times[8] = svcGetSystemTick();
+    // fputs("Events\n",log); fflush(log);
     UpdateEvents();
     perf_times[9] = svcGetSystemTick();
+    // fputs("Done\n",log); fclose(log);
 }
 
 void FindWorlds()

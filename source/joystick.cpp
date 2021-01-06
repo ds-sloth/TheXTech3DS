@@ -57,7 +57,7 @@ static bool bindJoystickKey(uint32_t keys, KM_Key &k)
 
 void UpdateControls()
 {
-    uint32_t keys = hidKeysHeld();
+    const uint32_t& keys = frmMain.keys_held;
 
     int A = 0;
 
@@ -139,17 +139,17 @@ void UpdateControls()
 
 bool PollJoystick(KM_Key &key)
 {
-    uint32_t keys = hidKeysDown();
+    const uint32_t& keys = frmMain.keys_pressed;
     return bindJoystickKey(keys, key);
 }
 
 bool JoyIsKeyDown(const KM_Key &key)
 {
-    uint32_t keys = hidKeysDown();
+    const uint32_t& keys = frmMain.keys_pressed;
     return key.id & keys;
 }
 
 bool getKeyState(KEYCODE kc)
 {
-    return kc & hidKeysDownRepeat();
+    return kc & frmMain.keys_held;
 }

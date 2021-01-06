@@ -142,11 +142,10 @@ private:
     void UpdateFileScreen();
     void UpdateBrowserScreen();
 
-    void UpdateSelectorBar();
-
 public:
     bool active = true;
     void UpdateEditorScreen();
+    void UpdateSelectorBar(bool level_screen = false);
     void ResetCursor();
     // set m_NPC_page based on the editor cursor
     void FocusNPC();

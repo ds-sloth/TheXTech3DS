@@ -2,9 +2,14 @@
 #include "sorting.h"
 #include "layers.h"
 #include "write_common.h"
+#include "sound.h"
 
 void SaveLevel(std::string FilePath)   // saves the level
 {
+    FILE* f = fopen(FilePath.c_str(), "wb");
+    if (!f)
+        return;
+
     int A = 0;
     int B = 0;
     int C = 0;
@@ -66,7 +71,6 @@ void SaveLevel(std::string FilePath)   // saves the level
     // If Right(FileNamePath, 2) = "\\" Then
     //     FileNamePath = Left(FileNamePath, Len(FileNamePath) - 1)
     // End If
-    FILE* f = fopen(FilePath.c_str(), "wb");
     fwritenum(f, curRelease);
     fwritenum(f, starCount);
     fwritestr(f, LevelName);
@@ -274,4 +278,5 @@ void SaveLevel(std::string FilePath)   // saves the level
     // LoadCustomGFX
 
     // LoadCustomGFX2 FileNamePath & Left(FileName, Len(FileName) - 4)
+    PlaySound(12);
 }

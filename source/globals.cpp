@@ -486,20 +486,6 @@ int showCursor(int show)
     return 0;
 }
 
-uint8_t getKeyState(int key)
-{
-    if(key < 0)
-        return 0;
-    return frmMain.getKeyState(key);
-}
-
-uint8_t getKeyStateI(int key)
-{
-    if(key < 0)
-        return 0;
-    return frmMain.getKeyState(key);
-}
-
 const char *getKeyName(int key)
 {
     return " ... ";
