@@ -1,6 +1,7 @@
 #include <3ds.h>
 
 #ifndef NUM_CHANNELS
+// must *never* exceed 32
 #define NUM_CHANNELS 20
 #define NUM_BUFFERS 3
 #define BUFFER_SIZE (256 * (44100 / 1000))

@@ -359,7 +359,7 @@ uint32_t playSoundOGG(const char* path, int loops) {
         Thread load_thread;
         load_thread = threadCreate(loadOGG_Thread, (void*)channel,
                                      THREAD_STACK_SZ, priority,
-                                     0, false);
+                                     0, true);
 
         if (load_thread)
             return uniquePlayId;
@@ -424,7 +424,7 @@ bool audioInit() {
 
     sound_thread = threadCreate(audioThread, NULL,
                                  THREAD_STACK_SZ, priority,
-                                 cpu, false);
+                                 cpu, true);
 
     if (sound_thread)
         printf("Created audio thread at %p on %s core\n", sound_thread, cpu ? "os" : "application");
