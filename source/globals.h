@@ -1114,6 +1114,7 @@ extern bool GamePaused;
 extern std::string MessageText;
 //Public NumSelectWorld As Integer
 extern int NumSelectWorld;
+extern int NumSelectWorldEditable;
 extern int NumSelectBattle;
 //Public SelectWorld(1 To 100) As SelectWorld
 struct SelectWorld_t;

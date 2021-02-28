@@ -36,7 +36,7 @@ class RangeArr
 {
     static constexpr long range_diff = begin - end;
     static constexpr size_t size = (range_diff < 0 ? -range_diff : range_diff) + 1;
-    static const long offset = -begin;
+    static constexpr long offset = -begin;
 #ifdef RANGE_ARR_USE_HEAP
     T *array = nullptr;
 #else
@@ -83,7 +83,7 @@ public:
             array[i] = o;
     }
 
-    T& operator[](long index)
+    inline T& operator[](long index)
     {
 #ifdef RANGE_ARR_USE_HEAP
         // SDL_assert_release(array); // When array won't initialize
@@ -101,7 +101,7 @@ class RangeArrI
 {
     static constexpr long range_diff = begin - end;
     static constexpr size_t size = (range_diff < 0 ? -range_diff : range_diff) + 1;
-    static const long offset = -begin;
+    static constexpr long offset = -begin;
 #ifdef RANGE_ARR_USE_HEAP
     T *array = nullptr;
 #else
@@ -150,7 +150,7 @@ public:
             array[i] = o;
     }
 
-    T& operator[](long index)
+    inline T& operator[](long index)
     {
 #ifdef RANGE_ARR_USE_HEAP
         // SDL_assert_release(array); // When array won't initialize

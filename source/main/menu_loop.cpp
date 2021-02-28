@@ -342,19 +342,26 @@ void MenuLoop()
             // if we didn't just pick a world
             if(MenuMode > 0 && MenuMode < 100)
             {
-                if (MenuMode != 4)
+                if (MenuMode == 9)
                 {
-                    if(MenuCursor >= NumSelectWorld)
+                    if(MenuCursor >= NumSelectWorldEditable)
                         MenuCursor = 0;
                     if(MenuCursor < 0)
-                        MenuCursor = NumSelectWorld - 1;
+                        MenuCursor = NumSelectWorldEditable - 1;
                 }
-                else
+                else if (MenuMode == 4)
                 {
                     if(MenuCursor >= NumSelectBattle)
                         MenuCursor = 0;
                     if(MenuCursor < 0)
                         MenuCursor = NumSelectBattle - 1;
+                }
+                else
+                {
+                    if(MenuCursor >= NumSelectWorld)
+                        MenuCursor = 0;
+                    if(MenuCursor < 0)
+                        MenuCursor = NumSelectWorld - 1;
                 }
             }
         }
@@ -1387,6 +1394,7 @@ void MenuLoop()
 void FindWorlds()
 {
     NumSelectWorld = 0;
+    NumSelectWorldEditable = -1;
 
     const std::vector<std::string>& worldRoots = AppPathManager::worldRootDirs();
     // worldRoots.push_back(AppPath + "worlds/");
@@ -1430,6 +1438,9 @@ void FindWorlds()
                 }
             }
         }
+        // this is after the first and only non-romfs root has been processed.
+        if (NumSelectWorldEditable == -1)
+            NumSelectWorldEditable = (SelectWorld.size() - 1);
     }
 
     NumSelectWorld = (SelectWorld.size() - 1);

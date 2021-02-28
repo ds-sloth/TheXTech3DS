@@ -64,6 +64,7 @@ KM_Key lastJoyButton;
 bool GamePaused = false;
 std::string MessageText;
 int NumSelectWorld  = 0;
+int NumSelectWorldEditable = 0;
 int NumSelectBattle = 0;
 std::vector<SelectWorld_t> SelectWorld;
 std::vector<SelectWorld_t> SelectBattle;

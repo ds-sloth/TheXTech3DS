@@ -2068,7 +2068,7 @@ void UpdateGraphics(bool skipRepaint)
         {
             std::string tempStr = "";
             minShow = 1;
-            maxShow = (MenuMode != 4) ? NumSelectWorld : NumSelectBattle;
+            maxShow = (MenuMode == 4) ? NumSelectBattle : ((MenuMode == 9) ? NumSelectWorldEditable : NumSelectWorld);
             if(maxShow > 5)
             {
                 minShow = worldCurs;
@@ -2081,18 +2081,18 @@ void UpdateGraphics(bool skipRepaint)
 
                 if(worldCurs < 1)
                     worldCurs = 1;
-                if (MenuMode != 4)
+                if (MenuMode == 9)
                 {
-                    if(worldCurs > NumSelectWorld - 4)
-                        worldCurs = NumSelectWorld - 4;
+                    if(worldCurs > NumSelectWorldEditable - 4)
+                        worldCurs = NumSelectWorldEditable - 4;
 
-                    if(maxShow >= NumSelectWorld)
+                    if(maxShow >= NumSelectWorldEditable)
                     {
-                        maxShow = NumSelectWorld;
-                        minShow = NumSelectWorld - 4;
+                        maxShow = NumSelectWorldEditable;
+                        minShow = NumSelectWorldEditable - 4;
                     }
                 }
-                else
+                else if (MenuMode == 4)
                 {
                     if(worldCurs > NumSelectBattle - 4)
                         worldCurs = NumSelectBattle - 4;
@@ -2101,6 +2101,17 @@ void UpdateGraphics(bool skipRepaint)
                     {
                         maxShow = NumSelectBattle;
                         minShow = NumSelectBattle - 4;
+                    }
+                }
+                else
+                {
+                    if(worldCurs > NumSelectWorld - 4)
+                        worldCurs = NumSelectWorld - 4;
+
+                    if(maxShow >= NumSelectWorld)
+                    {
+                        maxShow = NumSelectWorld;
+                        minShow = NumSelectWorld - 4;
                     }
                 }
 
@@ -2119,7 +2130,7 @@ void UpdateGraphics(bool skipRepaint)
             {
                 frmMain.renderTexture(ScreenW/2 - 8, MenuY - 20, GFX.MCursor[1]);
             }
-            if(maxShow < ((MenuMode != 4) ? NumSelectWorld : NumSelectBattle))
+            if(maxShow < ((MenuMode == 4) ? NumSelectBattle : ((MenuMode == 9) ? NumSelectWorldEditable : NumSelectWorld)))
             {
                 frmMain.renderTexture(ScreenW/2 - 8, MenuY + 140, GFX.MCursor[2]);
             }
