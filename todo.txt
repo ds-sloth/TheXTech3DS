@@ -1,10 +1,15 @@
 SMBX Port to 3DS!
 
+- Jupyter notebook
+  - Easy. Upload mkromfs, tex3ds, install imagemagick and ffmpeg
+  - unzip the user upload
+  - run my script
+  - let them download the resulting romfs folder zipped or romfs'd
+
 - Work out CIA
 
 - Fix height of intro level and width of curtain
-
-- Check remaining PGE_Delays
+  - Provide any assets I have modified
 
 - Update credits
   - Person with 3DS OS thread (Mario 64) (see sound file for credit)
@@ -13,12 +18,26 @@ SMBX Port to 3DS!
   - Fix credits music fadeout
   - Fix credits -> normal screen transition
 
-- Make it easier to build episodes
-  - Bundle tools for Windows / Linux?
-  - Somehow put it in a Jupyter notebook or in javascript?
+- Understand why SD card access is so slow and do something about it
+
+- Editor controls
+
+- Clear lower screen on editor exit
+
+- Sound
+  - Think about tongue effect for flying boot... Why does it cutoff a little too late?
+  - Music fadeins/fadeouts?
+  - Make OGGs loop properly with that attribute Wohlstand likes
+  - Implement SPCs: libgme seems pretty nice, hopefully not too resource-intensive
+  - Fix P-Switch music second play (has this been fixed?)
+  - Fix credits music fadeout
+
+- Alternative multiplayer controls
+
+- Check remaining PGE_Delays
 
 - Crashes
-  - Think through exceptions in standard library / PGE stuff
+  - Almost entirely those silly blocking calls... D:
 
 - Appearance glitches
   - Judder when Mario is on a conveyer belt
@@ -39,16 +58,3 @@ SMBX Port to 3DS!
   - New 3DS RAM...?
   - Allow user to disable sound
   - Allow user to toggle debug mode / show something nice when debug mode is off
-
-- Sound
-  - Think about tongue effect for flying boot... Why does it cutoff a little too late?
-  - Music fadeins/fadeouts?
-  - Make OGGs loop properly
-  - Consider implementing SPCs: libgme seems pretty nice,
-    hopefully not too resource-intensive
-  - Fix P-Switch music second play
-  - Fix credits music fadeout
-
-- Alternative multiplayer controls
-
-- Quick save / quick load

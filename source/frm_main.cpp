@@ -666,9 +666,25 @@ void FrmMain::renderRect(int x, int y, int w, int h, float red, float green, flo
     uint32_t clr = C2D_Color32f(red, green, blue, alpha);
 
     // Filled is always True in this game
-    C2D_DrawRectSolid(x/2+viewport_offset_x,
-                      y/2+viewport_offset_y,
-                      0, w/2, h/2, clr);
+    if (filled)
+        C2D_DrawRectSolid(x/2+viewport_offset_x,
+                          y/2+viewport_offset_y,
+                          0, w/2, h/2, clr);
+    else
+    {
+        C2D_DrawRectangle(x/2+viewport_offset_x,
+                          y/2+viewport_offset_y,
+                          0, 1, h/2, clr, clr, clr, clr);
+        C2D_DrawRectangle(x/2+viewport_offset_x+w/2-1,
+                          y/2+viewport_offset_y,
+                          0, 1, h/2, clr, clr, clr, clr);
+        C2D_DrawRectangle(x/2+viewport_offset_x,
+                          y/2+viewport_offset_y,
+                          0, w/2, 1, clr, clr, clr, clr);
+        C2D_DrawRectangle(x/2+viewport_offset_x,
+                          y/2+viewport_offset_y+h/2-1,
+                          0, w/2, 1, clr, clr, clr, clr);
+    }
 }
 
 void FrmMain::renderRectBR(int _left, int _top, int _right, int _bottom, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
@@ -810,16 +826,15 @@ void FrmMain::renderTextureScale(float xDst, float yDst, float wDst, float hDst,
                              float xSrc, float ySrc, float wSrc, float hSrc,
                              bool shadow)
 {
-    renderTexturePrivate(ROUNDDIV2(xDst),
-                   ROUNDDIV2(yDst),
-                   ROUNDDIV2(wDst),
-                   ROUNDDIV2(hDst),
-                   tx,
-                   xSrc/2,
-                   ySrc/2,
-                   shadow);
-    return;
-    // dead code, for now...
+    xDst = ROUNDDIV2(xDst);
+    yDst = ROUNDDIV2(yDst);
+    wDst = ROUNDDIV2(wDst);
+    hDst = ROUNDDIV2(hDst),
+    xSrc = xSrc/2;
+    ySrc = ySrc/2;
+    wSrc = wSrc/2;
+    hSrc = hSrc/2;
+    // identical to renderTexturePrivate apart from last line.
     if(!tx.inited)
         return;
 
@@ -837,29 +852,52 @@ void FrmMain::renderTextureScale(float xDst, float yDst, float wDst, float hDst,
     // this never happens unless there was an invalid input
     // if((xSrc < 0.f) || (ySrc < 0.f)) return;
 
-    // don't check viewport boundaries because they interact with scaling
+    if(xDst < 0.f)
+    {
+        xSrc -= xDst;
+        wDst += xDst;
+        xDst = 0.f;
+        if (wDst > viewport_w)
+            wDst = viewport_w;
+    }
+    else if(xDst + wDst > viewport_w)
+    {
+        wDst = (viewport_w - xDst);
+    }
+    if(yDst < 0.f)
+    {
+        ySrc -= yDst;
+        hDst += yDst;
+        yDst = 0.f;
+        if (hDst > viewport_h)
+            hDst = viewport_h;
+    }
+    else if(yDst + hDst > viewport_h)
+    {
+        hDst = (viewport_h - yDst);
+    }
 
     C2D_Image* to_draw = nullptr;
     C2D_Image* to_draw_2 = nullptr;
 
     // Don't go more than size of texture
     // Failure conditions should only happen if texture is smaller than expected
-    if(xSrc + wSrc > tx.w/2)
+    if(xSrc + wDst > tx.w/2)
     {
-        wSrc = tx.w/2 - xSrc;
-        if(wSrc < 0.f)
+        wDst = tx.w/2 - xSrc;
+        if(wDst < 0.f)
             return;
     }
-    if(ySrc + hSrc > tx.h/2)
+    if(ySrc + hDst > tx.h/2)
     {
-        hSrc = tx.h/2 - ySrc;
-        if(hSrc < 0.f)
+        hDst = tx.h/2 - ySrc;
+        if(hDst < 0.f)
             return;
     }
 
-    if(ySrc + hSrc > 1024.f)
+    if(ySrc + hDst > 1024.f)
     {
-        if(ySrc + hSrc > 2048.f)
+        if(ySrc + hDst > 2048.f)
         {
             if(tx.texture3)
                 to_draw = &tx.image3;
@@ -890,8 +928,8 @@ void FrmMain::renderTextureScale(float xDst, float yDst, float wDst, float hDst,
 
     if (to_draw == nullptr) return;
 
-    C2D_DrawImage_Custom(*to_draw, xDst+viewport_offset_x, yDst+viewport_offset_y,
-                         xSrc, ySrc, wDst, hDst, shadow);
+    C2D_DrawImage_Custom(*to_draw, xDst+viewport_offset_x, yDst+viewport_offset_y, wDst, hDst,
+                         xSrc, ySrc, wSrc, hSrc, shadow);
 }
 
 void FrmMain::renderTexture(double xDst, double yDst, double wDst, double hDst,

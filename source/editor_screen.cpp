@@ -69,12 +69,16 @@ const std::string GetTextInput(const std::string& prompt, const std::string& ini
     static SwkbdState keystate;
     static char input_buffer[240];
 
+    C3D_FrameEnd(0);
+
     swkbdInit(&keystate, SWKBD_TYPE_QWERTY, 1, 120);
     swkbdSetHintText(&keystate, prompt.c_str());
     swkbdSetInitialText(&keystate, init.c_str());
     swkbdSetFeatures(&keystate, SWKBD_DARKEN_TOP_SCREEN);
 
     swkbdInputText(&keystate, input_buffer, sizeof(input_buffer));
+
+    C3D_FrameBegin(0);
 
     return std::string(input_buffer);
 }
@@ -3884,20 +3888,20 @@ void EditorScreen::UpdateSelectorBar(bool level_screen)
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(sx+9*40+4, 4, GFXBlock[60], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_SETTINGS, 0, 0, 32, 32))
+        if (!level_screen && UpdateButton(sx+9*40+4, 4, GFXBlock[60], !in_excl_special && EditorCursor.Mode == OptCursor_t::LVL_SETTINGS, 0, 0, 32, 32))
         {
             EditorCursor.Mode = OptCursor_t::LVL_SETTINGS;
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(sx+10*40+4, 4, GFXBlock[447], in_layers, 0, 0, 32, 32) && !in_layers)
+        if (!level_screen && UpdateButton(sx+10*40+4, 4, GFXBlock[447], in_layers, 0, 0, 32, 32) && !in_layers)
         {
             EditorCursor.Mode = OptCursor_t::LVL_SELECT;
             optCursor.current = OptCursor_t::LVL_SELECT;
             m_last_mode = OptCursor_t::LVL_SELECT;
             m_special_page = SPECIAL_PAGE_LAYERS;
         }
-        if (UpdateButton(sx+11*40+4, 4, GFXBlock[169], in_events, 0, 0, 32, 32) && !in_events)
+        if (!level_screen && UpdateButton(sx+11*40+4, 4, GFXBlock[169], in_events, 0, 0, 32, 32) && !in_events)
         {
             EditorCursor.Mode = OptCursor_t::LVL_SELECT;
             optCursor.current = OptCursor_t::LVL_SELECT;
@@ -3939,7 +3943,7 @@ void EditorScreen::UpdateSelectorBar(bool level_screen)
             if (in_excl_special)
                 exit_special = true;
         }
-        if (UpdateButton(sx+9*40+4, 4, GFXLevelBMP[15], in_world_settings, 0, 0, 32, 32) && !in_world_settings)
+        if (!level_screen && UpdateButton(sx+9*40+4, 4, GFXLevelBMP[15], in_world_settings, 0, 0, 32, 32) && !in_world_settings)
         {
             EditorCursor.Mode = OptCursor_t::LVL_SELECT;
             optCursor.current = OptCursor_t::LVL_SELECT;
