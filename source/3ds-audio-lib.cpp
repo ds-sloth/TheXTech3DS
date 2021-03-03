@@ -4,6 +4,7 @@
 #include <tremor/ivorbisfile.h>
 #include <3ds.h>
 #include <cstdlib>
+#include "gme.h"
 #include "second_screen.h"
 
 volatile SimpleChannel channels[NUM_CHANNELS];
@@ -48,6 +49,12 @@ void closeChannel(volatile SimpleChannel *channel)
     {
         ov_clear((OggVorbis_File*)channel->data_pointer);
         free(channel->data_pointer);
+        // OGG does not free its pointer.
+    }
+    if (channel->format == FORMAT_GME_FILE && channel->data_pointer != nullptr)
+    {
+        gme_delete((Music_Emu*)channel->data_pointer);
+        // GME frees its pointer.
     }
     // DO NOT free the data pointer if it is a PCM_MEM because it is shared.
     channel->data_pointer = nullptr;
@@ -176,6 +183,33 @@ bool fillBuffer(volatile SimpleChannel *channel, volatile ndspWaveBuf *wavebuf)
             DSP_FlushDataCache(wavebuf->data_pcm16,
                 wavebuf->nsamples * 2);
         }
+        return true;
+    }
+    if (channel->format == FORMAT_GME_FILE && channel->data_pointer != nullptr)
+    {
+        short *buffer_loc = (short *)wavebuf->data_pcm16; // in 2x16-bit samples
+        size_t samplesToRead = BUFFER_SIZE / sizeof(short);
+        if(gme_track_ended((Music_Emu*)channel->data_pointer))
+        {
+            if (channel->loops == 0)
+            {
+                closeChannel(channel);
+                return false;
+            }
+            else
+            {
+                if (channel->loops > 0)
+                    channel->loops -= 1;
+                gme_start_track((Music_Emu*)channel->data_pointer, 0);
+            }
+        }
+
+        gme_play((Music_Emu*)channel->data_pointer, samplesToRead, buffer_loc);
+
+        wavebuf->nsamples = samplesToRead/2;
+        ndspChnWaveBufAdd(channel->channel_id, (ndspWaveBuf*)wavebuf);
+        DSP_FlushDataCache(wavebuf->data_pcm16,
+            wavebuf->nsamples * 4);
         return true;
     }
     return false;
@@ -334,7 +368,7 @@ void loadOGG_Thread(void* passed_val)
 }
 
 uint32_t playSoundOGG(const char* path, int loops) {
-    printf("Playin music %s\n", path);
+    // printf("Playin music %s\n", path);
     for (size_t ci = 0; ci < NUM_CHANNELS; ci++)
     {
         volatile SimpleChannel *channel = &channels[ci];
@@ -371,6 +405,61 @@ uint32_t playSoundOGG(const char* path, int loops) {
         }
     }
     return INVALID_ID;
+}
+
+// void loadChannelGME(volatile SimpleChannel* channel)
+// {
+
+// }
+
+uint32_t playSoundGME(const char* path, int loops) {
+    // printf("Playin music GME %s\n", path);
+    for (size_t ci = 0; ci < NUM_CHANNELS; ci++)
+    {
+        volatile SimpleChannel *channel = &channels[ci];
+        if(channel->format != FORMAT_FREE) continue;
+
+        channel->format = FORMAT_LOADING;
+        channel->loops = loops;
+        gme_open_file(path, (Music_Emu**)&(channel->data_pointer), 44100);
+        if (!channel->data_pointer)
+        {
+            channel->format = FORMAT_FREE;
+            return INVALID_ID;
+        }
+
+        ndspChnReset(ci);
+        ndspChnSetInterp(ci, NDSP_INTERP_POLYPHASE);
+
+        ndspChnSetFormat(ci, NDSP_FORMAT_STEREO_PCM16);
+        ndspChnSetRate(channel->channel_id, 44100);
+
+        channel->format = FORMAT_GME_FILE;
+        uint32_t uniquePlayId = getSoundId(channel);
+        return uniquePlayId;
+    }
+    return INVALID_ID;
+}
+
+// Thanks ThiefMaster!
+// https://stackoverflow.com/questions/5309471/getting-file-extension-in-c
+const char* get_filename_ext(const char* filename) {
+    const char* dot = strrchr(filename, '.');
+    if(!dot || dot == filename) return "";
+    return dot + 1;
+}
+
+uint32_t playSoundAuto(const char* path, int loops)
+{
+    const char* ext = get_filename_ext(path);
+    if (!strcasecmp(ext, "ogg"))
+        return playSoundOGG(path, loops);
+    if (!strcasecmp(ext, "mp3"))
+        return playSoundOGG(path, loops);
+    if (!strcasecmp(ext, "wav"))
+        return playSound(path, loops);
+    else
+        return playSoundGME(path, loops);
 }
 
 bool audioInit() {

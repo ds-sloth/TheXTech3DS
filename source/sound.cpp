@@ -270,7 +270,7 @@ void PlayMusic(std::string Alias, int fadeInMs)
     if(mus != music.end())
     {
         auto &m = mus->second;
-        g_curMusic = playSoundOGG(m.path.c_str(), loops);
+        g_curMusic = playSoundAuto(m.path.c_str(), loops);
         if(g_curMusic == INVALID_ID)
         {
             printf("Music '%s' opening error :(\n", m.path.c_str());
@@ -327,7 +327,7 @@ void StartMusic(int A, int fadeInMs)
         if(curWorldMusic == g_customWldMusicId)
         {
             printf("Starting custom music [%s]", curWorldMusicFile.c_str());
-            g_curMusic = playSoundOGG((FileNamePath + curWorldMusicFile).c_str(), -1);
+            g_curMusic = playSoundAuto((FileNamePath + curWorldMusicFile).c_str(), -1);
         }
         else
         {
@@ -355,7 +355,7 @@ void StartMusic(int A, int fadeInMs)
         std::string mus = fmt::format_ne("music{0}", curMusic);
         if(curMusic == g_customLvlMusicId)
         {
-            g_curMusic = playSoundOGG((FileNamePath + CustomMusic[A]).c_str(), -1);
+            g_curMusic = playSoundAuto((FileNamePath + CustomMusic[A]).c_str(), -1);
         }
         else
         {
