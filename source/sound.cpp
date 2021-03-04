@@ -296,11 +296,11 @@ void PlaySfx(std::string Alias, int loops)
         }
         if (s.isCustom)
         {
-            s.playingSoundId = playSound(s.customPath.c_str(), loops);
+            s.playingSoundId = playSoundAuto(s.customPath.c_str(), loops);
             if (s.playingSoundId != INVALID_ID)
                 return;
         }
-        s.playingSoundId = playSound(s.path.c_str(), loops);
+        s.playingSoundId = playSoundAuto(s.path.c_str(), loops);
     }
 }
 

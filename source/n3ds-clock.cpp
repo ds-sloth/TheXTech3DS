@@ -9,11 +9,12 @@ void InitClockSpeed()
     bool isN3DS;
     APT_CheckNew3DS(&isN3DS);
     if (!isN3DS) n3ds_clocked = -1;
-    if (isN3DS && false) // make this configurable...
-    {
-        SwapClockSpeed();
-        printf("N3DS clock enabled\n");
-    }
+    // I've made this configurable.
+    // if (isN3DS) // make this configurable...
+    // {
+    //     SwapClockSpeed();
+    //     printf("N3DS clock enabled\n");
+    // }
 }
 
 void SwapClockSpeed()

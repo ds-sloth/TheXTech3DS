@@ -6,6 +6,7 @@
 #include <cstdlib>
 #include "gme.h"
 #include "second_screen.h"
+#include "n3ds-clock.h"
 
 volatile SimpleChannel channels[NUM_CHANNELS];
 char *audio_buffer = NULL;
@@ -421,7 +422,10 @@ uint32_t playSoundGME(const char* path, int loops) {
 
         channel->format = FORMAT_LOADING;
         channel->loops = loops;
-        gme_open_file(path, (Music_Emu**)&(channel->data_pointer), 44100);
+        if (n3ds_clocked)
+            gme_open_file(path, (Music_Emu**)&(channel->data_pointer), 44100);
+        else
+            gme_open_file(path, (Music_Emu**)&(channel->data_pointer), 22050);
         if (!channel->data_pointer)
         {
             channel->format = FORMAT_FREE;
@@ -432,7 +436,10 @@ uint32_t playSoundGME(const char* path, int loops) {
         ndspChnSetInterp(ci, NDSP_INTERP_POLYPHASE);
 
         ndspChnSetFormat(ci, NDSP_FORMAT_STEREO_PCM16);
-        ndspChnSetRate(channel->channel_id, 44100);
+        if (n3ds_clocked)
+            ndspChnSetRate(channel->channel_id, 44100);
+        else
+            ndspChnSetRate(channel->channel_id, 22050);
 
         channel->format = FORMAT_GME_FILE;
         uint32_t uniquePlayId = getSoundId(channel);

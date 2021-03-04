@@ -82,7 +82,7 @@ void AppPathManager::initAppPath()
 
 void AppPathManager::findUserWorlds(DirMan userDir)
 {
-    m_worldRootDirs.push_back("sdmc:/3ds/thextech/worlds/");
+    m_worldRootDirs.push_back(UserDirName "/worlds/");
     m_worldRootDirs.push_back(assetsRoot() + "worlds/");
     std::vector<std::string> romfsFiles;
     static const std::vector<std::string> romfsExt = {".romfs"};

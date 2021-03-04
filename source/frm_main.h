@@ -49,7 +49,7 @@ class FrmMain
     std::set<C2D_SpriteSheet> m_textureBank; // SDL_Texture
     bool m_sdlLoaded = false;
     const uint8_t *m_keyboardState = nullptr;
-    uint32_t m_lastMousePress = 0;
+    touchPosition m_lastMousePosition = {0, 0};
     std::set<StdPicture*> m_bigPictures;
     uint32_t currentFrame = 0;
     int m_ri; // SDL_RendererInfo

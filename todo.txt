@@ -1,5 +1,11 @@
 SMBX Port to 3DS!
 
+- Editor:
+  - Configurable controls
+  - Fix warp placement... something very strange is going on.
+  - Fix draw order so that only the mouse is above the plane of the level
+  - Fix the delete thing to only delete one thing per square (?)
+
 - Jupyter notebook
   - Easy. Upload mkromfs, tex3ds, install imagemagick and ffmpeg
   - unzip the user upload
@@ -20,15 +26,14 @@ SMBX Port to 3DS!
 
 - Understand why SD card access is so slow and do something about it
 
-- Editor controls
-
 - Clear lower screen on editor exit
 
 - Sound
   - Think about tongue effect for flying boot... Why does it cutoff a little too late?
   - Music fadeins/fadeouts?
   - Make OGGs loop properly with that attribute Wohlstand likes
-  - Implement SPCs: libgme seems pretty nice, hopefully not too resource-intensive
+  - Implement gain and track selection for libgme / SPCs
+    - NON-ZERO DEFAULT GAIN?
   - Fix P-Switch music second play (has this been fixed?)
   - Fix credits music fadeout
 
@@ -57,4 +62,4 @@ SMBX Port to 3DS!
   - PGE_Delay??
   - New 3DS RAM...?
   - Allow user to disable sound
-  - Allow user to toggle debug mode / show something nice when debug mode is off
+  - Show something nice on the second screen when debug mode is off

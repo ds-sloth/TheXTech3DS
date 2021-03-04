@@ -204,11 +204,11 @@ void UpdateEditor()
 //        frmLevelEditor::picLevel.Visible = true;
 //    }
 //    GetCursorPos(CursorPos);
-    CursorPos.X = MenuMouseX;
-    CursorPos.Y = MenuMouseY;
+    // CursorPos.X = MenuMouseX;
+    // CursorPos.Y = MenuMouseY;
 
-    if(!frmMain.hasWindowMouseFocus() || CursorPos.X < 0 || CursorPos.Y > ScreenW || CursorPos.Y < 0 || CursorPos.Y > ScreenH)
-        HideCursor();
+    // if(!frmMain.hasWindowMouseFocus() || CursorPos.X < 0 || CursorPos.Y > ScreenW || CursorPos.Y < 0 || CursorPos.Y > ScreenH)
+    //     HideCursor();
 
     if(LevelEditor || MagicHand)
     {
@@ -2078,7 +2078,8 @@ void MouseMove(float X, float Y, bool /*nCur*/)
     if (editorScreen.active) return;
 
     // this is new. not sure of implications
-    MouseRelease = true;
+    // maybe not...? :)
+    // MouseRelease = true;
 
     int A = 0;
     HasCursor = true;

@@ -314,9 +314,9 @@ void MenuLoop()
                         BattleMode = false;
                         LevelEditor = true;
                         WorldEditor = true;
-                        OpenWorld(SelectWorld[selWorld].WorldPath + SelectWorld[selWorld].WorldFile);
                         ClearLevel();
                         ClearGame();
+                        OpenWorld(SelectWorld[selWorld].WorldPath + SelectWorld[selWorld].WorldFile);
                         editorScreen.ResetCursor();
                         return;
                     }

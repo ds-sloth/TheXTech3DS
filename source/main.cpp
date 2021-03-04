@@ -95,8 +95,15 @@ static void strToPlayerSetup(int player, const std::string &setupString)
 extern "C"
 int main(int argc, char**argv)
 {
+    // archiveMountSdmc();
     romfsInit();
     CmdLineSetup_t setup;
+
+    // archiveMount(ARCHIVE_SAVEDATA, {PATH_ASCII, 10, "/test.arch"}, "a");
+    // FILE* f = fopen("a:/test.txt", "r");
+    // if (!f) return -1;
+    // fprintf(f, "hello world!\n");
+    // fclose(f);
 
     // CrashHandler::initSigs();
 
@@ -123,6 +130,9 @@ int main(int argc, char**argv)
     int ret = GameMain(setup);
     printf("Quit with code %d...\n", ret);
     frmMain.freeSDL();
+
+    romfsExit();
+    archiveUnmountAll();
 
     return ret;
 }

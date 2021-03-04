@@ -147,26 +147,37 @@ void FrmMain::doEvents()
 
     if (!editorScreen.active)
     {
-        if ((keys_pressed & KEY_TOUCH) && (currentFrame - m_lastMousePress) < 40)
-            EditorControls.Mouse1 = true;
+        if ((keys_pressed & KEY_TOUCH) && (touch.py > 20))
+        {
+            int distance2 = (m_lastMousePosition.px - touch.px)*(m_lastMousePosition.px - touch.px)
+                + (m_lastMousePosition.py - touch.py)*(m_lastMousePosition.py - touch.py);
+
+            if (distance2 < 64)
+                EditorControls.Mouse1 = true;
+        }
         if (keys_released & KEY_TOUCH)
         {
             EditorControls.Mouse1 = false;
-            m_lastMousePress = currentFrame;
+            MenuMouseRelease = true;
         }
         if (keys_held & KEY_TOUCH)
         {
             // not selector bar
             if (touch.py > 20)
             {
+                MenuMouseX = -50;
+                MenuMouseY = -50;
                 EditorCursor.X = 100 + touch.px * 2;
                 EditorCursor.Y = touch.py * 2;
+                m_lastMousePosition = touch;
             }
             // selector bar
             else
             {
+                MenuMouseDown = keys_held & KEY_TOUCH;
                 MenuMouseX = 100 + touch.px * 2;
                 MenuMouseY = touch.py * 2;
+                m_lastMousePosition = {0, 0};
             }
         }
         MouseMove(EditorCursor.X, EditorCursor.Y, true);
