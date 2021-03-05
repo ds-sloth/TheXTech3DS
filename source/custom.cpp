@@ -148,17 +148,17 @@ void FindCustomNPCs(/*std::string cFilePath*/)
         DirMan searchDataDir(FileNamePath + FileName);
         searchDataDir.getListOfFiles(files, {".png", ".gif"});
         for(auto &p : files)
-            existingFiles.insert(FileNamePath + FileName  + "/"+ p);
+            existingFiles.insert(FileNamePath + FileName  + "/" + p);
     }
 
     for(int A = 1; A < maxNPCType; ++A)
     {
-        std::string npcPath = FileNamePath + s_dirEpisode.resolveFileCase(fmt::format_ne("npc-{0}.txt", A));
-        std::string npcPathC = FileNamePath + FileName + "/" + s_dirCustom.resolveFileCase(fmt::format_ne("npc-{0}.txt", A));
-        if(Files::fileExists(npcPath))
-            LoadCustomNPC(A, npcPath);
-        if(Files::fileExists(npcPathC))
-            LoadCustomNPC(A, npcPathC);
+        std::string npcPath = s_dirEpisode.resolveFileCaseExists(fmt::format_ne("npc-{0}.txt", A));
+        std::string npcPathC = s_dirCustom.resolveFileCaseExists(fmt::format_ne("npc-{0}.txt", A));
+        if(!npcPath.empty())
+            LoadCustomNPC(A, FileNamePath + npcPath);
+        if(!npcPathC.empty())
+            LoadCustomNPC(A, FileNamePath + FileName + "/" + npcPathC);
     }
 }
 

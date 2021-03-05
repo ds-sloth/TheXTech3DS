@@ -17,6 +17,7 @@ public:
     void setCurDir(const std::string &path);
 
     std::string resolveFileCase(const std::string &name);
+    std::string resolveFileCaseExists(const std::string &name);
     std::string resolveDirCase(const std::string &name);
 
     void rescan();

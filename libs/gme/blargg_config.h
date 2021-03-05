@@ -24,10 +24,10 @@
 */
 
 // Uncomment to enable platform-specific optimizations
-//#define BLARGG_NONPORTABLE 1
+#define BLARGG_NONPORTABLE 1
 
 // Uncomment to use faster, lower quality sound synthesis
-//#define BLIP_BUFFER_FAST 1
+#define BLIP_BUFFER_FAST 1
 
 // Uncomment if automatic byte-order determination doesn't work
 //#define BLARGG_BIG_ENDIAN 1

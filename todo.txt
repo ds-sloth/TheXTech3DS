@@ -4,7 +4,7 @@ SMBX Port to 3DS!
   - Configurable controls
   - Fix warp placement... something very strange is going on.
   - Fix draw order so that only the mouse is above the plane of the level
-  - Fix the delete thing to only delete one thing per square (?)
+  - Allow delete thing to delete more than one square, but still one tile per square
 
 - Jupyter notebook
   - Easy. Upload mkromfs, tex3ds, install imagemagick and ffmpeg
@@ -14,7 +14,7 @@ SMBX Port to 3DS!
 
 - Work out CIA
 
-- Fix height of intro level and width of curtain
+- Fix height of intro level and width of curtain, and also 
   - Provide any assets I have modified
 
 - Update credits
@@ -22,11 +22,14 @@ SMBX Port to 3DS!
   - People who made opus tutorial
   - People who made citra, devkitpro
   - Fix credits music fadeout
+    - (Means implementing music fadeouts in general)
   - Fix credits -> normal screen transition
 
 - Understand why SD card access is so slow and do something about it
 
 - Clear lower screen on editor exit
+
+- Add cheats screen
 
 - Sound
   - Think about tongue effect for flying boot... Why does it cutoff a little too late?
@@ -36,6 +39,7 @@ SMBX Port to 3DS!
     - NON-ZERO DEFAULT GAIN?
   - Fix P-Switch music second play (has this been fixed?)
   - Fix credits music fadeout
+  - Either make libgme run smoothly at O3DS speeds, or make both easy options
 
 - Alternative multiplayer controls
 
@@ -51,9 +55,6 @@ SMBX Port to 3DS!
   - Improve rounding
     - Standard math round might be cheaper w optimizations
     - Sometimes tiled backgrounds desync (force them to round same way)
-  - Bugs
-    - Skeleton death anim (Hyrule temple)
-    - Hammer bro death anim
 
 - Performance
   - WORLD MAP
@@ -62,4 +63,3 @@ SMBX Port to 3DS!
   - PGE_Delay??
   - New 3DS RAM...?
   - Allow user to disable sound
-  - Show something nice on the second screen when debug mode is off

@@ -16,8 +16,11 @@ DirListCI::DirListCI(const std::string &curDir)
 
 void DirListCI::setCurDir(const std::string &path)
 {
-    m_curDir = path;
-    rescan();
+    if (m_curDir != path)
+    {
+        m_curDir = path;
+        rescan();
+    }
 }
 
 static void replaceSlashes(std::string &str, const std::string &from)
@@ -41,13 +44,8 @@ static void replaceSlashes(std::string &str, const std::string &from)
     }
 }
 
-std::string DirListCI::resolveFileCase(const std::string &in_name)
+std::string DirListCI::resolveFileCaseExists(const std::string &in_name)
 {
-#ifdef _WIN32
-    std::string name;
-    replaceSlashes(name, in_name);
-    return name;
-#else
     if(in_name.empty())
         return in_name;
 
@@ -60,7 +58,11 @@ std::string DirListCI::resolveFileCase(const std::string &in_name)
     {
         auto sdName = resolveDirCase(name.substr(0, subDir));
         DirListCI sd(m_curDir + "/" + sdName);
-        return sdName + "/" + sd.resolveFileCase(name.substr(subDir + 1));
+        std::string found = sd.resolveFileCase(name.substr(subDir + 1));
+        if (found.empty())
+            return "";
+        else
+            return sdName + "/" + found;
     }
 
     // keep MixerX path arguments untouched
@@ -87,8 +89,22 @@ std::string DirListCI::resolveFileCase(const std::string &in_name)
             return found->second;
     }
 
-    return name;
-#endif
+    return "";
+}
+
+std::string DirListCI::resolveFileCase(const std::string &in_name)
+{
+    if(in_name.empty())
+        return in_name;
+
+    std::string found = resolveFileCaseExists(in_name);
+
+    // if not found, overwrite with the replace-slash version of the name
+    // and return
+    if (found.empty())
+        replaceSlashes(found, in_name);
+
+    return found;
 }
 
 std::string DirListCI::resolveDirCase(const std::string &name)
