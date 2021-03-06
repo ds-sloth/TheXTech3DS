@@ -1,9 +1,10 @@
-// Game_Music_Emu 0.5.5. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Sap_Emu.h"
 
 #include "blargg_endian.h"
 #include <string.h>
+#include <algorithm>
 
 /* Copyright (C) 2006 Shay Green. This module is free software; you
 can redistribute it and/or modify it under the terms of the GNU Lesser
@@ -19,6 +20,9 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 #include "blargg_source.h"
 
 long const base_scanline_period = 114;
+
+using std::min;
+using std::max;
 
 Sap_Emu::Sap_Emu()
 {
@@ -236,8 +240,7 @@ static Music_Emu* new_sap_emu () { return BLARGG_NEW Sap_Emu ; }
 static Music_Emu* new_sap_file() { return BLARGG_NEW Sap_File; }
 
 static gme_type_t_ const gme_sap_type_ = { "Atari XL", 0, &new_sap_emu, &new_sap_file, "SAP", 1 };
-gme_type_t const gme_sap_type = &gme_sap_type_;
-
+extern gme_type_t const gme_sap_type = &gme_sap_type_;
 
 // Setup
 
@@ -336,7 +339,7 @@ blargg_err_t Sap_Emu::start_track_( int track )
 	{
 		unsigned start = get_le16( in );
 		unsigned end   = get_le16( in + 2 );
-		//debug_printf( "Block $%04X-$%04X\n", start, end );
+		debug_printf( "Block $%04X-$%04X\n", start, end );
 		in += 4;
 		if ( end < start )
 		{

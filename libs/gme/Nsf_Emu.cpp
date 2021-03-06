@@ -1,10 +1,11 @@
-// Game_Music_Emu 0.5.5. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Nsf_Emu.h"
 
 #include "blargg_endian.h"
 #include <string.h>
 #include <stdio.h>
+#include <algorithm>
 
 #if !NSF_EMU_APU_ONLY
 	#include "Nes_Namco_Apu.h"
@@ -31,8 +32,13 @@ int const fme7_flag  = 0x20;
 
 long const clock_divisor = 12;
 
-Nsf_Emu::equalizer_t const Nsf_Emu::nes_eq     = {  -1.0, 80 };
-Nsf_Emu::equalizer_t const Nsf_Emu::famicom_eq = { -15.0, 80 };
+using std::min;
+using std::max;
+
+Nsf_Emu::equalizer_t const Nsf_Emu::nes_eq     =
+	Music_Emu::make_equalizer( -1.0, 80 );
+Nsf_Emu::equalizer_t const Nsf_Emu::famicom_eq =
+	Music_Emu::make_equalizer( -15.0, 80 );
 
 int Nsf_Emu::pcm_read( void* emu, nes_addr_t addr )
 {
@@ -128,7 +134,7 @@ static Music_Emu* new_nsf_emu () { return BLARGG_NEW Nsf_Emu ; }
 static Music_Emu* new_nsf_file() { return BLARGG_NEW Nsf_File; }
 
 static gme_type_t_ const gme_nsf_type_ = { "Nintendo NES", 0, &new_nsf_emu, &new_nsf_file, "NSF", 1 };
-gme_type_t const gme_nsf_type = &gme_nsf_type_;
+extern gme_type_t const gme_nsf_type = &gme_nsf_type_;
 
 
 // Setup

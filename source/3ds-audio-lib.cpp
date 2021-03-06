@@ -4,7 +4,7 @@
 #include <tremor/ivorbisfile.h>
 #include <3ds.h>
 #include <cstdlib>
-#include "gme.h"
+#include "gme/gme.h"
 #include "second_screen.h"
 #include "n3ds-clock.h"
 
@@ -508,7 +508,7 @@ bool audioInit() {
     int cpu = 0; // application core
     // just going to try this... :)
     if (
-        R_SUCCEEDED(APT_SetAppCpuTimeLimit(50)) ||
+        R_SUCCEEDED(APT_SetAppCpuTimeLimit(70)) ||
         R_SUCCEEDED(APT_SetAppCpuTimeLimit(30)))
         cpu = 1; // system core
 

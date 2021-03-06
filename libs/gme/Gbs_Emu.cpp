@@ -1,4 +1,4 @@
-// Game_Music_Emu 0.5.5. http://www.slack.net/~ant/
+// Game_Music_Emu https://bitbucket.org/mpyne/game-music-emu/
 
 #include "Gbs_Emu.h"
 
@@ -18,8 +18,10 @@ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA */
 
 #include "blargg_source.h"
 
-Gbs_Emu::equalizer_t const Gbs_Emu::handheld_eq   = { -47.0, 2000 };
-Gbs_Emu::equalizer_t const Gbs_Emu::headphones_eq = {   0.0,  300 };
+Gbs_Emu::equalizer_t const Gbs_Emu::handheld_eq   =
+	Music_Emu::make_equalizer( -47.0, 2000 );
+Gbs_Emu::equalizer_t const Gbs_Emu::headphones_eq =
+	Music_Emu::make_equalizer( 0.0, 300 );
 
 Gbs_Emu::Gbs_Emu()
 {
@@ -39,8 +41,7 @@ Gbs_Emu::Gbs_Emu()
 	set_max_initial_silence( 21 );
 	set_gain( 1.2 );
 	
-	static equalizer_t const eq = { -1.0, 120 };
-	set_equalizer( eq );
+	set_equalizer( make_equalizer( -1.0, 120 ) );
 }
 
 Gbs_Emu::~Gbs_Emu() { }
@@ -100,7 +101,7 @@ static Music_Emu* new_gbs_emu () { return BLARGG_NEW Gbs_Emu ; }
 static Music_Emu* new_gbs_file() { return BLARGG_NEW Gbs_File; }
 
 static gme_type_t_ const gme_gbs_type_ = { "Game Boy", 0, &new_gbs_emu, &new_gbs_file, "GBS", 1 };
-gme_type_t const gme_gbs_type = &gme_gbs_type_;
+extern gme_type_t const gme_gbs_type = &gme_gbs_type_;
 
 // Setup
 
@@ -151,7 +152,7 @@ void Gbs_Emu::set_bank( int n )
 	{
 		// TODO: what is the correct behavior? Current Game & Watch Gallery
 		// rip requires that this have no effect or set to bank 1.
-		//debug_printf( "Selected ROM bank 0\n" );
+		debug_printf( "Selected ROM bank 0\n" );
 		return;
 		//n = 1;
 	}
@@ -174,7 +175,7 @@ void Gbs_Emu::update_timer()
 		play_period = blip_time_t (play_period / tempo());
 }
 
-static BOOST::uint8_t const sound_data [Gb_Apu::register_count] = {
+static uint8_t const sound_data [Gb_Apu::register_count] = {
 	0x80, 0xBF, 0x00, 0x00, 0xBF, // square 1
 	0x00, 0x3F, 0x00, 0x00, 0xBF, // square 2
 	0x7F, 0xFF, 0x9F, 0x00, 0xBF, // wave
