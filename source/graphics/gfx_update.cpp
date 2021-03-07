@@ -1350,8 +1350,12 @@ void UpdateGraphics(bool skipRepaint)
             {
                 if(!Water[B].Hidden && vScreenCollision(Z, Water[B].Location))
                 {
-                    frmMain.renderRect(vScreenX[Z] + Water[B].Location.X, vScreenY[Z] + Water[B].Location.Y, Water[B].Location.Width, Water[B].Location.Height,
-                        0.f, 1.f, 0.f, 1.f, false);
+                    if (Water[B].Quicksand)
+                        frmMain.renderRect(vScreenX[Z] + Water[B].Location.X, vScreenY[Z] + Water[B].Location.Y, Water[B].Location.Width, Water[B].Location.Height,
+                            1.f, 1.f, 0.f, 1.f, false);
+                    else
+                        frmMain.renderRect(vScreenX[Z] + Water[B].Location.X, vScreenY[Z] + Water[B].Location.Y, Water[B].Location.Width, Water[B].Location.Height,
+                            0.f, 1.f, 1.f, 1.f, false);
                 }
             }
         }
@@ -1411,6 +1415,7 @@ void UpdateGraphics(bool skipRepaint)
 
         if(LevelEditor || (MagicHand && !GamePaused))
         {
+            frmMain.setLayer(2);
             if(LevelEditor)
             {
                 BlockFlash += 1;
@@ -1526,18 +1531,25 @@ void UpdateGraphics(bool skipRepaint)
                 {
                     if(Warp[A].Direction > 0 && !Warp[A].Hidden)
                     {
+                        bool complete = Warp[A].PlacedEnt && Warp[A].PlacedExit;
                         if(Warp[A].PlacedEnt)
                         {
-                            frmMain.renderTexture(vScreenX[Z] + Warp[A].Entrance.X,
-                                    vScreenY[Z] + Warp[A].Entrance.Y,
-                                    Warp[A].Entrance.Width, Warp[A].Entrance.Height, GFX.Warp, 0, 0);
+                            if (complete)
+                                frmMain.renderRect(vScreenX[Z] + Warp[A].Entrance.X, vScreenY[Z] + Warp[A].Entrance.Y, 32, 32,
+                                    1.f, 0.f, 1.f, 1.f, false);
+                            else
+                                frmMain.renderRect(vScreenX[Z] + Warp[A].Entrance.X, vScreenY[Z] + Warp[A].Entrance.Y, 32, 32,
+                                    1.f, 0.f, 0.f, 1.f, false);
                             SuperPrint(std::to_string(A), 1, vScreenX[Z] + Warp[A].Entrance.X + 2, vScreenY[Z] + Warp[A].Entrance.Y + 2);
                         }
                         if(Warp[A].PlacedExit)
                         {
-                            frmMain.renderTexture(vScreenX[Z] + Warp[A].Exit.X,
-                                    vScreenY[Z] + Warp[A].Exit.Y,
-                                    Warp[A].Exit.Width, Warp[A].Exit.Height, GFX.Warp, 0, 0);
+                            if (complete)
+                                frmMain.renderRect(vScreenX[Z] + Warp[A].Exit.X, vScreenY[Z] + Warp[A].Exit.Y, 32, 32,
+                                    1.f, 0.f, 1.f, 1.f, false);
+                            else
+                                frmMain.renderRect(vScreenX[Z] + Warp[A].Exit.X, vScreenY[Z] + Warp[A].Exit.Y, 32, 32,
+                                    1.f, 0.f, 0.f, 1.f, false);
                             SuperPrint(std::to_string(A), 1, vScreenX[Z] + Warp[A].Exit.X + Warp[A].Exit.Width - 16 - 2,
                                 vScreenY[Z] + Warp[A].Exit.Y + Warp[A].Exit.Height - 14 - 2);
                         }
@@ -1812,14 +1824,17 @@ void UpdateGraphics(bool skipRepaint)
                 }
                 else if(EditorCursor.Mode == OptCursor_t::LVL_WATER) // Water
                 {
-                    frmMain.renderRect(vScreenX[Z] + EditorCursor.Location.X, vScreenY[Z] + EditorCursor.Location.Y, EditorCursor.Location.Width, EditorCursor.Location.Height,
-                        0.f, 1.f, 0.f, 1.f, false);
+                    if (EditorCursor.Water.Quicksand)
+                        frmMain.renderRect(vScreenX[Z] + EditorCursor.Location.X, vScreenY[Z] + EditorCursor.Location.Y, EditorCursor.Location.Width, EditorCursor.Location.Height,
+                            1.f, 1.f, 0.f, 1.f, false);
+                    else
+                        frmMain.renderRect(vScreenX[Z] + EditorCursor.Location.X, vScreenY[Z] + EditorCursor.Location.Y, EditorCursor.Location.Width, EditorCursor.Location.Height,
+                            0.f, 1.f, 1.f, 1.f, false);
                 }
                 else if(EditorCursor.Mode == OptCursor_t::LVL_WARPS)
                 {
-                    frmMain.renderTexture(vScreenX[Z] + EditorCursor.Location.X,
-                            vScreenY[Z] + EditorCursor.Location.Y,
-                            EditorCursor.Location.Width, EditorCursor.Location.Height, GFX.Warp, 0, 0);
+                    frmMain.renderRect(vScreenX[Z] + EditorCursor.Location.X, vScreenY[Z] + EditorCursor.Location.Y, EditorCursor.Location.Width, EditorCursor.Location.Height,
+                        1.f, 0.f, 0.f, 1.f, false);
                 }
 
                 if(EditorCursor.Mode == 0 || EditorCursor.Mode == 6) // Eraser

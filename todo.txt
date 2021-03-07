@@ -2,9 +2,7 @@ SMBX Port to 3DS!
 
 - Editor:
   - Configurable controls
-  - Fix warp placement... something very strange is going on.
-  - Fix draw order so that only the mouse is above the plane of the level
-  - Allow delete thing to delete more than one square, but still one tile per square
+  - Allow delete thing to delete more than one square, but still one object per square
 
 - Jupyter notebook
   - Easy. Upload mkromfs, tex3ds, install imagemagick and ffmpeg
@@ -37,6 +35,7 @@ SMBX Port to 3DS!
   - Make OGGs loop properly with that attribute Wohlstand likes
   - Implement gain and track selection for libgme / SPCs
     - NON-ZERO DEFAULT GAIN?
+  - Make the default 2612 emulator depend on the current CPU speed
   - Fix P-Switch music second play (has this been fixed?)
   - Fix credits music fadeout
   - Either make libgme run smoothly at O3DS speeds, or make both easy options

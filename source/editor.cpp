@@ -365,35 +365,35 @@ void UpdateEditor()
                         {
                             PlaySound(23);
                             Warp[A].PlacedEnt = false;
-                            optCursor.current = 5;
+                            optCursor.current = OptCursor_t::LVL_WARPS;
                             OptCursorSync();
                             MouseRelease = false;
                             EditorCursor.Mode = OptCursor_t::LVL_WARPS;
                             EditorCursor.SubMode = 1;
                             EditorControls.Mouse1 = false; /* Simulate "Focus out" inside of SMBX Editor */
-                            if(Warp[A].LevelEnt)
-                            {
+                            if(Warp[A].LevelEnt || EditorCursor.Warp.MapWarp || EditorCursor.Warp.level != "")
                                 Warp[A].PlacedExit = false;
-                            }
                             EditorCursor.Warp = Warp[A];
+                            if (!Warp[A].PlacedEnt && !Warp[A].PlacedExit)
+                                KillWarp(A);
                             break;
                         }
                         else if(CursorCollision(EditorCursor.Location, Warp[A].Exit))
                         {
                             PlaySound(23);
                             Warp[A].PlacedExit = false;
-                            optCursor.current = 5;
+                            optCursor.current = OptCursor_t::LVL_WARPS;
                             OptCursorSync();
                             MouseRelease = false;
                             EditorCursor.Mode = OptCursor_t::LVL_WARPS;
                             EditorCursor.SubMode = 2;
                             EditorControls.Mouse1 = false; /* Simulate "Focus out" inside of SMBX Editor */
                             // TODO: verify that this is what we want.
-                            if(Warp[A].LevelEnt == true)
-                            {
+                            if(Warp[A].LevelEnt || EditorCursor.Warp.MapWarp || EditorCursor.Warp.level != "")
                                 Warp[A].PlacedEnt = false;
-                            }
                             EditorCursor.Warp = Warp[A];
+                            if (!Warp[A].PlacedEnt && !Warp[A].PlacedExit)
+                                KillWarp(A);
                             break;
                         }
                     }
@@ -1177,6 +1177,16 @@ void UpdateEditor()
                 }
                 Warp[A] = EditorCursor.Warp;
                 Warp[A].Layer = EditorCursor.Layer;
+                if (Warp[A].PlacedEnt && Warp[A].PlacedExit)
+                {
+                    EditorCursor.Warp.PlacedEnt = false;
+                    EditorCursor.Warp.PlacedExit = false;
+                    EditorCursor.SubMode = 1;
+                }
+                else if (Warp[A].PlacedEnt)
+                    EditorCursor.SubMode = 2;
+                else
+                    EditorCursor.SubMode = 1;
                 syncLayers_Warp(A);
 //                if(nPlay.Online == true)
 //                    Netplay::sendData Netplay::AddWarp[A];
