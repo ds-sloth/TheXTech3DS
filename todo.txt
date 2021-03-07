@@ -1,7 +1,6 @@
 SMBX Port to 3DS!
 
 - Editor:
-  - Configurable controls
   - Allow delete thing to delete more than one square, but still one object per square
 
 - Jupyter notebook
@@ -12,8 +11,12 @@ SMBX Port to 3DS!
 
 - Work out CIA
 
-- Fix height of intro level and width of curtain, and also 
+- Graphics / graphical bugs
+  - World map editor assets
+  - Fix height of intro level
   - Provide any assets I have modified
+  - Make icon for switch screens button
+  - Make graphics for CIA
 
 - Update credits
   - Person with 3DS OS thread (Mario 64) (see sound file for credit)
@@ -38,7 +41,8 @@ SMBX Port to 3DS!
   - Make the default 2612 emulator depend on the current CPU speed
   - Fix P-Switch music second play (has this been fixed?)
   - Fix credits music fadeout
-  - Either make libgme run smoothly at O3DS speeds, or make both easy options
+  - Either make libgme run smoothly at O3DS speeds,
+    or make both libgme and OGG easy options
 
 - Alternative multiplayer controls
 
@@ -62,3 +66,5 @@ SMBX Port to 3DS!
   - PGE_Delay??
   - New 3DS RAM...?
   - Allow user to disable sound
+  - Even N3DS has somewhat poor performance in some levels (Dire Docks, last level).
+    WHY?

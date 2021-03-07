@@ -297,11 +297,37 @@ struct ConJoystick_t
 //End Type
 };
 
+struct EditorConJoystick_t
+{
+    enum CtrlTypes
+    {
+        NoControl=-1,
+        JoyAxis=0,
+        JoyBallX,
+        JoyBallY,
+        JoyHat,
+        JoyButton
+    };
+    KM_Key Up;
+    KM_Key Down;
+    KM_Key Left;
+    KM_Key Right;
+
+    KM_Key PrevSection;
+    KM_Key NextSection;
+    KM_Key SwitchScreens;
+    KM_Key TestPlay;
+    KM_Key Select;
+    KM_Key Erase;
+};
+
 //Public conKeyboard(1 To 2) As conKeyboard  'player 1 and 2's controls
 // extern RangeArr<ConKeyboard_t, 1, 2> conKeyboard;
 
 //Public conJoystick(1 To 2) As conJoystick
 extern RangeArr<ConJoystick_t, 1, 2> conJoystick;
+
+extern EditorConJoystick_t editorConJoystick;
 
 //Public useJoystick(1 To 2) As Integer
 extern RangeArrI<int, 1, 2, 0> useJoystick;
@@ -2133,7 +2159,8 @@ const int curRelease = 64;
 // extern int ScreenW;
 // //Public Const ScreenH As Integer = 600  'Game Screen Height
 // extern int ScreenH;
-const int ScreenW = 840;
+constexpr int Max3DOffset = 20;
+const int ScreenW = 800 + 2 * Max3DOffset;
 const int ScreenH = 480;
 
 extern void Set_Screen(int sw, int sh);

@@ -93,7 +93,7 @@ bool GFX_t::load()
     For(i, 1, 2)
         loadImage(Tongue[i], uiPath + fmt::format_ne("Tongue{0}.png", i));
 
-    loadImage(Warp, uiPath + "Warp.png");
+    // loadImage(Warp, uiPath + "Warp.png");
 
     loadImage(YoshiWings, uiPath + "YoshiWings.png");
 

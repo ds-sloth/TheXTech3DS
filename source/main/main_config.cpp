@@ -110,6 +110,19 @@ void OpenConfig()
             readJoyKey(config, "AltRun", conJoystick[A].AltRun);
             config.endGroup();
         }
+
+        config.beginGroup("editor-joystick");
+        readJoyKey(config, "Up", editorConJoystick.Up);
+        readJoyKey(config, "Down", editorConJoystick.Down);
+        readJoyKey(config, "Left", editorConJoystick.Left);
+        readJoyKey(config, "Right", editorConJoystick.Right);
+        readJoyKey(config, "PrevSection", editorConJoystick.PrevSection);
+        readJoyKey(config, "NextSection", editorConJoystick.NextSection);
+        readJoyKey(config, "SwitchScreens", editorConJoystick.SwitchScreens);
+        readJoyKey(config, "TestPlay", editorConJoystick.TestPlay);
+        readJoyKey(config, "Select", editorConJoystick.Select);
+        readJoyKey(config, "Erase", editorConJoystick.Erase);
+        config.endGroup();
     }
 //    If resBool = True And resChanged = False And LevelEditor = False Then ChangeScreen
     if (n3ds_clocked != -1 && l_n3ds_clocked != n3ds_clocked)
@@ -163,6 +176,19 @@ void SaveConfig()
         writeJoyKey(config, "AltRun", conJoystick[A].AltRun);
         config.endGroup();
     }
+
+    config.beginGroup("editor-joystick");
+    writeJoyKey(config, "Up", editorConJoystick.Up);
+    writeJoyKey(config, "Down", editorConJoystick.Down);
+    writeJoyKey(config, "Left", editorConJoystick.Left);
+    writeJoyKey(config, "Right", editorConJoystick.Right);
+    writeJoyKey(config, "PrevSection", editorConJoystick.PrevSection);
+    writeJoyKey(config, "NextSection", editorConJoystick.NextSection);
+    writeJoyKey(config, "SwitchScreens", editorConJoystick.SwitchScreens);
+    writeJoyKey(config, "TestPlay", editorConJoystick.TestPlay);
+    writeJoyKey(config, "Select", editorConJoystick.Select);
+    writeJoyKey(config, "Erase", editorConJoystick.Erase);
+    config.endGroup();
 
     config.writeIniFile();
 #ifdef __EMSCRIPTEN__

@@ -174,7 +174,6 @@ void UpdateGraphics2(bool skipRedraw)
             }
         }
         graphics_times[2] = svcGetSystemTick();
-        frmMain.setLayer(1);
         for(A = 1; A <= numScenes; A++)
         {
             if(vScreenCollision(1, Scene[A].Location) == true)
@@ -248,7 +247,6 @@ void UpdateGraphics2(bool skipRedraw)
             }
         }
         graphics_times[2] = svcGetSystemTick();
-        frmMain.setLayer(1);
         for(A = 1; A <= numScenes; A++)
         {
             if(vScreenCollision2(1, Scene[A].Location) == true && Scene[A].Active == true)
@@ -308,7 +306,6 @@ void UpdateGraphics2(bool skipRedraw)
     }
     if (WorldEditor)
     {
-        frmMain.setLayer(2);
         for (A = 1; A <= numEffects; A++)
         {
             if (vScreenCollision(Z, Effect[A].Location))
@@ -323,10 +320,8 @@ void UpdateGraphics2(bool skipRedraw)
         {
             if (vScreenCollision(Z, WorldMusic[A].Location))
             {
-                frmMain.renderTexture(vScreenX[Z] + WorldMusic[A].Location.X,
-                    vScreenY[Z] + WorldMusic[A].Location.Y,
-                    WorldMusic[A].Location.Width, WorldMusic[A].Location.Height,
-                    GFX.Warp, 0, 0);
+                frmMain.renderRect(vScreenX[Z] + WorldMusic[A].Location.X, vScreenY[Z] + WorldMusic[A].Location.Y, 32, 32,
+                    1.f, 0.f, 1.f, 1.f, false);
                 SuperPrint(std::to_string(WorldMusic[A].Type), 1, vScreenX[Z] + WorldMusic[A].Location.X + 2, vScreenY[Z] + WorldMusic[A].Location.Y + 2);
             }
         }
@@ -403,10 +398,8 @@ void UpdateGraphics2(bool skipRedraw)
         }
         else if (EditorCursor.Mode == OptCursor_t::WLD_MUSIC)
         {
-            frmMain.renderTexture(vScreenX[Z] + EditorCursor.WorldMusic.Location.X,
-                vScreenY[Z] + EditorCursor.WorldMusic.Location.Y,
-                EditorCursor.WorldMusic.Location.Width, EditorCursor.WorldMusic.Location.Height,
-                GFX.Warp, 0, 0);
+            frmMain.renderRect(vScreenX[Z] + EditorCursor.WorldMusic.Location.X, vScreenY[Z] + EditorCursor.WorldMusic.Location.Y, 32, 32,
+                1.f, 0.f, 1.f, 1.f, false);
             SuperPrint(std::to_string(EditorCursor.WorldMusic.Type), 1, vScreenX[Z] + EditorCursor.WorldMusic.Location.X + 2, vScreenY[Z] + EditorCursor.WorldMusic.Location.Y + 2);
         }
         if (EditorCursor.Mode == OptCursor_t::LVL_ERASER || EditorCursor.Mode == OptCursor_t::LVL_ERASER0)
@@ -427,7 +420,6 @@ void UpdateGraphics2(bool skipRedraw)
     else
     {
         graphics_times[4] = svcGetSystemTick();
-        frmMain.setLayer(1);
         if(WorldPlayer[1].Type == 0)
             WorldPlayer[1].Type = 1;
         if(Player[1].Character == 1)
@@ -453,6 +445,7 @@ void UpdateGraphics2(bool skipRedraw)
 
         graphics_times[5] = svcGetSystemTick();
         // still on layer 2.
+        frmMain.setLayer(2);
         // render background...
         // top...
         frmMain.renderTexture(0, 0, ScreenW-66, 130, GFX.Interface[4], 0, 0);
@@ -674,7 +667,7 @@ void UpdateGraphics2(bool skipRedraw)
         }
         if(PrintFPS > 0)
         {
-            SuperPrint(std::to_string(int(PrintFPS)), 1, 8, 8);
+            SuperPrint(std::to_string(int(PrintFPS)), 1, 8 + Max3DOffset, 8);
         }
         graphics_times[11] = svcGetSystemTick();
 

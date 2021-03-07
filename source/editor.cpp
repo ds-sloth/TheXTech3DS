@@ -79,7 +79,7 @@ void ResetSectionScrolls()
         }
 
         last_vScreenY[i] = -(level[i].Height - 600);
-        last_vScreenX[i] = -(level[i].X);
+        last_vScreenX[i] = -(level[i].X) - Max3DOffset;
     }
     curSection = 0;
     vScreenY[1] = last_vScreenY[curSection];
@@ -147,7 +147,7 @@ void UpdateEditor()
 
     if(!MagicHand)
     {
-        if(getKeyState(KEYCODE_ZL) && !WorldEditor)
+        if(JoyIsKeyHeld(editorConJoystick.PrevSection) && !WorldEditor)
         {
             if(ScrollRelease == true)
             {
@@ -159,7 +159,7 @@ void UpdateEditor()
 //                    frmLevelSettings::optSection(curSection).Value = true;
             }
         }
-        else if(getKeyState(KEYCODE_ZR) && !WorldEditor)
+        else if(JoyIsKeyHeld(editorConJoystick.NextSection) && !WorldEditor)
         {
             if(ScrollRelease == true)
             {
@@ -213,7 +213,7 @@ void UpdateEditor()
     if(LevelEditor || MagicHand)
     {
         GetEditorControls();
-        // if(getKeyState(KEYCODE_DUP))
+        // if(JoyIsKeyHeld(KEYCODE_DUP))
         //     ScrollDelay = 0;
 
         if(MagicHand)
@@ -1485,33 +1485,33 @@ void GetEditorControls()
 {
     if(true)
     {
-        if(getKeyState(KEYCODE_DUP))
+        if(JoyIsKeyHeld(editorConJoystick.Up))
             EditorControls.Up = true;
         else
             EditorControls.Up = false;
-        if(getKeyState(KEYCODE_DDOWN))
+        if(JoyIsKeyHeld(editorConJoystick.Down))
             EditorControls.Down = true;
         else
             EditorControls.Down = false;
-        if(getKeyState(KEYCODE_DLEFT))
+        if(JoyIsKeyHeld(editorConJoystick.Left))
             EditorControls.Left = true;
         else
             EditorControls.Left = false;
-        if(getKeyState(KEYCODE_DRIGHT))
+        if(JoyIsKeyHeld(editorConJoystick.Right))
             EditorControls.Right = true;
         else
             EditorControls.Right = false;
-        if(KEYCODE_B & frmMain.keys_pressed)
+        if(JoyIsKeyDown(editorConJoystick.Select))
         {
             optCursor.current = 13;
             SetCursor();
         }
-        if(KEYCODE_X & frmMain.keys_pressed)
+        if(JoyIsKeyDown(editorConJoystick.Erase))
         {
             optCursor.current = 0;
             SetCursor();
         }
-        if(!WorldEditor && (KEYCODE_START & frmMain.keys_pressed))
+        if(!WorldEditor && JoyIsKeyDown(editorConJoystick.TestPlay))
         {
             Backup_FullFileName = FullFileName;
             // how does this interact with cross-level warps?
@@ -1520,7 +1520,7 @@ void GetEditorControls()
             HasCursor = false;
             zTestLevel();
         }
-        if(KEYCODE_SELECT & frmMain.keys_pressed)
+        if(JoyIsKeyDown(editorConJoystick.SwitchScreens))
         {
             editorScreen.active = !editorScreen.active;
             HasCursor = false;

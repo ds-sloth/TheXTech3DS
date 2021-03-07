@@ -45,10 +45,10 @@ void GetvScreen(int A)
     vScreenY[A] = vScreenY[A] - vScreen[A].TempY;
     if (vScreen[A].Width + level[Player[A].Section].X > level[Player[A].Section].Width)
         vScreenX[A] = -level[Player[A].Section].X/2 + -(level[Player[A].Section].Width - vScreen[A].Width)/2;
-    else if(-vScreenX[A] < level[Player[A].Section].X)
-        vScreenX[A] = -level[Player[A].Section].X;
-    else if(-vScreenX[A] + vScreen[A].Width > level[Player[A].Section].Width)
-        vScreenX[A] = -(level[Player[A].Section].Width - vScreen[A].Width);
+    else if(-vScreenX[A] + Max3DOffset < level[Player[A].Section].X)
+        vScreenX[A] = -level[Player[A].Section].X + Max3DOffset;
+    else if(-vScreenX[A] + vScreen[A].Width - Max3DOffset > level[Player[A].Section].Width)
+        vScreenX[A] = -(level[Player[A].Section].Width - vScreen[A].Width + Max3DOffset);
     if (vScreen[A].Height + level[Player[A].Section].Y > level[Player[A].Section].Height)
         vScreenY[A] = -level[Player[A].Section].Y/2 + -(level[Player[A].Section].Height - vScreen[A].Height)/2;
     else if(-vScreenY[A] < level[Player[A].Section].Y)
@@ -128,7 +128,7 @@ void GetvScreenAverage()
     {
         if(GameMenu)
         {
-            vScreenX[1] = -level[0].X;
+            vScreenX[1] = -level[0].X + Max3DOffset;
             B = 1;
         }
         else
@@ -139,10 +139,10 @@ void GetvScreenAverage()
 
     if (vScreen[A].Width + level[Player[1].Section].X > level[Player[1].Section].Width)
         vScreenX[A] = -level[Player[1].Section].X/2 + -(level[Player[1].Section].Width - vScreen[A].Width)/2;
-    else if(-vScreenX[A] < level[Player[1].Section].X)
-        vScreenX[A] = -level[Player[1].Section].X;
-    else if(-vScreenX[A] + ScreenW > level[Player[1].Section].Width)
-        vScreenX[A] = -(level[Player[1].Section].Width - ScreenW);
+    else if(-vScreenX[A] + Max3DOffset < level[Player[1].Section].X)
+        vScreenX[A] = -level[Player[1].Section].X + Max3DOffset;
+    else if(-vScreenX[A] + ScreenW - Max3DOffset > level[Player[1].Section].Width)
+        vScreenX[A] = -(level[Player[1].Section].Width - ScreenW + Max3DOffset);
     if (vScreen[A].Height + level[Player[1].Section].Y > level[Player[1].Section].Height)
         vScreenY[A] = -level[Player[1].Section].Y/2 + -(level[Player[1].Section].Height - vScreen[A].Height)/2;
     else if(-vScreenY[A] < level[Player[1].Section].Y)
@@ -154,7 +154,7 @@ void GetvScreenAverage()
     {
         if(vScreenX[1] > OldX)
         {
-            if(fEqual(vScreenX[1], -level[0].X))
+            if(fEqual(vScreenX[1], -level[0].X + Max3DOffset))
                 vScreenX[1] = OldX + 20;
             else
                 vScreenX[1] = OldX;

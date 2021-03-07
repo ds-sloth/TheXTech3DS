@@ -716,9 +716,9 @@ void UpdateLoad()
     if(draw)
     {
         frmMain.initDraw();
-        frmMain.renderTexture(0, 0, GFX.MenuGFX[4]);
-        frmMain.renderTexture(632, 456, GFX.Loader);
-        frmMain.renderTexture(760, 440, GFX.LoadCoin.w, GFX.LoadCoin.h / 4, GFX.LoadCoin, 0, 32 * LoadCoins);
+        frmMain.renderTexture(0+Max3DOffset, 0, GFX.MenuGFX[4]);
+        frmMain.renderTexture(632+Max3DOffset, 456, GFX.Loader);
+        frmMain.renderTexture(760+Max3DOffset, 440, GFX.LoadCoin.w, GFX.LoadCoin.h / 4, GFX.LoadCoin, 0, 32 * LoadCoins);
 
         frmMain.finalizeDraw();
         DoEvents();

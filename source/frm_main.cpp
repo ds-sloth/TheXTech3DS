@@ -80,7 +80,8 @@ bool FrmMain::initSDL(const CmdLineSetup_t &setup)
     {
         C3D_TexInitVRAM(&layer_texs[i], 512, 256, GPU_RGBA8);
         layer_targets[i] = C3D_RenderTargetCreateFromTex(&layer_texs[i], GPU_TEXFACE_2D, 0, GPU_RB_DEPTH24_STENCIL8);
-        layer_subtexs[i] = {420, 240, 0., 1., 420./512., 1-(240./256.)};
+        constexpr int texwidth = 400 + 2*Max3DOffset/2;
+        layer_subtexs[i] = {texwidth, 240, 0., 1., (double)texwidth/512., 1-(240./256.)};
         layer_ims[i].tex = &layer_texs[i];
         layer_ims[i].subtex = &layer_subtexs[i];
     }
@@ -274,6 +275,9 @@ void FrmMain::setLayer(int layer)
 
 void FrmMain::finalizeDraw()
 {
+    constexpr int shift = Max3DOffset / 2;
+    constexpr double bg_shift = shift;
+    constexpr double mid_shift = shift * .4;
     resetViewport();
     // leave the draw context and wait for vblank...
     if (LevelEditor && !editorScreen.active)
@@ -281,35 +285,35 @@ void FrmMain::finalizeDraw()
         C2D_TargetClear(bottom, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(bottom);
         // can be a bigger offset than this...
-        C2D_DrawImageAt(layer_ims[0], -50, 0, 0);
-        C2D_DrawImageAt(layer_ims[1], -50, 0, 0);
-        C2D_DrawImageAt(layer_ims[2], -50, 0, 0);
-        C2D_DrawImageAt(layer_ims[3], -50, 0, 0);
+        C2D_DrawImageAt(layer_ims[0], -40 - shift, 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -40 - shift, 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -40 - shift, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -40 - shift, 0, 0);
     }
     else if (numEyes == 1)
     {
         C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(top);
-        C2D_DrawImageAt(layer_ims[0], -10, 0, 0);
-        C2D_DrawImageAt(layer_ims[1], -10, 0, 0);
-        C2D_DrawImageAt(layer_ims[2], -10, 0, 0);
-        C2D_DrawImageAt(layer_ims[3], -10, 0, 0);
+        C2D_DrawImageAt(layer_ims[0], -shift, 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -shift, 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -shift, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -shift, 0, 0);
     }
     else
     {
         C2D_TargetClear(top, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(top);
-        C2D_DrawImageAt(layer_ims[0], -10 - (int)(10. * depthSlider), 0, 0);
-        C2D_DrawImageAt(layer_ims[1], -10 - (int)(4. * depthSlider), 0, 0);
-        C2D_DrawImageAt(layer_ims[2], -10, 0, 0);
-        C2D_DrawImageAt(layer_ims[3], -10 + (int)(4. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[0], -shift - (int)(bg_shift * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -shift - (int)(mid_shift * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[2], -shift, 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -shift + (int)(mid_shift * depthSlider), 0, 0);
 
         C2D_TargetClear(right, C2D_Color32f(0.0f, 0.0f, 0.0f, 1.0f));
         C2D_SceneBegin(right);
-        C2D_DrawImageAt(layer_ims[0], -10 + (int)(10. * depthSlider), 0, 0);
-        C2D_DrawImageAt(layer_ims[1], -10 + (int)(4. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[0], -10 + (int)(bg_shift * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[1], -10 + (int)(mid_shift * depthSlider), 0, 0);
         C2D_DrawImageAt(layer_ims[2], -10, 0, 0);
-        C2D_DrawImageAt(layer_ims[3], -10 - (int)(4. * depthSlider), 0, 0);
+        C2D_DrawImageAt(layer_ims[3], -10 - (int)(mid_shift * depthSlider), 0, 0);
     }
     currentFrame ++;
     C3D_FrameEnd(0);

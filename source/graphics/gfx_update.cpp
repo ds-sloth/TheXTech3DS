@@ -1984,17 +1984,19 @@ void UpdateGraphics(bool skipRepaint)
         if(MenuMode != 1 && MenuMode != 2 && MenuMode != 4 && MenuMode != 9)
             worldCurs = 0;
 
-        int menuFix = -44; // for Input Settings
+        int menuFix = -30; // for Input Settings
 
+        frmMain.setLayer(2);
         frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[1].w / 2, 0, GFX.MenuGFX[1].w, GFX.MenuGFX[1].h, GFX.MenuGFX[1], 0, 0);
-        frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[2].w / 2, 50,
-                GFX.MenuGFX[2].w, GFX.MenuGFX[2].h, GFX.MenuGFX[2], 0, 0);
-
         frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[3].w / 2, ScreenH - 20,
             GFX.MenuGFX[3].w, GFX.MenuGFX[3].h, GFX.MenuGFX[3], 0, 0);
 
+        frmMain.setLayer(3);
+        frmMain.renderTexture(ScreenW / 2 - GFX.MenuGFX[2].w / 2, 30,
+                GFX.MenuGFX[2].w, GFX.MenuGFX[2].h, GFX.MenuGFX[2], 0, 0);
+
         int MenuX = ScreenW / 2 - 100;
-        int MenuY = ScreenH - 195;
+        int MenuY = ScreenH - 200;
         if(MenuMode == 0)
         {
             SuperPrint("START GAME", 3, MenuX, MenuY);
@@ -2084,10 +2086,10 @@ void UpdateGraphics(bool skipRepaint)
             std::string tempStr = "";
             minShow = 1;
             maxShow = (MenuMode == 4) ? NumSelectBattle : ((MenuMode == 9) ? NumSelectWorldEditable : NumSelectWorld);
-            if(maxShow > 5)
+            if(maxShow > 6)
             {
                 minShow = worldCurs;
-                maxShow = minShow + 4;
+                maxShow = minShow + 5;
 
                 if(MenuCursor <= minShow - 1)
                     worldCurs = worldCurs - 1;
@@ -2098,40 +2100,40 @@ void UpdateGraphics(bool skipRepaint)
                     worldCurs = 1;
                 if (MenuMode == 9)
                 {
-                    if(worldCurs > NumSelectWorldEditable - 4)
-                        worldCurs = NumSelectWorldEditable - 4;
+                    if(worldCurs > NumSelectWorldEditable - 5)
+                        worldCurs = NumSelectWorldEditable - 5;
 
                     if(maxShow >= NumSelectWorldEditable)
                     {
                         maxShow = NumSelectWorldEditable;
-                        minShow = NumSelectWorldEditable - 4;
+                        minShow = NumSelectWorldEditable - 5;
                     }
                 }
                 else if (MenuMode == 4)
                 {
-                    if(worldCurs > NumSelectBattle - 4)
-                        worldCurs = NumSelectBattle - 4;
+                    if(worldCurs > NumSelectBattle - 5)
+                        worldCurs = NumSelectBattle - 5;
 
                     if(maxShow >= NumSelectBattle)
                     {
                         maxShow = NumSelectBattle;
-                        minShow = NumSelectBattle - 4;
+                        minShow = NumSelectBattle - 5;
                     }
                 }
                 else
                 {
-                    if(worldCurs > NumSelectWorld - 4)
-                        worldCurs = NumSelectWorld - 4;
+                    if(worldCurs > NumSelectWorld - 5)
+                        worldCurs = NumSelectWorld - 5;
 
                     if(maxShow >= NumSelectWorld)
                     {
                         maxShow = NumSelectWorld;
-                        minShow = NumSelectWorld - 4;
+                        minShow = NumSelectWorld - 5;
                     }
                 }
 
                 minShow = worldCurs;
-                maxShow = minShow + 4;
+                maxShow = minShow + 5;
             }
 
             for(auto A = minShow; A <= maxShow; A++)
@@ -2147,11 +2149,11 @@ void UpdateGraphics(bool skipRepaint)
             }
             if(maxShow < ((MenuMode == 4) ? NumSelectBattle : ((MenuMode == 9) ? NumSelectWorldEditable : NumSelectWorld)))
             {
-                frmMain.renderTexture(ScreenW/2 - 8, MenuY + 140, GFX.MCursor[2]);
+                frmMain.renderTexture(ScreenW/2 - 8, MenuY + 170, GFX.MCursor[2]);
             }
 
             B = MenuCursor - minShow + 1;
-            if(B >= 0 && B < 5)
+            if(B >= 0 && B < 6)
             {
                 frmMain.renderTexture(MenuX - 20, MenuY + (B * 30), GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
             }
@@ -2188,29 +2190,31 @@ void UpdateGraphics(bool skipRepaint)
         {
             SuperPrint("PLAYER 1 CONTROLS", 3, MenuX, MenuY);
             SuperPrint("PLAYER 2 CONTROLS", 3, MenuX, MenuY+30);
+            SuperPrint("EDITOR CONTROLS", 3, MenuX, MenuY+60);
             if (n3ds_clocked == -1)
             {
-                if (debugMode)
-                    SuperPrint("HIDE DEBUG SCREEN", 3, MenuX, MenuY+60);
-                else
-                    SuperPrint("SHOW DEBUG SCREEN", 3, MenuX, MenuY+60);
-                SuperPrint("VIEW CREDITS", 3, MenuX, MenuY+90);
-            }
-            else
-            {
-                if (n3ds_clocked)
-                    SuperPrint("USE O3DS CLOCK SPEED", 3, MenuX, MenuY+60);
-                else
-                    SuperPrint("USE N3DS CLOCK SPEED", 3, MenuX, MenuY+60);
                 if (debugMode)
                     SuperPrint("HIDE DEBUG SCREEN", 3, MenuX, MenuY+90);
                 else
                     SuperPrint("SHOW DEBUG SCREEN", 3, MenuX, MenuY+90);
                 SuperPrint("VIEW CREDITS", 3, MenuX, MenuY+120);
             }
+            else
+            {
+                if (n3ds_clocked)
+                    SuperPrint("USE O3DS CLOCK SPEED", 3, MenuX, MenuY+90);
+                else
+                    SuperPrint("USE N3DS CLOCK SPEED", 3, MenuX, MenuY+90);
+                if (debugMode)
+                    SuperPrint("HIDE DEBUG SCREEN", 3, MenuX, MenuY+120);
+                else
+                    SuperPrint("SHOW DEBUG SCREEN", 3, MenuX, MenuY+120);
+                SuperPrint("VIEW CREDITS", 3, MenuX, MenuY+150);
+            }
             frmMain.renderTexture(MenuX - 20, MenuY + (MenuCursor * 30),
                                   GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
         }
+        // player controls
         else if(MenuMode == 31 || MenuMode == 32)
         {
             SuperPrint("3DS INPUT..PLAYER " + std::to_string(MenuMode - 30), 3, MenuX, MenuY - 120 + menuFix);
@@ -2229,10 +2233,29 @@ void UpdateGraphics(bool skipRepaint)
             frmMain.renderTexture(MenuX - 20, MenuY - 120 + (MenuCursor * 30) + menuFix,
                                   GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
         }
+        // editor controls
+        else if(MenuMode == 33)
+        {
+            SuperPrint("3DS INPUT..EDITOR", 3, MenuX, MenuY - 120 + menuFix);
+
+            SuperPrint(fmt::format_ne("UP.........{0}", getJoyKeyName(editorConJoystick.Up)), 3, MenuX, MenuY - 90 + menuFix);
+            SuperPrint(fmt::format_ne("DOWN.......{0}", getJoyKeyName(editorConJoystick.Down)), 3, MenuX, MenuY - 60 + menuFix);
+            SuperPrint(fmt::format_ne("LEFT.......{0}", getJoyKeyName(editorConJoystick.Left)), 3, MenuX, MenuY - 30 + menuFix);
+            SuperPrint(fmt::format_ne("RIGHT......{0}", getJoyKeyName(editorConJoystick.Right)), 3, MenuX, MenuY + menuFix);
+            SuperPrint(fmt::format_ne("PREV SECT..{0}", getJoyKeyName(editorConJoystick.PrevSection)), 3, MenuX, MenuY + 30 + menuFix);
+            SuperPrint(fmt::format_ne("NEXT SECT..{0}", getJoyKeyName(editorConJoystick.NextSection)), 3, MenuX, MenuY + 60 + menuFix);
+            SuperPrint(fmt::format_ne("SWITCH SCR.{0}", getJoyKeyName(editorConJoystick.SwitchScreens)), 3, MenuX, MenuY + 90 + menuFix);
+            SuperPrint(fmt::format_ne("TEST PLAY..{0}", getJoyKeyName(editorConJoystick.TestPlay)), 3, MenuX, MenuY + 120 + menuFix);
+            SuperPrint(fmt::format_ne("SELECT.....{0}", getJoyKeyName(editorConJoystick.Select)), 3, MenuX, MenuY + 150 + menuFix);
+            SuperPrint(fmt::format_ne("ERASER.....{0}", getJoyKeyName(editorConJoystick.Erase)), 3, MenuX, MenuY + 180 + menuFix);
+
+            frmMain.renderTexture(MenuX - 20, MenuY - 120 + (MenuCursor * 30) + menuFix,
+                                  GFX.MCursor[0].w, GFX.MCursor[0].h, GFX.MCursor[0], 0, 0);
+        }
     }
 
     if(PrintFPS > 0) {
-        SuperPrint(fmt::format_ne("{0}", int(PrintFPS)), 1, 8, 8);
+        SuperPrint(fmt::format_ne("{0}", int(PrintFPS)), 1, 8 + Max3DOffset, 8);
     }
 
     if(GameOutro)

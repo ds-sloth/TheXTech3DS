@@ -127,9 +127,9 @@ void MenuLoop()
         {
             if(menuBackPress && MenuCursorCanMove)
             {
-                if(MenuCursor != 4)
+                if(MenuCursor != 5)
                 {
-                    MenuCursor = 4;
+                    MenuCursor = 5;
                     PlaySound(26);
                 }
             }
@@ -538,15 +538,19 @@ void MenuLoop()
                         MenuCursor = 1;
                         MenuMode = 32;
                         PlaySound(26);
-                    } else if(MenuCursor == 2 && n3ds_clocked != -1) {
+                    } else if(MenuCursor == 2) {
+                        MenuCursor = 1;
+                        MenuMode = 33;
+                        PlaySound(26);
+                    } else if(MenuCursor == 3 && n3ds_clocked != -1) {
                         PlaySound(29);
                         SwapClockSpeed();
-                    } else if((MenuCursor == 2 && n3ds_clocked == -1) ||
-                              (MenuCursor == 3 && n3ds_clocked != -1)) {
+                    } else if((MenuCursor == 3 && n3ds_clocked == -1) ||
+                              (MenuCursor == 4 && n3ds_clocked != -1)) {
                         PlaySound(29);
                         frmMain.toggleDebug();
-                    } else if((MenuCursor == 3 && n3ds_clocked == -1) ||
-                              (MenuCursor == 4)) {
+                    } else if((MenuCursor == 4 && n3ds_clocked == -1) ||
+                              (MenuCursor == 5)) {
                         PlaySound(29);
                         GameMenu = false;
                         GameOutro = true;
@@ -557,8 +561,8 @@ void MenuLoop()
                 }
             }
             if(MenuMode == 3) {
-                // max cursor pos is 4 when you can toggle clock speed and 3 otherwise
-                B = ((n3ds_clocked == -1) ? 3 : 4);
+                // max cursor pos is 5 when you can toggle clock speed and 4 otherwise
+                B = ((n3ds_clocked == -1) ? 4 : 5);
                 if(MenuCursor > B)
                     MenuCursor = 0;
                 if(MenuCursor < 0)
@@ -567,7 +571,7 @@ void MenuLoop()
 
         }
 
-        else if(MenuMode == 31 || MenuMode == 32)
+        else if(MenuMode == 31 || MenuMode == 32 || MenuMode == 33)
         {
             if(getNewJoystick)
             {
@@ -575,10 +579,10 @@ void MenuLoop()
 
                 if(!JoyIsKeyDown(oldJumpJoy))
                 {
-                    oldJumpJoy.id = 0; // want to disallow it immediately after pressing the jump button
+                    oldJumpJoy.id = 0; // want to disallow it immediately after pressing the jump button, but allow it after releasing it
                     bool gotNewKey = PollJoystick(joyKey);
 
-                    if(gotNewKey)
+                    if(gotNewKey && MenuMode != 33)
                     {
                         PlaySound(29);
                         // never double keys
@@ -626,6 +630,54 @@ void MenuLoop()
                         getNewJoystick = false;
                         MenuCursorCanMove = false;
                     }
+                    else if (gotNewKey)
+                    {
+                        PlaySound(29);
+                        // never double keys
+                        if (editorConJoystick.Up.id == joyKey.id)
+                            editorConJoystick.Up = lastJoyButton;
+                        else if (editorConJoystick.Down.id == joyKey.id)
+                            editorConJoystick.Down = lastJoyButton;
+                        else if (editorConJoystick.Left.id == joyKey.id)
+                            editorConJoystick.Left = lastJoyButton;
+                        else if (editorConJoystick.Right.id == joyKey.id)
+                            editorConJoystick.Right = lastJoyButton;
+                        else if (editorConJoystick.PrevSection.id == joyKey.id)
+                            editorConJoystick.PrevSection = lastJoyButton;
+                        else if (editorConJoystick.NextSection.id == joyKey.id)
+                            editorConJoystick.NextSection = lastJoyButton;
+                        else if (editorConJoystick.SwitchScreens.id == joyKey.id)
+                            editorConJoystick.SwitchScreens = lastJoyButton;
+                        else if (editorConJoystick.TestPlay.id == joyKey.id)
+                            editorConJoystick.TestPlay = lastJoyButton;
+                        else if (editorConJoystick.Select.id == joyKey.id)
+                            editorConJoystick.Select = lastJoyButton;
+                        else if (editorConJoystick.Erase.id == joyKey.id)
+                            editorConJoystick.Erase = lastJoyButton;
+                        // assign the new key
+                        if(MenuCursor == 1)
+                            editorConJoystick.Up = joyKey;
+                        else if(MenuCursor == 2)
+                            editorConJoystick.Down = joyKey;
+                        else if(MenuCursor == 3)
+                            editorConJoystick.Left = joyKey;
+                        else if(MenuCursor == 4)
+                            editorConJoystick.Right = joyKey;
+                        else if(MenuCursor == 5)
+                            editorConJoystick.PrevSection = joyKey;
+                        else if(MenuCursor == 6)
+                            editorConJoystick.NextSection = joyKey;
+                        else if(MenuCursor == 7)
+                            editorConJoystick.SwitchScreens = joyKey;
+                        else if(MenuCursor == 8)
+                            editorConJoystick.TestPlay = joyKey;
+                        else if(MenuCursor == 9)
+                            editorConJoystick.Select = joyKey;
+                        else if(MenuCursor == 10)
+                            editorConJoystick.Erase = joyKey;
+                        getNewJoystick = false;
+                        MenuCursorCanMove = false;
+                    }
                 }
             }
             else if(MenuCursorCanMove)
@@ -637,7 +689,7 @@ void MenuLoop()
                     MenuCursorCanMove = false;
                     PlaySound(26);
                 }
-                else if(menuDoPress)
+                else if(menuDoPress && MenuMode != 33)
                 {
                     if(MenuCursor == 1)
                     {
@@ -690,6 +742,62 @@ void MenuLoop()
                         conJoystick[MenuMode - 30].Start.type = -1;
                     }
                     oldJumpJoy = conJoystick[MenuMode - 30].Jump;
+                    getNewJoystick = true;
+                    MenuCursorCanMove = false;
+                }
+                else if(menuDoPress && MenuMode == 33)
+                {
+                    if(MenuCursor == 1)
+                    {
+                        lastJoyButton = editorConJoystick.Up;
+                        editorConJoystick.Up.type = -1;
+                    }
+                    else if(MenuCursor == 2)
+                    {
+                        lastJoyButton = editorConJoystick.Down;
+                        editorConJoystick.Down.type = -1;
+                    }
+                    else if(MenuCursor == 3)
+                    {
+                        lastJoyButton = editorConJoystick.Left;
+                        editorConJoystick.Left.type = -1;
+                    }
+                    else if(MenuCursor == 4)
+                    {
+                        lastJoyButton = editorConJoystick.Right;
+                        editorConJoystick.Right.type = -1;
+                    }
+                    else if(MenuCursor == 5)
+                    {
+                        lastJoyButton = editorConJoystick.PrevSection;
+                        editorConJoystick.PrevSection.type = -1;
+                    }
+                    else if(MenuCursor == 6)
+                    {
+                        lastJoyButton = editorConJoystick.NextSection;
+                        editorConJoystick.NextSection.type = -1;
+                    }
+                    else if(MenuCursor == 7)
+                    {
+                        lastJoyButton = editorConJoystick.SwitchScreens;
+                        editorConJoystick.SwitchScreens.type = -1;
+                    }
+                    else if(MenuCursor == 8)
+                    {
+                        lastJoyButton = editorConJoystick.TestPlay;
+                        editorConJoystick.TestPlay.type = -1;
+                    }
+                    else if(MenuCursor == 9)
+                    {
+                        lastJoyButton = editorConJoystick.Select;
+                        editorConJoystick.Select.type = -1;
+                    }
+                    else if(MenuCursor == 10)
+                    {
+                        lastJoyButton = editorConJoystick.Erase;
+                        editorConJoystick.Erase.type = -1;
+                    }
+                    oldJumpJoy = conJoystick[1].Jump;
                     getNewJoystick = true;
                     MenuCursorCanMove = false;
                 }

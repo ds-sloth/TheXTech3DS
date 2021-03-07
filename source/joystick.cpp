@@ -149,7 +149,8 @@ bool JoyIsKeyDown(const KM_Key &key)
     return key.id & keys;
 }
 
-bool getKeyState(KEYCODE kc)
+bool JoyIsKeyHeld(const KM_Key &key)
 {
-    return kc & frmMain.keys_held;
+    const uint32_t& keys = frmMain.keys_held;
+    return key.id & keys;
 }

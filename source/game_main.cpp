@@ -1296,6 +1296,47 @@ void InitControls()
         }
     }
 
+    auto &j = editorConJoystick;
+    j.Up.id = KEYCODE_PAD_UP;
+    j.Up.val = KEYID_PAD_UP;
+    j.Up.type = ConJoystick_t::JoyButton;
+
+    j.Down.id = KEYCODE_PAD_DOWN;
+    j.Down.val = KEYID_PAD_DOWN;
+    j.Down.type = ConJoystick_t::JoyButton;
+
+    j.Left.id = KEYCODE_PAD_LEFT;
+    j.Left.val = KEYID_PAD_LEFT;
+    j.Left.type = ConJoystick_t::JoyButton;
+
+    j.Right.id = KEYCODE_PAD_RIGHT;
+    j.Right.val = KEYID_PAD_RIGHT;
+    j.Right.type = ConJoystick_t::JoyButton;
+
+    j.PrevSection.id = KEYCODE_L;
+    j.PrevSection.val = KEYID_L;
+    j.PrevSection.type = ConJoystick_t::JoyButton;
+
+    j.NextSection.id = KEYCODE_R;
+    j.NextSection.val = KEYID_R;
+    j.NextSection.type = ConJoystick_t::JoyButton;
+
+    j.SwitchScreens.id = KEYCODE_SELECT;
+    j.SwitchScreens.val = KEYID_SELECT;
+    j.SwitchScreens.type = ConJoystick_t::JoyButton;
+
+    j.TestPlay.id = KEYCODE_START;
+    j.TestPlay.val = KEYID_START;
+    j.TestPlay.type = ConJoystick_t::JoyButton;
+
+    j.Select.id = KEYCODE_DUP;
+    j.Select.val = KEYID_DUP;
+    j.Select.type = ConJoystick_t::JoyButton;
+
+    j.Erase.id = KEYCODE_DDOWN;
+    j.Erase.val = KEYID_DDOWN;
+    j.Erase.type = ConJoystick_t::JoyButton;
+
     OpenConfig();
 }
 

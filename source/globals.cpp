@@ -47,6 +47,7 @@ bool ScrollRelease = false;
 std::string LB;
 std::string EoT;
 RangeArr<ConJoystick_t, 1, 2> conJoystick;
+EditorConJoystick_t editorConJoystick;
 RangeArrI<int, 1, 2, 0> useJoystick;
 
 int ScreenShake = 0;

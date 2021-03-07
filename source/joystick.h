@@ -38,7 +38,8 @@ bool JoyIsKeyDown(const KM_Key &key);
 // Public Sub PollJoystick()
 bool PollJoystick(KM_Key &key);
 
-bool getKeyState(KEYCODE kc);
+bool JoyIsKeyHeld(const KM_Key& key);
 
+bool getKeyState(KEYCODE kc);
 
 #endif // JOYSTICK_H
