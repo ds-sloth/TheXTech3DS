@@ -506,9 +506,7 @@ bool audioInit() {
 
     // Thanks to @mkst from sm64 3ds port
     int cpu = 0; // application core
-    // just going to try this... :)
     if (
-        R_SUCCEEDED(APT_SetAppCpuTimeLimit(70)) ||
         R_SUCCEEDED(APT_SetAppCpuTimeLimit(30)))
         cpu = 1; // system core
 
