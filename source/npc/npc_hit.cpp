@@ -1713,7 +1713,8 @@ void NPCHit(int A, int B, int C)
             }
             else if(B == 10)
             {
-                UpdateGraphics(true);
+                // weird case
+                // UpdateGraphics(true);
                 NPC[A].Immune = 10;
                 NPC[A].Damage = NPC[A].Damage + 1;
                 PlaySound(39);

@@ -458,7 +458,6 @@ int GameMain(const CmdLineSetup_t &setup)
 
             StartMusic(0);
             SetupPlayers();
-            // printf("How are we doing now???");
 
             For(A, 1, numPlayers)
             {
@@ -491,8 +490,6 @@ int GameMain(const CmdLineSetup_t &setup)
                 p.Dead = true;
             }
 
-            // printf("Um, now?");
-
             ProcEvent(LevelStart, true);
             For(A, 2, maxEvents)
             {
@@ -500,7 +497,6 @@ int GameMain(const CmdLineSetup_t &setup)
                     ProcEvent(Events[A].Name, true);
             }
 
-            // printf("Merp?");
             overTime = 0;
             GoalTime = SDL_GetTicks() + 1000;
             fpsCount = 0;
@@ -508,9 +504,9 @@ int GameMain(const CmdLineSetup_t &setup)
             cycleCount = 0;
             gameTime = 0;
 
-            // printf("Merp??");
             // Update graphics before loop begin (to process inital lazy-unpacking of used sprites)
             UpdateGraphics(true);
+            frmMain.clearBuffer();
 
             // printf("Merp!!!");
             do
@@ -652,9 +648,8 @@ int GameMain(const CmdLineSetup_t &setup)
                 GoToLevelNoGameThing = false;
 
                 // Update graphics before loop begin (to process inital lazy-unpacking of used sprites)
-                printf("First gfx2\n");
                 UpdateGraphics2(true);
-                printf("done!\n");
+                frmMain.clearBuffer();
 
                 do // 'level select loop
                 {
@@ -833,9 +828,8 @@ int GameMain(const CmdLineSetup_t &setup)
             gameTime = 0;
 
             // Update graphics before loop begin (to process inital lazy-unpacking of used sprites)
-            printf("Graphics??\n");
             UpdateGraphics(true);
-            printf("entering main game!\n");
+            frmMain.clearBuffer();
 
             do // MAIN GAME LOOP
             {

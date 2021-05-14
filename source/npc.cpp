@@ -2635,7 +2635,8 @@ void SpecialNPC(int A)
                     tempLocation.X = Player[B].Location.X - tempLocation.Width + 4;
                 if(CheckCollision(NPC[A].Location, tempLocation))
                 {
-                    UpdateGraphics(true);
+                    // weird case...
+                    // UpdateGraphics(true);
                     PlaySound(85);
                     if(NPC[A].Type == 133)
                         NPC[A].Killed = 3;
